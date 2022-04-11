@@ -1,5 +1,5 @@
 on: push
-name: CI for frontend
+name: frontend
 jobs:
   build:
     runs-on: ubuntu-latest
