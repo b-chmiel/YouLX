@@ -1,10 +1,10 @@
 import {Component} from '@angular/core';
 
 @Component({
-  selector: 'app-toolbar',
+  selector: 'home-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']
 })
 export class ToolbarComponent {
-
+  options: string[] = ['One', 'Two', 'Three'];
 }

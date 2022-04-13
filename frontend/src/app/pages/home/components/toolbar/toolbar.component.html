@@ -1,0 +1,18 @@
+<div class="m-3 p-3 bg-base-100 shadow-xl rounded-box flex flex-wrap gap-3">
+  <div class="form-control flex-1 min-w-fit">
+    <div class="input-group">
+      <span class="pl-2 pr-1.5"><mat-icon>search</mat-icon></span>
+      <input type="text" placeholder="Search for whatever you want" class="input input-bordered w-full">
+    </div>
+  </div>
+  <div class="form-control w-full md:max-w-xs">
+    <div class="input-group">
+      <span class="pl-2 pr-1.5"><mat-icon>location_on</mat-icon></span>
+      <input type="text" placeholder="Whole Poland" class="input input-bordered w-full" [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of options" [value]="option">{{option}}</mat-option>
+      </mat-autocomplete>
+      <button class="btn">Search</button>
+    </div>
+  </div>
+</div>
