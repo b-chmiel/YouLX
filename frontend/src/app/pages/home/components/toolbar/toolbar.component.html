@@ -8,7 +8,7 @@
   <div class="form-control w-full md:max-w-xs">
     <div class="input-group">
       <span class="pl-2 pr-1.5"><mat-icon>location_on</mat-icon></span>
-      <input type="text" placeholder="Whole Poland" class="input input-bordered w-full" [matAutocomplete]="auto">
+      <input type="text" placeholder="Everywhere" class="input input-bordered w-full" [matAutocomplete]="auto">
       <mat-autocomplete #auto="matAutocomplete">
         <mat-option *ngFor="let option of options" [value]="option">{{option}}</mat-option>
       </mat-autocomplete>

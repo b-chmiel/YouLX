@@ -5,11 +5,15 @@ import {ToolbarComponent} from './components/toolbar/toolbar.component';
 import {MatInputModule} from "@angular/material/input";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatIconModule} from "@angular/material/icon";
+import { OfferComponent } from './components/offer/offer.component';
+import { OffersComponent } from './components/offers/offers.component';
 
 @NgModule({
   declarations: [
     HomeComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    OfferComponent,
+    OffersComponent
   ],
   imports: [
     CommonModule,
