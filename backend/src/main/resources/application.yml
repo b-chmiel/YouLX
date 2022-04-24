@@ -30,7 +30,3 @@ logging:
       springframework:
         web: DEBUG
       hibernate: ERROR
-youlx:
-  http:
-    auth-token-header-name: X-API-KEY
-    auth-token: secret

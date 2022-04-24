@@ -1,6 +1,5 @@
-package com.youlx.api;
+package com.youlx.api.user;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +11,9 @@ import java.security.Principal;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/me")
-@SecurityRequirement(name = "X-API-KEY")
 public class UserController {
     @GetMapping
     public ResponseEntity<?> me(Principal user) {
-        return ResponseEntity.ok(new UserDto(user.getName()));
+        return ResponseEntity.ok(new UserDto(0L, "", "", "", user.getName()));
     }
 }
