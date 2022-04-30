@@ -27,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .exceptionHandling()
                 .defaultAuthenticationEntryPointFor(
                         new Http403ForbiddenEntryPoint(),
@@ -45,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/api/login")
                 .and()
                 .logout()
+                .logoutUrl("/api/logout")
                 .permitAll();
     }
 
