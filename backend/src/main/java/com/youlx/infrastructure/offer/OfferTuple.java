@@ -25,15 +25,17 @@ public class OfferTuple {
     @Lob
     private String description;
     private OfferStatus status;
+    private String userId;
 
     public OfferTuple(Offer offer) {
         name = offer.getName();
         description = offer.getDescription();
         status = offer.getStatus();
+        userId = offer.getUserId();
     }
 
     public Offer toDomain() {
-        return new Offer(id, name, description, status);
+        return new Offer(id, name, description, status, userId);
     }
 
     @Override
