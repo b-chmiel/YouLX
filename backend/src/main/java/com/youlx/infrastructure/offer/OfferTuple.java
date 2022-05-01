@@ -22,6 +22,7 @@ public class OfferTuple {
     private Long id;
 
     private String name;
+    @Lob
     private String description;
     private OfferStatus status;
 
