@@ -1,4 +1,4 @@
-package com.youlx.api.user;
+package com.youlx.api.rest.user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
