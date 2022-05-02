@@ -35,7 +35,7 @@ public class OfferController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        final var created = service.create(offer.toDomain());
+        final var created = service.create(offer.toDomain(user.getName()));
         final var uri = new URI(Routes.Offer.OFFERS + '/' + created.getId());
         return ResponseEntity.created(uri).build();
     }

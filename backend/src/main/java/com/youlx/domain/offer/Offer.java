@@ -10,4 +10,5 @@ public class Offer {
     private final String name;
     private final String description;
     private final OfferStatus status;
+    private final String userId;
 }

@@ -14,7 +14,7 @@ class OfferCreateDto {
     private String description;
     private OfferStatus status;
 
-    Offer toDomain() {
-        return new Offer(null, name, description, status);
+    Offer toDomain(String userId) {
+        return new Offer(null, name, description, status, userId);
     }
 }
