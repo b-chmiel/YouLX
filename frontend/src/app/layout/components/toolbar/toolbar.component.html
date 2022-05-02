@@ -2,8 +2,12 @@
     <div class="flex-1">
       <a href="/" class="btn btn-ghost normal-case text-xl">YouLX</a>
     </div>
-    <div class="flex-none">
-        <a href="/account/login" class="btn btn-ghost">Log in</a>
-        <a href="/account/signup" class="btn btn-ghost">Sign up</a>
+    <div class="flex-none" *ngIf="profile$ | async as profile">
+      <ng-container *ngIf="profile != null; else notLoggedIn">
+        <button (click)="logout()" class="btn btn-ghost">Log out</button>
+      </ng-container>
+      <ng-template #notLoggedIn>
+        <button (click)="login()" class="btn btn-ghost">Log in</button>
+      </ng-template>
     </div>
-  </div>
+</div>
