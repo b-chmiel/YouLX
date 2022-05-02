@@ -1,31 +1,23 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Router} from "@angular/router";
-import Profile from "../models/profile";
-import {tap} from "rxjs";
+import {HttpClient} from '@angular/common/http';
+import Profile from '../models/profile';
+import {catchError, Observable, of, tap} from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
+  private readonly profileUrl = '/api/me';
+  private profile: Profile | null | undefined;
 
-  private readonly loginUrl = "login";
-  private readonly logoutUrl = "logout";
-  private readonly profileUrl = "api/me";
-
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient) {
   }
 
-  login() {
-    return this.router.navigateByUrl(this.loginUrl);
-  }
+  getProfileInfo(): Observable<Profile | null> {
+    if (this.profile !== undefined) {
+      return of(this.profile);
+    }
 
-  logout() {
-    console.log("logout");
-    return this.router.navigateByUrl(this.logoutUrl);
-  }
-
-  getProfileInfo() {
-    return this.http.get<Profile>(this.profileUrl).pipe(tap(x => console.log(x.login)));
+    return this.http.get<Profile>(this.profileUrl).pipe(catchError(err => of(null)), tap(profile => this.profile = profile));
   }
 }

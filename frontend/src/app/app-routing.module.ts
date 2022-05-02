@@ -1,30 +1,21 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {HomeComponent} from "./pages/home/home.component";
-import {AuthResolver} from "./resolvers/auth.resolver";
+import {HomeComponent} from './pages/home/home.component';
 
 const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
-    resolve: {
-      user: AuthResolver
-    }
-  },
-  {
-    path: '',
-    redirectTo: '/home',
-    pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: ''
-  }
+    redirectTo: '/home',
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class AppRoutingModule {
 }
