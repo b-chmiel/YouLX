@@ -1,4 +1,4 @@
-package com.youlx.api.user;
+package com.youlx.api.rest.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

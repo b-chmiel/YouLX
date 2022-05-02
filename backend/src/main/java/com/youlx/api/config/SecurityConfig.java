@@ -1,5 +1,6 @@
-package com.youlx.config;
+package com.youlx.api.config;
 
+import com.youlx.api.Routes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -27,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .exceptionHandling()
                 .defaultAuthenticationEntryPointFor(
                         new Http403ForbiddenEntryPoint(),
@@ -36,15 +38,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/swagger-ui/**").permitAll()
                 .antMatchers("/api/swagger-ui.html").permitAll()
                 .antMatchers("/api/docs").permitAll()
-                .antMatchers("/api/login*").permitAll()
+                .antMatchers(Routes.Auth.LOGIN + "*").permitAll()
                 .antMatchers("/v3/api-docs/**").permitAll()
+                .antMatchers(Routes.Offer.OFFERS + "*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/api/login")
-                .loginProcessingUrl("/api/login")
+                .loginPage(Routes.Auth.LOGIN)
+                .loginProcessingUrl(Routes.Auth.LOGIN)
                 .and()
                 .logout()
+                .logoutUrl(Routes.Auth.LOGOUT)
                 .permitAll();
     }
 
