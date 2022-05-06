@@ -11,4 +11,12 @@ public class Offer {
     private final String description;
     private final OfferStatus status;
     private final String userId;
+
+    public Offer(String name, String description, String userId) {
+        this.id = null;
+        this.name = name;
+        this.description = description;
+        this.userId = userId;
+        this.status = OfferStatus.OPEN;
+    }
 }
