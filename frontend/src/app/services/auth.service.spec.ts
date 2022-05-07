@@ -32,13 +32,13 @@ describe('AuthService', () => {
     // @ts-ignore
     service.getProfileInfo().subscribe(profile => expect(profile.login).toEqual(user.login));
 
-    const request = httpTest.expectOne('/api/me');
+    const request = httpTest.expectOne('/api/profile');
     request.flush(user);
   });
 
   it('should return null on error', () => {
     service.getProfileInfo().subscribe(profile => expect(profile).toBeNull());
-    const request = httpTest.expectOne('/api/me');
+    const request = httpTest.expectOne('/api/profile');
     request.flush('', {status: 403, statusText: 'not authorized'})
   });
 });
