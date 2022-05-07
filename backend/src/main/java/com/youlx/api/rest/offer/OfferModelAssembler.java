@@ -1,6 +1,5 @@
-package com.youlx.infrastructure.offer;
+package com.youlx.api.rest.offer;
 
-import com.youlx.api.rest.offer.OfferController;
 import com.youlx.domain.offer.Offer;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -10,9 +9,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class OfferModelAssembler implements RepresentationModelAssembler<OfferTuple, EntityModel<Offer>> {
+public class OfferModelAssembler implements RepresentationModelAssembler<Offer, EntityModel<OfferDto>> {
     @Override
-    public EntityModel<Offer> toModel(OfferTuple entity) {
-        return EntityModel.of(entity.toDomain(), linkTo(methodOn(OfferController.class).get(entity.getId())).withSelfRel());
+    public EntityModel<OfferDto> toModel(Offer entity) {
+        final var dto = new OfferDto(entity);
+        return EntityModel.of(dto, linkTo(methodOn(OfferController.class).get(entity.getId())).withSelfRel());
     }
 }
