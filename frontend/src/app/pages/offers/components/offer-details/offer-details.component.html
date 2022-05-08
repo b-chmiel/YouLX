@@ -1,0 +1,24 @@
+<ng-container *ngIf="offer; else notFound">
+
+  <div class="container max-w-4xl mx-auto">
+    <div class="my-3">
+      <a routerLink="/" class="btn btn-sm btn-outline">go back</a>
+    </div>
+    <article class="bg-white shadow-xl p-3 rounded-box prose max-w-none">
+      <h4>{{offer.name}}</h4>
+      <hr class="mb-2"/>
+      <p>{{offer.description}}</p>
+    </article>
+  </div>
+</ng-container>
+<ng-template #notFound>
+  <div class="hero bg-base-200">
+    <div class="hero-content text-center">
+      <div class="max-w-md">
+        <h1 class="text-5xl font-bold">Offer unavailable</h1>
+        <p class="py-6">We could't find the offer you were looking for :(</p>
+        <a href="/" class="btn btn-primary">Go back</a>
+      </div>
+    </div>
+  </div>
+</ng-template>

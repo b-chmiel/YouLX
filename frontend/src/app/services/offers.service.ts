@@ -36,10 +36,14 @@ export class OffersService {
       })),
       catchError(err => of([] as Offer[])));
   }
+
+  getOffer(offerId: string): Observable<Offer | null> {
+    return this.http.get<Offer>(`${this.offersUrl}/${offerId}`).pipe(catchError(_ => of(null)));
+  }
 }
 
 interface GetOffersResponse {
   _embedded: {
     offers: Offer[]
-  }
+  };
 }
