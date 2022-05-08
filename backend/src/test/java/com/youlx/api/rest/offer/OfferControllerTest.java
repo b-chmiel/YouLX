@@ -1,13 +1,17 @@
 package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
+import com.youlx.testUtils.MvcHelpers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,30 +19,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class OfferControllerTest {
     @Autowired
-    private MockMvc mockMvc;
+    private MvcHelpers commonHelpers;
 
     @Test
-    public void accessibleForUnauthenticatedUser() throws Exception {
-        mockMvc.perform(get(Routes.Offer.OFFERS)).andDo(print()).andExpect(status().isOk());
+    public void getAccessibleForUnauthenticatedUser() throws Exception {
+        commonHelpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    public void create() throws Exception {
+        final var name = "asdf";
+        final var desc = "fdsa";
+        final var offer = new OfferCreateDto(name, desc);
+
+        final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
+
+        response.andExpect(status().isCreated());
+
+        final var location = response.andReturn().getResponse().getHeader("location");
+        assertTrue(Objects.requireNonNull(response.andReturn().getResponse().getHeader("location")).contains(Routes.Offer.OFFERS));
+
+        final var created = commonHelpers.getRequest(location);
+        assertEquals(MvcHelpers.attributeFromResult("name", created), name);
+        assertEquals(MvcHelpers.attributeFromResult("description", created), desc);
     }
 }
-
-
-//    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-//
-//    @Test
-//    public void testInsertObject() throws Exception {
-//        String url = BASE_URL + "/object";
-//        ObjectBean anObject = new ObjectBean();
-//        anObject.setObjectId("33");
-//        anObject.setUserId("4268321");
-//        //... more
-//        ObjectMapper mapper = new ObjectMapper();
-//        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-//        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-//        String requestJson=ow.writeValueAsString(anObject );
-//
-//        mockMvc.perform(post(url).contentType(APPLICATION_JSON_UTF8)
-//                        .content(requestJson))
-//                .andExpect(status().isOk());
-//    }

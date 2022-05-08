@@ -34,8 +34,8 @@ public class OfferTuple {
         userId = offer.getUserId();
     }
 
-    public Offer toDomain() {
-        return new Offer(id, name, description, status, userId);
+    public Offer toDomain(String hashedId) {
+        return new Offer(hashedId, name, description, status, userId);
     }
 
     @Override

@@ -11,7 +11,7 @@ public class OfferServiceImpl implements OfferService {
     private final OfferRepository repository;
 
     @Override
-    public Optional<Offer> findById(Long id) {
+    public Optional<Offer> findById(String id) {
         return repository.findById(id);
     }
 

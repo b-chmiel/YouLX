@@ -5,5 +5,5 @@ import java.util.Optional;
 public interface OfferRepository {
     Offer create(Offer offer);
 
-    Optional<Offer> findById(Long id);
+    Optional<Offer> findById(String id);
 }

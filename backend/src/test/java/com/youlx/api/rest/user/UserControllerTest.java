@@ -1,12 +1,14 @@
 package com.youlx.api.rest.user;
 
+import com.youlx.api.Routes;
+import com.youlx.testUtils.MvcHelpers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -14,10 +16,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class UserControllerTest {
     @Autowired
-    private MockMvc mockMvc;
+    private MvcHelpers helpers;
+
+    private final String mockUserLogin = "test-user";
 
     @Test
     public void profileReturns403IfUserIsNotAuthenticated() throws Exception {
-        mockMvc.perform(get("/api/me")).andDo(print()).andExpect(status().isForbidden());
+        helpers.getRequest(Routes.User.ME).andDo(print()).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(mockUserLogin)
+    public void profileReturnsUserInfo() throws Exception {
+        final var result = helpers.getRequest(Routes.User.ME);
+
+        result.andExpect(status().isOk());
+        assertEquals(MvcHelpers.attributeFromResult("login", result), mockUserLogin);
     }
 }

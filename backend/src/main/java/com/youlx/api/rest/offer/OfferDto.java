@@ -14,7 +14,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Relation(collectionRelation = "offers", itemRelation = "offer")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OfferDto extends RepresentationModel<OfferDto> {
-    private Long id;
+    private String id;
     private String name;
     private String description;
     private String status;
