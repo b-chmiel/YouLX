@@ -1,3 +1,3 @@
 export default interface Profile {
-  login: string
+  login: string;
 }

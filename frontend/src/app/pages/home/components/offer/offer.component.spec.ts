@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {OfferComponent} from './offer.component';
-import {ChangeDetectorRef} from "@angular/core";
+import {ChangeDetectorRef} from '@angular/core';
 
 describe('OfferComponent', () => {
   let component: OfferComponent;
@@ -9,7 +9,7 @@ describe('OfferComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [OfferComponent]
+      declarations: [OfferComponent],
     })
       .compileComponents();
   });
@@ -19,10 +19,10 @@ describe('OfferComponent', () => {
     component = fixture.componentInstance;
     component.offer = {
       id: 'gfasd',
-      title: 'Great neighbourhood, good location, big house! The best offer!',
-      categories: ['property', 'house', 'new'],
+      name: 'Great neighbourhood, good location, big house! The best offer!',
+      description: 'A house in the suburbs, contact me through my email at notta.scammy@estate.real',
       coverUrl: 'https://api.lorem.space/image/house?w=400&h=225',
-      price: 600_000
+      price: 600_000,
     };
     fixture.detectChanges();
   });
@@ -38,13 +38,13 @@ describe('OfferComponent', () => {
   });
 
   it('should render offer title', () => {
-    expect(fixture.nativeElement.textContent).toContain(component.offer.title);
+    expect(fixture.nativeElement.textContent).toContain(component.offer.name);
   });
 
-  it('should render all categories', () => {
-    for (const category of component.offer.categories) {
-      expect(fixture.nativeElement.textContent).toContain(category);
-    }
+  it('should render no cover if not provided', async () => {
+    component.offer.coverUrl = null;
+    await runOnPushChangeDetection(fixture);
+    expect(fixture.nativeElement.textContent).toContain('no cover');
   });
 
   it('should render offer price if provided', () => {

@@ -3,7 +3,6 @@ package com.youlx.api.rest.offer;
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferService;
-import com.youlx.infrastructure.offer.OfferModelAssembler;
 import com.youlx.infrastructure.offer.OfferPagedRepository;
 import com.youlx.infrastructure.offer.OfferTuple;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ import java.security.Principal;
 @RequestMapping(Routes.Offer.OFFERS)
 public class OfferController {
     private final OfferPagedRepository repository;
-    private final PagedResourcesAssembler<OfferTuple> assembler;
+    private final PagedResourcesAssembler<Offer> resourcesAssembler;
     private final OfferModelAssembler modelAssembler;
     private final OfferService service;
 
@@ -49,8 +48,8 @@ public class OfferController {
     }
 
     @GetMapping
-    public PagedModel<EntityModel<Offer>> getAll(Pageable pageable) {
-        final var offers = repository.findAll(pageable);
-        return assembler.toModel(offers, modelAssembler);
+    public PagedModel<EntityModel<OfferDto>> getAll(Pageable pageable) {
+        final var offers = repository.findAll(pageable).map(OfferTuple::toDomain);
+        return resourcesAssembler.toModel(offers, modelAssembler);
     }
 }

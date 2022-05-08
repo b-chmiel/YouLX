@@ -12,9 +12,8 @@ import lombok.Setter;
 class OfferCreateDto {
     private String name;
     private String description;
-    private OfferStatus status;
 
     Offer toDomain(String userId) {
-        return new Offer(null, name, description, status, userId);
+        return new Offer(name, description, userId);
     }
 }

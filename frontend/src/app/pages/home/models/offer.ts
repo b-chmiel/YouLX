@@ -1,7 +1,7 @@
 export interface Offer {
-  id: string
-  title: string
-  coverUrl: string
-  categories: string[]
-  price: number | null
+  id: string;
+  name: string;
+  description: string | null;
+  coverUrl: string | null;
+  price: number | null;
 }

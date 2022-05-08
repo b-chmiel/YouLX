@@ -7,7 +7,7 @@ import {catchError, Observable, of, tap} from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly profileUrl = '/api/me';
+  private readonly profileUrl = '/api/profile';
   private profile: Profile | null | undefined;
 
   constructor(private http: HttpClient) {
