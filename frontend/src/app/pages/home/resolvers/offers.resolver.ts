@@ -5,7 +5,7 @@ import {
   ActivatedRouteSnapshot
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import {Offer} from '../models/offer';
+import {Offer} from '../../../models/offer';
 import {OffersService} from '../../../services/offers.service';
 
 @Injectable({

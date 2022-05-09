@@ -1,0 +1,27 @@
+<div class="container max-w-4xl mx-auto">
+  <div class="my-3">
+    <a routerLink="/" class="btn btn-sm btn-outline">go back</a>
+  </div>
+  <div class="rounded-box bg-base-100 p-3 shadow-xl">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-control">
+        <label for="name" class="label">
+          <span class="label-text">Offer Title</span>
+        </label>
+        <input id="name" type="text" formControlName="name" placeholder="Briefly describe your offer" class="input input-bordered w-full">
+      </div>
+      <div class="form-control">
+        <label for="description" class="label">
+          <span class="label-text">Description</span>
+        </label>
+        <textarea id="description" formControlName="description" class="textarea textarea-bordered h-24" placeholder="Describe your offer in detail"></textarea>
+      </div>
+      <div class="form-control">
+        <input type="submit" value="Submit" class="btn mt-3" [disabled]="!form.valid || fetching" />
+      </div>
+      <div class="text-error mt-2" *ngIf="error">
+        {{error}}
+      </div>
+    </form>
+  </div>
+</div>
