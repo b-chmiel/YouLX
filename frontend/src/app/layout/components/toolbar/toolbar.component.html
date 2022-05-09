@@ -4,6 +4,10 @@
   </div>
   <div class="flex-none">
     <ng-container *ngIf="profile$ | async as profile; else notLoggedIn">
+      <a routerLink="/offers/create" class="mr-3 btn btn-ghost btn-sm">
+        Create offer
+      </a>
+
       <div class="dropdown dropdown-end dropdown-hover">
         <a routerLink="/" tabindex="0" class="btn btn-ghost avatar">
           <p class="mr-3">{{profile.login}}</p>

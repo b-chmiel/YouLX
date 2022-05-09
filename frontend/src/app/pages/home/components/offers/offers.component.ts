@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Offer} from '../../models/offer';
+import {Offer} from '../../../../models/offer';
 import {ActivatedRoute} from '@angular/router';
 
 @Component({

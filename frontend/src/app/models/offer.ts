@@ -1,3 +1,8 @@
+export interface CreateOfferDto {
+  name: string;
+  description: string;
+}
+
 export interface Offer {
   id: string;
   name: string;
