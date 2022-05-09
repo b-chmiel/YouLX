@@ -7,6 +7,7 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatIconModule} from "@angular/material/icon";
 import { OfferComponent } from './components/offer/offer.component';
 import { OffersComponent } from './components/offers/offers.component';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -15,12 +16,13 @@ import { OffersComponent } from './components/offers/offers.component';
     OfferComponent,
     OffersComponent
   ],
-  imports: [
-    CommonModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    MatIconModule
-  ],
+    imports: [
+        CommonModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        MatIconModule,
+        RouterModule,
+    ],
   exports: [
     HomeComponent
   ]

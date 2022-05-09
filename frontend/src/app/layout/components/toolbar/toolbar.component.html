@@ -1,11 +1,11 @@
 <div class="navbar bg-base-100 shadow-xl rounded-b-xl">
   <div class="flex-1">
-    <a href="/" class="btn btn-ghost normal-case text-xl">YouLX</a>
+    <a routerLink="/" class="btn btn-ghost normal-case text-xl">YouLX</a>
   </div>
   <div class="flex-none">
     <ng-container *ngIf="profile$ | async as profile; else notLoggedIn">
       <div class="dropdown dropdown-end dropdown-hover">
-        <a href="/" tabindex="0" class="btn btn-ghost avatar">
+        <a routerLink="/" tabindex="0" class="btn btn-ghost avatar">
           <p class="mr-3">{{profile.login}}</p>
           <div class="w-10 bg-neutral rounded-full">
             <img alt="avatar" src="https://avatars.dicebear.com/api/initials/{{profile.login}}.svg">
