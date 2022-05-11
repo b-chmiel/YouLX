@@ -3,6 +3,8 @@ package com.youlx.domain.offer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Getter
 public class Offer {
@@ -11,6 +13,7 @@ public class Offer {
     private final String description;
     private final OfferStatus status;
     private final String userId;
+    private final LocalDateTime creationDate;
 
     public Offer(String name, String description, String userId) {
         this.id = null;
@@ -18,5 +21,6 @@ public class Offer {
         this.description = description;
         this.userId = userId;
         this.status = OfferStatus.OPEN;
+        this.creationDate = LocalDateTime.now();
     }
 }

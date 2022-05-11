@@ -2,6 +2,7 @@ package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
+import com.youlx.domain.offer.OfferStatus;
 import com.youlx.testUtils.MvcHelpers;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,10 +37,7 @@ public class OfferControllerTest {
 
             final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
-            final var result = commonHelpers.getRequest(location);
-
-            assertEquals(name, MvcHelpers.attributeFromResult("name", result));
-            assertEquals(description, MvcHelpers.attributeFromResult("description", result));
+            commonHelpers.getRequest(location).andExpect(status().isOk());
         }
     }
 
@@ -66,8 +66,14 @@ public class OfferControllerTest {
             assertTrue(Objects.requireNonNull(response.andReturn().getResponse().getHeader("location")).contains(Routes.Offer.OFFERS));
 
             final var created = commonHelpers.getRequest(location);
-            assertEquals(MvcHelpers.attributeFromResult("name", created), name);
-            assertEquals(MvcHelpers.attributeFromResult("description", created), desc);
+            assertEquals(name, MvcHelpers.attributeFromResult("name", created));
+            assertEquals(desc, MvcHelpers.attributeFromResult("description", created));
+            assertEquals(OfferStatus.OPEN.name(), MvcHelpers.attributeFromResult("status", created));
+
+            final var expectedDate = LocalDateTime.now();
+            final var actualDate = LocalDateTime.parse(MvcHelpers.attributeFromResult("creationDate", created));
+
+            assertEquals(expectedDate.toEpochSecond(ZoneOffset.UTC) ,actualDate.toEpochSecond(ZoneOffset.UTC));
         }
     }
 }
