@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -26,16 +27,18 @@ public class OfferTuple {
     private String description;
     private OfferStatus status;
     private String userId;
+    private LocalDateTime creationDate;
 
     public OfferTuple(Offer offer) {
         name = offer.getName();
         description = offer.getDescription();
         status = offer.getStatus();
         userId = offer.getUserId();
+        creationDate = offer.getCreationDate();
     }
 
     public Offer toDomain(String hashedId) {
-        return new Offer(hashedId, name, description, status, userId);
+        return new Offer(hashedId, name, description, status, userId, creationDate);
     }
 
     @Override
