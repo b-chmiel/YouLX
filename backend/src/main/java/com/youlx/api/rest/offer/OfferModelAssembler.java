@@ -9,7 +9,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class OfferModelAssembler implements RepresentationModelAssembler<Offer, EntityModel<OfferDto>> {
+class OfferModelAssembler implements RepresentationModelAssembler<Offer, EntityModel<OfferDto>> {
     @Override
     public EntityModel<OfferDto> toModel(Offer entity) {
         final var dto = new OfferDto(entity);
