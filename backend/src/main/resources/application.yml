@@ -1,5 +1,6 @@
 server:
   port: 8080
+
 spring:
   h2:
     console:
@@ -21,9 +22,14 @@ spring:
     properties:
       hibernate:
         format_sql=true:
+  data:
+    rest:
+      default-page-size: 10
+
 springdoc:
   swagger-ui:
     path: /api/docs
+
 logging:
   level:
     org:

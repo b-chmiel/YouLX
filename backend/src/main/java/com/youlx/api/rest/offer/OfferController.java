@@ -3,6 +3,7 @@ package com.youlx.api.rest.offer;
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferService;
+import com.youlx.domain.offer.OfferStatus;
 import com.youlx.domain.utils.HashId;
 import com.youlx.infrastructure.offer.OfferPagedRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +50,9 @@ public class OfferController {
     }
 
     @GetMapping
-    public PagedModel<EntityModel<OfferDto>> getAll(Pageable pageable) {
-        final var offers = repository.findAll(pageable).map(
+    public PagedModel<EntityModel<OfferDto>> getAllOpen(Pageable pageable) {
+        final var offersTuple = repository.findAllByStatus(pageable, OfferStatus.OPEN);
+        final var offers = offersTuple.map(
                 t -> t.toDomain(hashId.encode(t.getId()))
         );
         return resourcesAssembler.toModel(offers, modelAssembler);

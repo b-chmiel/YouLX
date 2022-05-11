@@ -13,13 +13,13 @@ import org.springframework.hateoas.server.core.Relation;
 @EqualsAndHashCode(callSuper = false)
 @Relation(collectionRelation = "offers", itemRelation = "offer")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OfferDto extends RepresentationModel<OfferDto> {
+class OfferDto extends RepresentationModel<OfferDto> {
     private String id;
     private String name;
     private String description;
     private String status;
 
-    public OfferDto(Offer offer) {
+    OfferDto(Offer offer) {
         this.id = offer.getId();
         this.name = offer.getName();
         this.description = offer.getDescription();
