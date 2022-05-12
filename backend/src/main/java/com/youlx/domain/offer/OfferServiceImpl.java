@@ -19,4 +19,9 @@ public class OfferServiceImpl implements OfferService {
     public Offer create(Offer offer) {
         return repository.create(offer);
     }
+
+    @Override
+    public Optional<Offer> close(String id, OfferClose offerClose) {
+        return repository.close(id, offerClose);
+    }
 }

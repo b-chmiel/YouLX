@@ -2,6 +2,7 @@ package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
+import com.youlx.domain.offer.OfferCloseReason;
 import com.youlx.domain.offer.OfferStatus;
 import com.youlx.testUtils.MvcHelpers;
 import org.junit.jupiter.api.Nested;
@@ -15,8 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,9 +31,7 @@ public class OfferControllerTest {
         @Test
         @WithMockUser
         public void shouldGetRecentlyCreated() throws Exception {
-            final var name = "asdf";
-            final var description = "fdsa";
-            final var offer = new OfferDto(new Offer(name, description, "user"));
+            final var offer = new OfferDto(new Offer("", "", ""));
 
             final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
@@ -73,7 +71,22 @@ public class OfferControllerTest {
             final var expectedDate = LocalDateTime.now();
             final var actualDate = LocalDateTime.parse(MvcHelpers.attributeFromResult("creationDate", created));
 
-            assertEquals(expectedDate.toEpochSecond(ZoneOffset.UTC) ,actualDate.toEpochSecond(ZoneOffset.UTC));
+            assertTrue(Math.abs(expectedDate.toEpochSecond(ZoneOffset.UTC) - actualDate.toEpochSecond(ZoneOffset.UTC)) < 2);
+        }
+    }
+
+    @Nested
+    public class CloseTests {
+        @Test
+        @WithMockUser
+        public void shouldCloseOffer() throws Exception {
+            final var offer = new OfferDto(new Offer("", "", ""));
+
+            final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
+            final var location = response.andReturn().getResponse().getHeader("location");
+            commonHelpers.postRequest(new OfferCloseDto(OfferCloseReason.EXPIRED), location + "/close");
+            final var result = commonHelpers.getRequest(location);
+            assertEquals(OfferCloseReason.EXPIRED.name(), MvcHelpers.attributeFromResult("closeReason", result));
         }
     }
 }

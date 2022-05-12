@@ -1,7 +1,9 @@
 package com.youlx.infrastructure.offer;
 
 import com.youlx.domain.offer.Offer;
+import com.youlx.domain.offer.OfferClose;
 import com.youlx.domain.offer.OfferRepository;
+import com.youlx.domain.offer.OfferStatus;
 import com.youlx.domain.utils.HashId;
 import com.youlx.domain.utils.HashIdException;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +35,29 @@ public class OfferRepositoryImpl implements OfferRepository {
         } catch (HashIdException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<Offer> close(String id, OfferClose offer) {
+        Long decoded;
+        try {
+            decoded = hashId.decode(id);
+        } catch (HashIdException e) {
+            return Optional.empty();
+        }
+
+        final var found = repo.findById(decoded);
+        if (found.isEmpty()) {
+            return Optional.empty();
+        }
+
+        found.get().setStatus(OfferStatus.CLOSED);
+        found.get().setCloseReason(offer.reason());
+        return Optional.of(repo.save(found.get()).toDomain(id));
+    }
+
+    @Override
+    public void clear() {
+        repo.deleteAll();
     }
 }

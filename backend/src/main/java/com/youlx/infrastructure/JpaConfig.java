@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackageClasses = {OfferRepositoryImpl.class})
 public class JpaConfig {
     @Bean
-    OfferRepositoryImpl orderRepository(OfferRepositoryImpl.Repo repo, HashId hashId) {
+    OfferRepositoryImpl offerRepository(OfferRepositoryImpl.Repo repo, HashId hashId) {
         return new OfferRepositoryImpl(repo, hashId);
     }
 }

@@ -6,4 +6,8 @@ public interface OfferRepository {
     Offer create(Offer offer);
 
     Optional<Offer> findById(String id);
+
+    Optional<Offer> close(String id, OfferClose offer);
+
+    void clear();
 }
