@@ -45,7 +45,16 @@ public class OfferController {
     public ResponseEntity<?> get(@Valid @PathVariable String id) {
         final var result = service.findById(id);
         return result.isPresent() ?
-                ResponseEntity.ok(result) :
+                ResponseEntity.ok(new OfferDto(result.get())) :
+                ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("{id}/close")
+    public ResponseEntity<?> close(@Valid @PathVariable String id, @Valid @RequestBody OfferCloseDto offerClose) {
+        //TODO add user authorization and authentication before close
+        final var result = service.close(id, offerClose.toDomain());
+        return result.isPresent() ?
+                ResponseEntity.ok(new OfferDto(result.get())) :
                 ResponseEntity.notFound().build();
     }
 

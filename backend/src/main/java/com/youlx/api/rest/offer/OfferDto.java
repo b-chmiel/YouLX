@@ -2,6 +2,8 @@ package com.youlx.api.rest.offer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.youlx.domain.offer.Offer;
+import com.youlx.domain.offer.OfferClose;
+import com.youlx.domain.offer.OfferCloseReason;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
@@ -21,6 +23,7 @@ class OfferDto extends RepresentationModel<OfferDto> {
     private String description;
     private String status;
     private LocalDateTime creationDate;
+    private OfferCloseReason closeReason;
 
     OfferDto(Offer offer) {
         this.id = offer.getId();
@@ -28,5 +31,6 @@ class OfferDto extends RepresentationModel<OfferDto> {
         this.description = offer.getDescription();
         this.status = offer.getStatus().name();
         this.creationDate = offer.getCreationDate();
+        this.closeReason = offer.getCloseReason().orElse(null);
     }
 }
