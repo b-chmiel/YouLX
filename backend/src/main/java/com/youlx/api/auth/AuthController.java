@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -36,17 +35,22 @@ public class AuthController {
     //TODO add validation
     @RequestMapping(value = Routes.Auth.REGISTER, method = RequestMethod.POST)
     public ResponseEntity<?> register(
-            @NotNull String username,
-            @NotNull String firstName,
-            @NotNull String lastName,
-            @NotNull String email,
-            @NotNull String password
+            String username,
+            String firstName,
+            String lastName,
+            String email,
+            String password
     ) throws URISyntaxException {
-        final var user = new UserRegisterDto(firstName, lastName, email, username, password);
+        //TODO improve validation
+        if (username == null || firstName == null || lastName == null || email == null || password == null) {
+            return ResponseEntity.status(HttpStatus.FOUND).location(new URI(Routes.Auth.REGISTER + "?error")).build();
+        }
+
+        final var user = new UserRegisterDto(username, firstName, lastName, email, password);
         final var registered = service.register(user.toDomain());
 
         if (registered.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.FOUND).location(new URI(Routes.Auth.REGISTER)).build();
+            return ResponseEntity.status(HttpStatus.FOUND).location(new URI(Routes.Auth.REGISTER + "?error")).build();
         }
 
         return ResponseEntity.status(HttpStatus.FOUND).location(new URI(Routes.Auth.LOGIN)).build();
