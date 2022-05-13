@@ -1,0 +1,33 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org">
+<head>
+    <title tiles:fragment="title"></title>
+</head>
+<body>
+<div tiles:fragment="content">
+    <form name="f" th:action="@{/api/register}" method="post">
+        <fieldset>
+            <legend>Register</legend>
+            <div th:if="${param.error}" class="alert alert-error">
+                Invalid username and password.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                You have been logged out.
+            </div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username"/>
+            <label for="firstName">First name</label>
+            <input type="text" id="firstName" name="firstName"/>
+            <label for="lastName">Last name</label>
+            <input type="text" id="lastName" name="lastName"/>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email"/>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"/>
+            <div class="form-actions">
+                <button type="submit" class="btn">Register</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>

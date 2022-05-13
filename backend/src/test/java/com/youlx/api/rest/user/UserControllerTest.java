@@ -2,6 +2,7 @@ package com.youlx.api.rest.user;
 
 import com.youlx.api.Routes;
 import com.youlx.testUtils.MvcHelpers;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,17 +21,20 @@ public class UserControllerTest {
 
     private final String mockUserLogin = "test-user";
 
-    @Test
-    public void profileReturns403IfUserIsNotAuthenticated() throws Exception {
-        helpers.getRequest(Routes.User.ME).andDo(print()).andExpect(status().isForbidden());
-    }
+    @Nested
+    public class MeTests {
+        @Test
+        public void profileReturns403IfUserIsNotAuthenticated() throws Exception {
+            helpers.getRequest(Routes.User.ME).andDo(print()).andExpect(status().isForbidden());
+        }
 
-    @Test
-    @WithMockUser(mockUserLogin)
-    public void profileReturnsUserInfo() throws Exception {
-        final var result = helpers.getRequest(Routes.User.ME);
+        @Test
+        @WithMockUser(mockUserLogin)
+        public void profileReturnsUserInfo() throws Exception {
+            final var result = helpers.getRequest(Routes.User.ME);
 
-        result.andExpect(status().isOk());
-        assertEquals(MvcHelpers.attributeFromResult("login", result), mockUserLogin);
+            result.andExpect(status().isOk());
+            assertEquals(MvcHelpers.attributeFromResult("login", result), mockUserLogin);
+        }
     }
 }

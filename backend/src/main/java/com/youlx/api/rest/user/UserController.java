@@ -11,10 +11,11 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(Routes.User.ME)
+@RequestMapping
 public class UserController {
-    @GetMapping
+    @GetMapping(Routes.User.ME)
     public ResponseEntity<?> me(Principal user) {
+        // TODO connect to userService
         return ResponseEntity.ok(new UserDto(0L, "", "", "", user.getName()));
     }
 }
