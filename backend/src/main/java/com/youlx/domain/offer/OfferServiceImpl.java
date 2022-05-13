@@ -21,7 +21,12 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public Optional<Offer> close(String id, OfferClose offerClose) {
-        return repository.close(id, offerClose);
+    public Optional<Offer> close(String id, OfferClose offerClose, String user) {
+        final var offer = repository.findById(id);
+        if (offer.isPresent() && offer.get().getUserId().equals(user)) {
+            return repository.close(id, offerClose);
+        }
+
+        return Optional.empty();
     }
 }

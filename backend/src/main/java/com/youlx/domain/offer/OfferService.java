@@ -7,5 +7,5 @@ public interface OfferService {
 
     Offer create(Offer offer);
 
-    Optional<Offer> close(String id, OfferClose offerClose);
+    Optional<Offer> close(String id, OfferClose offerClose, String user);
 }
