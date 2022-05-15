@@ -2,7 +2,6 @@ package com.youlx.api.rest.user;
 
 import com.youlx.api.Routes;
 import com.youlx.testUtils.MvcHelpers;
-import lombok.With;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
