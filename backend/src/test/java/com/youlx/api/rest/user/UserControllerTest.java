@@ -2,6 +2,7 @@ package com.youlx.api.rest.user;
 
 import com.youlx.api.Routes;
 import com.youlx.testUtils.MvcHelpers;
+import lombok.With;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,12 @@ public class UserControllerTest {
         @WithMockUser
         public void shouldReturn404OnNonExistingUser() throws Exception {
             helpers.getRequest(Routes.User.USER + "/123/offers").andExpect(status().isNotFound());
+        }
+
+        @Test
+        @WithMockUser
+        public void shouldReturn200ForAdmin() throws Exception {
+            helpers.getRequest(Routes.User.USER + "/admin/offers").andExpect(status().isOk());
         }
     }
 }

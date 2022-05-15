@@ -26,7 +26,7 @@ public class UserController {
         return ResponseEntity.ok(new UserDto(0L, "", "", "", user.getName()));
     }
 
-    @GetMapping(Routes.User.USER + "{id}/offers")
+    @GetMapping(Routes.User.USER + "/{id}/offers")
     public ResponseEntity<?> offers(Principal user, @Valid @PathVariable String id) {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
