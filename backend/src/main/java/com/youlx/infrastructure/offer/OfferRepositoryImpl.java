@@ -9,11 +9,13 @@ import com.youlx.domain.utils.HashIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 public class OfferRepositoryImpl implements OfferRepository {
     public interface Repo extends JpaRepository<OfferTuple, Long> {
+        List<OfferTuple> findAllByUserId(String id);
     }
 
     private final Repo repo;
@@ -59,5 +61,15 @@ public class OfferRepositoryImpl implements OfferRepository {
     @Override
     public void clear() {
         repo.deleteAll();
+    }
+
+    @Override
+    public List<Offer> findByUserId(String id) {
+        return repo
+                .findAllByUserId(id)
+                .stream()
+                .map(
+                        o -> o.toDomain(hashId.encode(o.getId()))
+                ).toList();
     }
 }
