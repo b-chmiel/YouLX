@@ -37,4 +37,18 @@ public class UserControllerTest {
             assertEquals(MvcHelpers.attributeFromResult("login", result), mockUserLogin);
         }
     }
+
+    @Nested
+    public class OfferTests {
+        @Test
+        public void shouldReturn401WhenNotAuthenticated() throws Exception {
+            helpers.getRequest(Routes.User.USER + "/123/offers").andExpect(status().isForbidden());
+        }
+
+        @Test
+        @WithMockUser
+        public void shouldReturn404OnNonExistingUser() throws Exception {
+            helpers.getRequest(Routes.User.USER + "/123/offers").andExpect(status().isNotFound());
+        }
+    }
 }

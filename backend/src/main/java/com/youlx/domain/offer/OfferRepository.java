@@ -1,5 +1,6 @@
 package com.youlx.domain.offer;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface OfferRepository {
@@ -10,4 +11,6 @@ public interface OfferRepository {
     Optional<Offer> close(String id, OfferClose offer);
 
     void clear();
+
+    List<Offer> findByUserId(String id);
 }
