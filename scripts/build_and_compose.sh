@@ -1,3 +1,7 @@
+#!/bin/bash 
+set -euo pipefail
+IFS=$'\n\t'
+
 cd "${0%/*}"
 cd ..
 cd frontend
