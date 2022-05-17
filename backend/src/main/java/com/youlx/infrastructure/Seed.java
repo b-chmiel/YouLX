@@ -25,13 +25,18 @@ public class Seed implements ApplicationRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private static final String mockDescription = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        offerRepository.create(new Offer(null, "Offer0", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", OfferStatus.OPEN, "admin", LocalDateTime.now(), Optional.empty()));
-        offerRepository.create(new Offer(null, "Offer1", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", OfferStatus.CLOSED, "user1", LocalDateTime.now(), Optional.of(OfferCloseReason.EXPIRED)));
+        final var user1 = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user1", "user1", "user1", passwordEncoder.encode("user1"), "user1");
+        final var user2 = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user2", "user2", "user2", passwordEncoder.encode("user2"), "user2");
+        final var admin = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "admin", "admin", "admin", passwordEncoder.encode("admin"), "admin");
+        userRepository.create(user1);
+        userRepository.create(user2);
+        userRepository.create(admin);
 
-        userRepository.create(new User(List.of(new SimpleGrantedAuthority(SecurityRoles.ADMIN.name())), "admin", "admin", "admin", passwordEncoder.encode("admin"), "admin"));
-        userRepository.create(new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user1", "user1", "user1", passwordEncoder.encode("user1"), "user1"));
-        userRepository.create(new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user2", "user2", "user2", passwordEncoder.encode("user2"), "user2"));
+        offerRepository.create(new Offer(null, "Offer0", mockDescription, OfferStatus.OPEN, LocalDateTime.now(), Optional.empty(), admin));
+        offerRepository.create(new Offer(null, "Offer1", mockDescription, OfferStatus.CLOSED, LocalDateTime.now(), Optional.of(OfferCloseReason.EXPIRED), user1));
     }
 }

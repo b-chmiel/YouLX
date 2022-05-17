@@ -19,14 +19,14 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public Offer create(Offer offer) {
+    public Offer create(Offer offer) throws Exception {
         return offerRepository.create(offer);
     }
 
     @Override
     public Optional<Offer> close(String id, OfferClose offerClose, String user) {
         final var offer = offerRepository.findById(id);
-        if (offer.isPresent() && offer.get().getUserId().equals(user)) {
+        if (offer.isPresent() && offer.get().getUser().getUsername().equals(user)) {
             return offerRepository.close(id, offerClose);
         }
 

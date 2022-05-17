@@ -1,5 +1,6 @@
 package com.youlx.domain.offer;
 
+import com.youlx.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,18 +16,18 @@ public class Offer {
     private final String name;
     private final String description;
     private OfferStatus status;
-    private final String userId;
     private final LocalDateTime creationDate;
     private Optional<OfferCloseReason> closeReason;
+    private final User user;
 
-    public Offer(String name, String description, String userId) {
+    public Offer(String name, String description, User user) {
         this.id = null;
         this.name = name;
         this.description = description;
-        this.userId = userId;
         this.status = OfferStatus.OPEN;
         this.creationDate = LocalDateTime.now();
         this.closeReason = Optional.empty();
+        this.user = user;
     }
 
     public void close(OfferCloseReason reason) {

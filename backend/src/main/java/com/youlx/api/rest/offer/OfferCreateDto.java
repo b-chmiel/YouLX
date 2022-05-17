@@ -1,7 +1,7 @@
 package com.youlx.api.rest.offer;
 
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferStatus;
+import com.youlx.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ class OfferCreateDto {
     private String name;
     private String description;
 
-    Offer toDomain(String userId) {
-        return new Offer(name, description, userId);
+    Offer toDomain(User user) {
+        return new Offer(name, description, user);
     }
 }

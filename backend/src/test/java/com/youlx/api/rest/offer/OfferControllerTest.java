@@ -4,7 +4,10 @@ import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferCloseReason;
 import com.youlx.domain.offer.OfferStatus;
+import com.youlx.domain.user.User;
+import com.youlx.domain.user.UserRepository;
 import com.youlx.testUtils.MvcHelpers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,12 +31,22 @@ public class OfferControllerTest {
     @Autowired
     private MvcHelpers commonHelpers;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private final static User mockUser = new User(List.of(), "", "", "", "", "a");
+
+    @BeforeEach
+    void setup() {
+        userRepository.create(mockUser);
+    }
+
     @Nested
     public class GetTests {
         @Test
-        @WithMockUser
+        @WithMockUser(value = "a")
         public void shouldGetRecentlyCreated() throws Exception {
-            final var offer = new OfferDto(new Offer("", "", ""));
+            final var offer = new OfferDto(new Offer("", "", mockUser));
 
             final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
@@ -51,7 +65,7 @@ public class OfferControllerTest {
     @Nested
     public class CreateTests {
         @Test
-        @WithMockUser
+        @WithMockUser("a")
         public void create() throws Exception {
             final var name = "asdf";
             final var desc = "fdsa";
@@ -79,9 +93,9 @@ public class OfferControllerTest {
     @Nested
     public class CloseTests {
         @Test
-        @WithMockUser
+        @WithMockUser("a")
         public void shouldCloseOffer() throws Exception {
-            final var offer = new OfferDto(new Offer("", "", ""));
+            final var offer = new OfferDto(new Offer("", "", mockUser));
 
             final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");

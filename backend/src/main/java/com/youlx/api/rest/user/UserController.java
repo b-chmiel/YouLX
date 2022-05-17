@@ -23,7 +23,7 @@ public class UserController {
     @GetMapping(Routes.User.ME)
     public ResponseEntity<?> me(Principal user) {
         // TODO connect to userService
-        return ResponseEntity.ok(new UserDto(0L, "", "", "", user.getName()));
+        return ResponseEntity.ok(new UserDto("", "", "", user.getName()));
     }
 
     @GetMapping(Routes.User.USER + "/{id}/offers")

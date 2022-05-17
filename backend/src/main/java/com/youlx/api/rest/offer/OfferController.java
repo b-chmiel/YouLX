@@ -4,6 +4,7 @@ import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferService;
 import com.youlx.domain.offer.OfferStatus;
+import com.youlx.domain.user.UserService;
 import com.youlx.domain.utils.HashId;
 import com.youlx.infrastructure.offer.OfferPagedRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.Principal;
 
 @RestController
@@ -29,14 +29,20 @@ public class OfferController {
     private final OfferModelAssembler modelAssembler;
     private final OfferService service;
     private final HashId hashId;
+    private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> create(Principal user, @Valid @RequestBody OfferCreateDto offer) throws URISyntaxException {
+    public ResponseEntity<?> create(Principal user, @Valid @RequestBody OfferCreateDto offer) throws Exception {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        final var created = service.create(offer.toDomain(user.getName()));
+        final var userData = userService.findById(user.getName());
+        if (userData.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        final var created = service.create(offer.toDomain(userData.get()));
         final var uri = new URI(Routes.Offer.OFFERS + '/' + created.getId());
         return ResponseEntity.created(uri).build();
     }

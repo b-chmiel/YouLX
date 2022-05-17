@@ -17,4 +17,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encode(user.getPassword()));
         return repository.create(user);
     }
+
+    @Override
+    public Optional<User> findById(String id) {
+        return repository.findByUsername(id);
+    }
 }

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OfferRepository {
-    Offer create(Offer offer);
+    Offer create(Offer offer) throws Exception;
 
     Optional<Offer> findById(String id);
 

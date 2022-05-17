@@ -6,7 +6,7 @@ import java.util.Optional;
 public interface OfferService {
     Optional<Offer> findById(String id);
 
-    Offer create(Offer offer);
+    Offer create(Offer offer) throws Exception;
 
     Optional<Offer> close(String id, OfferClose offerClose, String user);
 
