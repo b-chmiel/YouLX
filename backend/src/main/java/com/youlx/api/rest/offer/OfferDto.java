@@ -1,6 +1,7 @@
 package com.youlx.api.rest.offer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.youlx.api.rest.user.UserDto;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferCloseReason;
 import lombok.*;
@@ -23,6 +24,7 @@ public class OfferDto extends RepresentationModel<OfferDto> {
     private String status;
     private LocalDateTime creationDate;
     private OfferCloseReason closeReason;
+    private UserDto user;
 
     public OfferDto(Offer offer) {
         this.id = offer.getId();
@@ -31,5 +33,6 @@ public class OfferDto extends RepresentationModel<OfferDto> {
         this.status = offer.getStatus().name();
         this.creationDate = offer.getCreationDate();
         this.closeReason = offer.getCloseReason().orElse(null);
+        this.user = new UserDto(offer.getUser());
     }
 }

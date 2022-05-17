@@ -10,14 +10,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     public interface Repo extends JpaRepository<UserTuple, String> {
-        Optional<UserTuple> findByUsername(String s);
+        Optional<UserTuple> findById(String s);
     }
 
     private final Repo repo;
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return repo.findByUsername(username).map(UserTuple::toDomain);
+        return repo.findById(username).map(UserTuple::toDomain);
     }
 
     @Override

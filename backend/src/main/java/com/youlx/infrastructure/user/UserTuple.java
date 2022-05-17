@@ -18,9 +18,10 @@ import java.util.Objects;
 @Setter
 @ToString
 @NoArgsConstructor
+public
 class UserTuple {
     @Id
-    private String username;
+    private String id;
 
     private String firstName;
     private String lastName;
@@ -31,7 +32,7 @@ class UserTuple {
     private List<String> authorities;
 
     UserTuple(User user) {
-        this.username = user.getUsername();
+        this.id = user.getUsername();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.email = user.getEmail();
@@ -39,9 +40,13 @@ class UserTuple {
         this.authorities = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
     }
 
-    User toDomain() {
-        final var auth = authorities.stream().map(SimpleGrantedAuthority::new).toList();
-        return new User(auth, firstName, lastName, email, password, username);
+    public User toDomain() {
+        List<SimpleGrantedAuthority> auth = List.of();
+        if (authorities != null) {
+            auth = authorities.stream().map(SimpleGrantedAuthority::new).toList();
+        }
+
+        return new User(auth, firstName, lastName, email, password, id);
     }
 
     @Override
@@ -49,11 +54,11 @@ class UserTuple {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserTuple userTuple = (UserTuple) o;
-        return Objects.equals(username, userTuple.username);
+        return Objects.equals(id, userTuple.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username);
+        return Objects.hash(id);
     }
 }

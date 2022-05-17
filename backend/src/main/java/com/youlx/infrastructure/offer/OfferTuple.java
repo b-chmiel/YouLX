@@ -3,6 +3,8 @@ package com.youlx.infrastructure.offer;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferCloseReason;
 import com.youlx.domain.offer.OfferStatus;
+import com.youlx.domain.user.User;
+import com.youlx.infrastructure.user.UserTuple;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,22 +31,23 @@ public class OfferTuple {
     @Lob
     private String description;
     private OfferStatus status;
-    private String userId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private UserTuple user;
     private LocalDateTime creationDate;
     @Nullable
     private OfferCloseReason closeReason;
 
-    public OfferTuple(Offer offer) {
+    public OfferTuple(Offer offer, UserTuple user) {
         name = offer.getName();
         description = offer.getDescription();
         status = offer.getStatus();
-        userId = offer.getUserId();
+        this.user = user;
         creationDate = offer.getCreationDate();
         closeReason = offer.getCloseReason().orElse(null);
     }
 
     public Offer toDomain(String hashedId) {
-        return new Offer(hashedId, name, description, status, userId, creationDate, Optional.ofNullable(closeReason));
+        return new Offer(hashedId, name, description, status, creationDate, Optional.ofNullable(closeReason), user.toDomain());
     }
 
     @Override

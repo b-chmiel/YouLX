@@ -1,6 +1,8 @@
 package com.youlx.infrastructure.offer;
 
 import com.youlx.domain.offer.*;
+import com.youlx.domain.user.User;
+import com.youlx.domain.user.UserRepository;
 import com.youlx.domain.utils.HashId;
 import com.youlx.domain.utils.HashIdException;
 import com.youlx.infrastructure.JpaConfig;
@@ -17,10 +19,9 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -38,6 +39,11 @@ class OfferRepositoryTest {
     @Autowired
     private OfferRepository repository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private final static User mockUser = new User(List.of(), "", "", "", "", "a");
+
     @BeforeEach
     void setup() throws HashIdException {
         when(hashId.encode(1L)).thenReturn("1");
@@ -46,6 +52,7 @@ class OfferRepositoryTest {
         when(hashId.decode("1")).thenReturn(1L);
         when(hashId.decode("2")).thenReturn(2L);
         when(hashId.decode("3")).thenReturn(3L);
+        userRepository.create(mockUser);
         repository.clear();
     }
 
@@ -55,18 +62,18 @@ class OfferRepositoryTest {
     }
 
     @Test
-    void shouldCreateAndFind() {
-        final var offer = new Offer("3", "a", "b", OfferStatus.OPEN,  "c", LocalDateTime.now(), Optional.empty());
+    void shouldCreateAndFind() throws Exception {
+        final var offer = new Offer("3", "a", "b", OfferStatus.OPEN, LocalDateTime.now(), Optional.empty(), mockUser);
 
         final var result = repository.create(offer);
 
         Helpers.assertOfferAttributesEqual(offer, result);
-        assertThat(repository.findById("3").get(), samePropertyValuesAs(result));
+        Helpers.assertOfferAttributesEqual(result, repository.findById("3").get());
     }
 
     @Test
-    void shouldPatch() {
-        final var offer = new Offer("a", "b", "c");
+    void shouldPatch() throws Exception {
+        final var offer = new Offer("a", "b", mockUser);
 
         final var result = repository.create(offer);
 
@@ -78,8 +85,8 @@ class OfferRepositoryTest {
     }
 
     @Test
-    void shouldClose() {
-        final var offer = new Offer("a", "b", "c");
+    void shouldClose() throws Exception {
+        final var offer = new Offer("a", "b", mockUser);
         final var created = repository.create(offer);
 
         assertEquals(OfferStatus.OPEN, created.getStatus());
@@ -92,13 +99,13 @@ class OfferRepositoryTest {
     }
 
     @Test
-    void shouldGetAllByUserId() {
-        assertEquals(0, repository.findByUserId("c").size());
+    void shouldGetAllByUserId() throws Exception {
+        assertEquals(0, repository.findByUserId(mockUser.getUsername()).size());
 
-        repository.create(new Offer("", "", "c"));
-        repository.create(new Offer("", "", "d"));
+        repository.create(new Offer("", "", mockUser));
+        repository.create(new Offer("", "", mockUser));
 
-        assertEquals(1, repository.findByUserId("c").size());
+        assertEquals(2, repository.findByUserId(mockUser.getUsername()).size());
     }
 
     private static class Helpers {
@@ -108,7 +115,7 @@ class OfferRepositoryTest {
             assertEquals(expected.getDescription(), actual.getDescription());
             assertEquals(expected.getName(), actual.getName());
             assertEquals(expected.getStatus(), actual.getStatus());
-            assertEquals(expected.getUserId(), actual.getUserId());
+            assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
         }
     }
 }
