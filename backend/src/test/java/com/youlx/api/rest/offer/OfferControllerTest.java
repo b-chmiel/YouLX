@@ -20,6 +20,9 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -52,13 +55,35 @@ public class OfferControllerTest {
             final var location = response.andReturn().getResponse().getHeader("location");
             commonHelpers.getRequest(location).andExpect(status().isOk());
         }
+
+        @Test
+        @WithMockUser("a")
+        public void shouldShowHateoasCloseOnOfferOwner() throws Exception {
+            final var offer = new OfferDto(new Offer("", "", mockUser));
+
+            final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
+            final var location = response.andReturn().getResponse().getHeader("location");
+            final var result = commonHelpers.getRequest(location);
+
+            assertThat(MvcHelpers.attributeFromResult("_links.self[0].href", result), containsString("/close"));
+        }
     }
 
     @Nested
     public class GetAllTests {
         @Test
         public void accessibleForUnauthenticatedUser() throws Exception {
-            commonHelpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
+            final var response = commonHelpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
+
+            assertThat(MvcHelpers.attributeFromResult("_embedded.offers[0]._links.self.href", response), not(containsString("/close")));
+        }
+
+        @Test
+        @WithMockUser()
+        public void accessibleForAuthenticatedNotRegisteredUser() throws Exception {
+            final var response = commonHelpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
+
+            assertThat(MvcHelpers.attributeFromResult("_embedded.offers[0]._links.self.href", response), not(containsString("/close")));
         }
     }
 

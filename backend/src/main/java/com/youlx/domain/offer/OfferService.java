@@ -1,5 +1,7 @@
 package com.youlx.domain.offer;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -11,4 +13,6 @@ public interface OfferService {
     Optional<Offer> close(String id, OfferClose offerClose, String user);
 
     Optional<List<Offer>> findByUserId(String id);
+
+    boolean isClosable(UserDetails user, Offer offer);
 }
