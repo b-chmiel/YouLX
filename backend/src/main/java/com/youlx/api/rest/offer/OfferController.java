@@ -9,6 +9,8 @@ import com.youlx.domain.utils.HashId;
 import com.youlx.infrastructure.offer.OfferPagedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
@@ -68,7 +70,7 @@ public class OfferController {
     }
 
     @GetMapping
-    public PagedModel<EntityModel<OfferDto>> getAllOpen(Pageable pageable) {
+    public PagedModel<EntityModel<OfferDto>> getAllOpen(@PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
         final var offersTuple = repository.findAllByStatus(pageable, OfferStatus.OPEN);
         final var offers = offersTuple.map(
                 t -> t.toDomain(hashId.encode(t.getId()))
