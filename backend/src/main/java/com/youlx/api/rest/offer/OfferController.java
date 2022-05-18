@@ -53,7 +53,7 @@ public class OfferController {
     public ResponseEntity<?> get(@Valid @PathVariable String id) {
         final var result = service.findById(id);
         return result.isPresent() ?
-                ResponseEntity.ok(new OfferDto(result.get())) :
+                ResponseEntity.ok(modelAssembler.toModel(result.get())) :
                 ResponseEntity.notFound().build();
     }
 
@@ -65,7 +65,7 @@ public class OfferController {
 
         final var result = service.close(id, offerClose.toDomain(), user.getName());
         return result.isPresent() ?
-                ResponseEntity.ok(new OfferDto(result.get())) :
+                ResponseEntity.ok(modelAssembler.toModel(result.get())) :
                 ResponseEntity.notFound().build();
     }
 

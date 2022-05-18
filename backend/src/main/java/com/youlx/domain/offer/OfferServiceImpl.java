@@ -2,6 +2,7 @@ package com.youlx.domain.offer;
 
 import com.youlx.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,5 +41,10 @@ public class OfferServiceImpl implements OfferService {
         }
 
         return Optional.of(offerRepository.findByUserId(id));
+    }
+
+    @Override
+    public boolean isClosable(UserDetails user, Offer offer) {
+        return offer.getUser().getUsername().equals(user.getUsername()) && offer.getStatus().equals(OfferStatus.OPEN);
     }
 }
