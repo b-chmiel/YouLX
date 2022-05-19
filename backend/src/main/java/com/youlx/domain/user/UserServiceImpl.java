@@ -22,4 +22,9 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findById(String id) {
         return repository.findByUsername(id);
     }
+
+    @Override
+    public Optional<User> edit(String id, UserEdit user) {
+        return repository.edit(id, user);
+    }
 }

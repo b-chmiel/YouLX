@@ -4,5 +4,8 @@ import java.util.Optional;
 
 public interface UserService {
     Optional<User> register(User user);
+
     Optional<User> findById(String id);
+
+    Optional<User> edit(String id, UserEdit user);
 }

@@ -8,4 +8,6 @@ public interface UserRepository {
     Optional<User> create(User user);
 
     void clear();
+
+    Optional<User> edit(String id, UserEdit user);
 }

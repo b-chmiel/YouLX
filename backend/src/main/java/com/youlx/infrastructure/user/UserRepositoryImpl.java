@@ -1,6 +1,7 @@
 package com.youlx.infrastructure.user;
 
 import com.youlx.domain.user.User;
+import com.youlx.domain.user.UserEdit;
 import com.youlx.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,5 +33,19 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void clear() {
         repo.deleteAll();
+    }
+
+    @Override
+    public Optional<User> edit(String id, UserEdit user) {
+        final var toEdit = repo.findById(id);
+        if (toEdit.isEmpty()) {
+            return Optional.empty();
+        }
+
+        toEdit.get().setEmail(user.email());
+        toEdit.get().setFirstName(user.firstName());
+        toEdit.get().setLastName(user.lastName());
+
+        return Optional.of(repo.save(toEdit.get()).toDomain());
     }
 }
