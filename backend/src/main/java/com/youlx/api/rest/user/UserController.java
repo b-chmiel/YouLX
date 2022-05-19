@@ -5,11 +5,9 @@ import com.youlx.api.rest.offer.OfferDto;
 import com.youlx.domain.offer.OfferService;
 import com.youlx.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -23,8 +21,16 @@ class UserController {
 
     @GetMapping(Routes.User.ME)
     ResponseEntity<?> me(Principal user) {
-        final var result = userService.findById(user.getName());
-        return result.isPresent() ? ResponseEntity.ok(new UserDto(result.get())) : ResponseEntity.notFound().build();
+        return userService.findById(user.getName())
+                .map(u -> ResponseEntity.ok(new UserDto(u)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping(Routes.User.ME)
+    ResponseEntity<?> me(Principal user, @Valid @RequestBody UserEditDto userData) {
+        return userService.edit(user.getName(), userData.toDomain())
+                .map(u -> ResponseEntity.ok(new UserDto(u)))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());
     }
 
     @GetMapping(Routes.User.USER + "/{id}/offers")
