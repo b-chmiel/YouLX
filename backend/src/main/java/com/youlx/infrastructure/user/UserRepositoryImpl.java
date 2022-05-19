@@ -28,4 +28,9 @@ public class UserRepositoryImpl implements UserRepository {
 
         return Optional.of(repo.save(new UserTuple(user)).toDomain());
     }
+
+    @Override
+    public void clear() {
+        repo.deleteAll();
+    }
 }
