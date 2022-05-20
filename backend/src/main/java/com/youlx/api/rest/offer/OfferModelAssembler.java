@@ -36,7 +36,7 @@ class OfferModelAssembler implements RepresentationModelAssembler<Offer, EntityM
         if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof final UserDetails user) {
             if (offerService.isClosable(user, entity)) {
                 final var principal = new UserPrincipal(user.getUsername());
-                links.add(linkTo(methodOn(OfferController.class).close(principal, entity.getId(), new OfferCloseDto(OfferCloseReason.MANUAL))).withRel("close"));
+                links.add(linkTo(methodOn(OfferController.class).close(principal, entity.getId())).withRel("close"));
             }
         }
 

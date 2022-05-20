@@ -65,7 +65,7 @@ public class OfferControllerTest {
             final var location = response.andReturn().getResponse().getHeader("location");
             final var result = commonHelpers.getRequest(location);
 
-            assertThat(MvcHelpers.attributeFromResult("_links.self[0].href", result), containsString("/close"));
+            assertThat(MvcHelpers.attributeFromResult("_links.close.href", result), containsString("/close"));
         }
     }
 
@@ -124,9 +124,9 @@ public class OfferControllerTest {
 
             final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
-            commonHelpers.postRequest(new OfferCloseDto(OfferCloseReason.EXPIRED), location + "/close");
+            commonHelpers.postRequest(null, location + "/close");
             final var result = commonHelpers.getRequest(location);
-            assertEquals(OfferCloseReason.EXPIRED.name(), MvcHelpers.attributeFromResult("closeReason", result));
+            assertEquals(OfferCloseReason.MANUAL.name(), MvcHelpers.attributeFromResult("closeReason", result));
         }
     }
 }
