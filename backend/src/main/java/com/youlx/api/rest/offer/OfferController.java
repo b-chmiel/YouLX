@@ -1,9 +1,7 @@
 package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
-import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferService;
-import com.youlx.domain.offer.OfferStatus;
+import com.youlx.domain.offer.*;
 import com.youlx.domain.user.UserService;
 import com.youlx.domain.utils.HashId;
 import com.youlx.infrastructure.offer.OfferPagedRepository;
@@ -58,12 +56,12 @@ public class OfferController {
     }
 
     @PostMapping("{id}/close")
-    public ResponseEntity<?> close(Principal user, @Valid @PathVariable String id, @Valid @RequestBody OfferCloseDto offerClose) {
+    public ResponseEntity<?> close(Principal user, @Valid @PathVariable String id) {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        final var result = service.close(id, offerClose.toDomain(), user.getName());
+        final var result = service.close(id, new OfferClose(OfferCloseReason.MANUAL), user.getName());
         return result.isPresent() ?
                 ResponseEntity.ok(modelAssembler.toModel(result.get())) :
                 ResponseEntity.notFound().build();
