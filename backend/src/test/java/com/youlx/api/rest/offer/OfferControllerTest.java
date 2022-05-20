@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class OfferControllerTest {
+class OfferControllerTest {
     @Autowired
     private MvcHelpers commonHelpers;
 
@@ -45,10 +45,10 @@ public class OfferControllerTest {
     }
 
     @Nested
-    public class GetTests {
+    class GetTests {
         @Test
         @WithMockUser(value = "a")
-        public void shouldGetRecentlyCreated() throws Exception {
+        void shouldGetRecentlyCreated() throws Exception {
             final var offer = new OfferDto(new Offer("", "", mockUser));
 
             final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
@@ -58,7 +58,7 @@ public class OfferControllerTest {
 
         @Test
         @WithMockUser("a")
-        public void shouldShowHateoasCloseOnOfferOwner() throws Exception {
+        void shouldShowHateoasCloseOnOfferOwner() throws Exception {
             final var offer = new OfferDto(new Offer("", "", mockUser));
 
             final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
@@ -70,9 +70,9 @@ public class OfferControllerTest {
     }
 
     @Nested
-    public class GetAllTests {
+    class GetAllTests {
         @Test
-        public void accessibleForUnauthenticatedUser() throws Exception {
+        void accessibleForUnauthenticatedUser() throws Exception {
             final var response = commonHelpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
 
             assertThat(MvcHelpers.attributeFromResult("_embedded.offers[0]._links.self.href", response), not(containsString("/close")));
@@ -80,7 +80,7 @@ public class OfferControllerTest {
 
         @Test
         @WithMockUser()
-        public void accessibleForAuthenticatedNotRegisteredUser() throws Exception {
+        void accessibleForAuthenticatedNotRegisteredUser() throws Exception {
             final var response = commonHelpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
 
             assertThat(MvcHelpers.attributeFromResult("_embedded.offers[0]._links.self.href", response), not(containsString("/close")));
@@ -88,10 +88,10 @@ public class OfferControllerTest {
     }
 
     @Nested
-    public class CreateTests {
+    class CreateTests {
         @Test
         @WithMockUser("a")
-        public void create() throws Exception {
+        void create() throws Exception {
             final var name = "asdf";
             final var desc = "fdsa";
             final var offer = new OfferCreateDto(name, desc);
@@ -116,10 +116,10 @@ public class OfferControllerTest {
     }
 
     @Nested
-    public class CloseTests {
+    class CloseTests {
         @Test
         @WithMockUser("a")
-        public void shouldCloseOffer() throws Exception {
+        void shouldCloseOffer() throws Exception {
             final var offer = new OfferDto(new Offer("", "", mockUser));
 
             final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);

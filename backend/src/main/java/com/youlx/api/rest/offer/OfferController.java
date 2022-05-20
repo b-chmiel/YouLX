@@ -1,10 +1,11 @@
 package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
-import com.youlx.domain.offer.*;
+import com.youlx.domain.offer.Offer;
+import com.youlx.domain.offer.OfferClose;
+import com.youlx.domain.offer.OfferCloseReason;
+import com.youlx.domain.offer.OfferService;
 import com.youlx.domain.user.UserService;
-import com.youlx.domain.utils.HashId;
-import com.youlx.infrastructure.offer.OfferPagedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,16 +24,14 @@ import java.security.Principal;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(Routes.Offer.OFFERS)
-public class OfferController {
-    private final OfferPagedRepository repository;
+class OfferController {
     private final PagedResourcesAssembler<Offer> resourcesAssembler;
     private final OfferModelAssembler modelAssembler;
     private final OfferService service;
-    private final HashId hashId;
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> create(Principal user, @Valid @RequestBody OfferCreateDto offer) throws Exception {
+    ResponseEntity<?> create(Principal user, @Valid @RequestBody OfferCreateDto offer) throws Exception {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -48,7 +47,7 @@ public class OfferController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<?> get(@Valid @PathVariable String id) {
+    ResponseEntity<?> get(@Valid @PathVariable String id) {
         final var result = service.findById(id);
         return result.isPresent() ?
                 ResponseEntity.ok(modelAssembler.toModel(result.get())) :
@@ -56,7 +55,7 @@ public class OfferController {
     }
 
     @PostMapping("{id}/close")
-    public ResponseEntity<?> close(Principal user, @Valid @PathVariable String id) {
+    ResponseEntity<?> close(Principal user, @Valid @PathVariable String id) {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -68,11 +67,9 @@ public class OfferController {
     }
 
     @GetMapping
-    public PagedModel<EntityModel<OfferDto>> getAllOpen(@PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
-        final var offersTuple = repository.findAllByStatus(pageable, OfferStatus.OPEN);
-        final var offers = offersTuple.map(
-                t -> t.toDomain(hashId.encode(t.getId()))
-        );
-        return resourcesAssembler.toModel(offers, modelAssembler);
+    PagedModel<EntityModel<OfferDto>> getAllOpen(
+            @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return resourcesAssembler.toModel(service.findOpen(pageable), modelAssembler);
     }
 }

@@ -15,26 +15,25 @@ import java.net.URISyntaxException;
 
 @Controller
 @RequiredArgsConstructor
-public class AuthController {
+ class AuthController {
     private final UserService service;
 
     @RequestMapping(Routes.Auth.LOGIN)
-    public ModelAndView login() {
+     ModelAndView login() {
         var model = new ModelAndView();
         model.setViewName("login");
         return model;
     }
 
     @RequestMapping(value = Routes.Auth.REGISTER, method = RequestMethod.GET)
-    public ModelAndView register() {
+     ModelAndView register() {
         final var model = new ModelAndView();
         model.setViewName("register");
         return model;
     }
 
-    //TODO add validation
     @RequestMapping(value = Routes.Auth.REGISTER, method = RequestMethod.POST)
-    public ResponseEntity<?> register(
+     ResponseEntity<?> register(
             String username,
             String firstName,
             String lastName,
