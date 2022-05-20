@@ -15,6 +15,6 @@ public final class Routes {
 
     public static final class User {
         public static final String ME = prefix + "/me";
-        public static final String USER = prefix + "/user";
+        public static final String USER = prefix + "/users";
     }
 }

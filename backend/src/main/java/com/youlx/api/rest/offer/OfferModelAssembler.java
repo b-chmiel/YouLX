@@ -21,6 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 @RequiredArgsConstructor
+public
 class OfferModelAssembler implements RepresentationModelAssembler<Offer, EntityModel<OfferDto>> {
     private final OfferService offerService;
 

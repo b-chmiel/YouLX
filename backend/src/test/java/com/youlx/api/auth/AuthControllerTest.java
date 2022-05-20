@@ -15,19 +15,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AuthControllerTest {
+class AuthControllerTest {
     @Autowired
     private MvcHelpers helpers;
 
     @Nested
     class LoginTests {
         @Test
-        public void loginReturns200IfNotAuthenticated() throws Exception {
+        void loginReturns200IfNotAuthenticated() throws Exception {
             helpers.getRequest(Routes.Auth.LOGIN).andExpect(status().isOk());
         }
 
         @Test
-        public void shouldReturnErrorOnWrongCreds() throws Exception {
+        void shouldReturnErrorOnWrongCreds() throws Exception {
             final var loginParams = new HashMap<String, String>();
             loginParams.put("username", "username");
             loginParams.put("password", "password");
@@ -35,7 +35,7 @@ public class AuthControllerTest {
         }
 
         @Test
-        public void shouldLoginAdmin() throws Exception {
+        void shouldLoginAdmin() throws Exception {
             final var loginParams = new HashMap<String, String>();
             loginParams.put("username", "admin");
             loginParams.put("password", "admin");

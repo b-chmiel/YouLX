@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerTest {
+class MeControllerTest {
     @Autowired
     private MvcHelpers helpers;
 
@@ -96,26 +96,6 @@ class UserControllerTest {
             assertEquals(userEdit.getEmail(), edited.get().getEmail());
             assertEquals(userEdit.getFirstName(), edited.get().getFirstName());
             assertEquals(userEdit.getLastName(), edited.get().getLastName());
-        }
-    }
-
-    @Nested
-    class OfferTests {
-        @Test
-        void shouldReturn403WhenNotAuthenticated() throws Exception {
-            helpers.getRequest(Routes.User.USER + "/123/offers").andExpect(status().isForbidden());
-        }
-
-        @Test
-        @WithMockUser
-        void shouldReturn404OnNonExistingUser() throws Exception {
-            helpers.getRequest(Routes.User.USER + "/123/offers").andExpect(status().isNotFound());
-        }
-
-        @Test
-        @WithMockUser
-        void shouldReturn200ForAdmin() throws Exception {
-            helpers.getRequest(Routes.User.USER + "/admin/offers").andExpect(status().isOk());
         }
     }
 }
