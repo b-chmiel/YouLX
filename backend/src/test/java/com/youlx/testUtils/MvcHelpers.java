@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @Component
 public class MvcHelpers {
@@ -32,6 +33,17 @@ public class MvcHelpers {
         final var content = mapper.writeValueAsString(payload);
         return mockMvc.perform(
                 post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header("host", "asdfga")
+                        .header("user-agent", "asdfadsg")
+        );
+    }
+
+    public <T> ResultActions putRequest(T payload, String url) throws Exception {
+        final var content = mapper.writeValueAsString(payload);
+        return mockMvc.perform(
+                put(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
                         .header("host", "asdfga")
