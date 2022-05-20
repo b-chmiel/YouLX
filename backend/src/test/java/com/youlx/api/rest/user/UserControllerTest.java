@@ -74,13 +74,13 @@ class UserControllerTest {
         @Test
         @WithMockUser
         void returns400OnMalformedRequest() throws Exception {
-            helpers.postRequest(null, Routes.User.ME).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+            helpers.putRequest(null, Routes.User.ME).andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
         }
 
         @Test
         @WithMockUser("doesnotexist")
         void returns304WhenUserDoesNotExist() throws Exception {
-            helpers.postRequest(new UserEditDto("", "", ""), Routes.User.ME).andExpect(status().is(HttpStatus.NOT_MODIFIED.value()));
+            helpers.putRequest(new UserEditDto("", "", ""), Routes.User.ME).andExpect(status().is(HttpStatus.NOT_MODIFIED.value()));
         }
 
         @Test
@@ -90,7 +90,7 @@ class UserControllerTest {
             userRepository.create(user);
 
             final var userEdit = new UserEditDto("aa", "bb", "cc");
-            helpers.postRequest(userEdit, Routes.User.ME).andExpect(status().isOk());
+            helpers.putRequest(userEdit, Routes.User.ME).andExpect(status().isOk());
 
             final var edited = userRepository.findByUsername(user.getUsername());
             assertEquals(userEdit.getEmail(), edited.get().getEmail());

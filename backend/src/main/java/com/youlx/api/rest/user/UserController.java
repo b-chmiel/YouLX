@@ -26,7 +26,7 @@ class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping(Routes.User.ME)
+    @PutMapping(Routes.User.ME)
     ResponseEntity<?> me(Principal user, @Valid @RequestBody UserEditDto userData) {
         return userService.edit(user.getName(), userData.toDomain())
                 .map(u -> ResponseEntity.ok(new UserDto(u)))
