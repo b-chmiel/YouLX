@@ -7,16 +7,16 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @Component
 public class MvcHelpers {
@@ -35,8 +35,12 @@ public class MvcHelpers {
                 post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
-                        .header("host", "asdfga")
-                        .header("user-agent", "asdfadsg")
+        );
+    }
+
+    public ResultActions postFile(MockMultipartFile file, String url) throws Exception {
+        return mockMvc.perform(
+                MockMvcRequestBuilders.multipart(url).file(file)
         );
     }
 
@@ -46,8 +50,6 @@ public class MvcHelpers {
                 put(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
-                        .header("host", "asdfga")
-                        .header("user-agent", "asdfadsg")
         );
     }
 

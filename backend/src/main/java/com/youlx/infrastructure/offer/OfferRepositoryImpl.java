@@ -4,8 +4,8 @@ import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferClose;
 import com.youlx.domain.offer.OfferRepository;
 import com.youlx.domain.offer.OfferStatus;
-import com.youlx.domain.utils.HashId;
-import com.youlx.domain.utils.HashIdException;
+import com.youlx.domain.utils.hashId.ApiHashIdException;
+import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.user.UserTuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,7 +37,7 @@ public class OfferRepositoryImpl implements OfferRepository {
         final var tuple = new OfferTuple(offer, user.get());
         final var result = repo.save(tuple);
 
-        return result.toDomain(hashId.encode(result.getId()));
+        return result.toDomain(hashId);
     }
 
     @Override
@@ -45,9 +45,9 @@ public class OfferRepositoryImpl implements OfferRepository {
         try {
             final Long decoded = hashId.decode(id);
             return repo.findById(decoded).map(
-                    t -> t.toDomain(id)
+                    t -> t.toDomain(hashId)
             );
-        } catch (HashIdException e) {
+        } catch (ApiHashIdException e) {
             return Optional.empty();
         }
     }
@@ -57,7 +57,7 @@ public class OfferRepositoryImpl implements OfferRepository {
         Long decoded;
         try {
             decoded = hashId.decode(id);
-        } catch (HashIdException e) {
+        } catch (ApiHashIdException e) {
             return Optional.empty();
         }
 
@@ -68,7 +68,7 @@ public class OfferRepositoryImpl implements OfferRepository {
 
         found.get().setStatus(OfferStatus.CLOSED);
         found.get().setCloseReason(offer.reason());
-        return Optional.of(repo.save(found.get()).toDomain(id));
+        return Optional.of(repo.save(found.get()).toDomain(hashId));
     }
 
     @Override
@@ -88,7 +88,7 @@ public class OfferRepositoryImpl implements OfferRepository {
                 .findAllByUser(user.get())
                 .stream()
                 .map(
-                        o -> o.toDomain(hashId.encode(o.getId()))
+                        o -> o.toDomain(hashId)
                 ).toList();
     }
 }

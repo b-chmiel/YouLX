@@ -1,4 +1,4 @@
-package com.youlx.domain.utils;
+package com.youlx.domain.utils.hashId;
 
 import lombok.RequiredArgsConstructor;
 import org.hashids.Hashids;
@@ -13,10 +13,10 @@ public class HashIdImpl implements HashId {
     }
 
     @Override
-    public Long decode(String id) throws HashIdException {
+    public Long decode(String id) throws ApiHashIdException {
         final var result = hashids.decode(id);
         if (result.length != 1) {
-            throw new HashIdException("Cannot decode id.");
+            throw new ApiHashIdException("Cannot decode id: " + id);
         }
 
         return hashids.decode(id)[0];

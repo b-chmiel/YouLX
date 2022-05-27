@@ -36,7 +36,7 @@ public class Seed implements ApplicationRunner {
         userRepository.create(user2);
         userRepository.create(admin);
 
-        offerRepository.create(new Offer(null, "Offer0", mockDescription, OfferStatus.OPEN, LocalDateTime.now(), Optional.empty(), admin));
-        offerRepository.create(new Offer(null, "Offer1", mockDescription, OfferStatus.CLOSED, LocalDateTime.now(), Optional.of(OfferCloseReason.EXPIRED), user1));
+        offerRepository.create(new Offer(null, "Offer0", mockDescription, OfferStatus.OPEN, LocalDateTime.now(), Optional.empty(), admin, List.of()));
+        offerRepository.create(new Offer(null, "Offer1", mockDescription, OfferStatus.CLOSED, LocalDateTime.now(), Optional.of(OfferCloseReason.EXPIRED), user1, List.of()));
     }
 }
