@@ -4,6 +4,7 @@ import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferClose;
 import com.youlx.domain.offer.OfferRepository;
 import com.youlx.domain.offer.OfferStatus;
+import com.youlx.domain.photo.PhotoRepository;
 import com.youlx.domain.utils.hashId.ApiHashIdException;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.user.UserTuple;
@@ -26,6 +27,7 @@ public class OfferRepositoryImpl implements OfferRepository {
     private final Repo repo;
     private final HashId hashId;
     private final UserRepo userRepo;
+    private final PhotoRepository photoRepository;
 
     @Override
     public Offer create(Offer offer) throws Exception {
@@ -36,6 +38,10 @@ public class OfferRepositoryImpl implements OfferRepository {
 
         final var tuple = new OfferTuple(offer, user.get());
         final var result = repo.save(tuple);
+
+        offer.getPhotos().forEach(
+                p -> photoRepository.savePhoto(hashId.encode(result.getId()), p)
+        );
 
         return result.toDomain(hashId);
     }

@@ -36,13 +36,13 @@ public class OfferTuple {
     @Type(type = "org.hibernate.type.MaterializedClobType")
     private String description;
     private OfferStatus status;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private UserTuple user;
     private LocalDateTime creationDate;
     @Nullable
     private OfferCloseReason closeReason;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = PhotoTuple.class)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = PhotoTuple.class)
     private List<PhotoTuple> photos;
 
     public OfferTuple(Offer offer, UserTuple user) {
@@ -64,7 +64,7 @@ public class OfferTuple {
                 creationDate,
                 Optional.ofNullable(closeReason),
                 user.toDomain(),
-                photos.stream().map(p -> p.toDomain(hasher)).toList()
+                photos.stream().map(PhotoTuple::toDomain).toList()
         );
     }
 

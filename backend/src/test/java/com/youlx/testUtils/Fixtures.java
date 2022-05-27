@@ -2,6 +2,7 @@ package com.youlx.testUtils;
 
 import com.youlx.domain.photo.Photo;
 import com.youlx.domain.user.User;
+import com.youlx.domain.utils.uuid.UuidImpl;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -13,7 +14,7 @@ public class Fixtures {
 
     static {
         try {
-            photo = new Photo(new MockMultipartFile("index.jpg", new ClassPathResource("fixtures/index.jpg").getInputStream()));
+            photo = new Photo(new UuidImpl(), new MockMultipartFile("index.jpg", new ClassPathResource("fixtures/index.jpg").getInputStream()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

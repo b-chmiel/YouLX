@@ -1,5 +1,6 @@
 package com.youlx.infrastructure;
 
+import com.youlx.domain.photo.PhotoRepository;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.offer.OfferRepositoryImpl;
 import com.youlx.infrastructure.photo.PhotoRepositoryImpl;
@@ -14,8 +15,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackageClasses = {OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class})
 public class JpaConfig {
     @Bean
-    OfferRepositoryImpl offerRepository(OfferRepositoryImpl.Repo repo, HashId hashId, OfferRepositoryImpl.UserRepo userRepo) {
-        return new OfferRepositoryImpl(repo, hashId, userRepo);
+    OfferRepositoryImpl offerRepository(OfferRepositoryImpl.Repo repo, HashId hashId, OfferRepositoryImpl.UserRepo userRepo, PhotoRepository photoRepository) {
+        return new OfferRepositoryImpl(repo, hashId, userRepo, photoRepository);
     }
 
     @Bean

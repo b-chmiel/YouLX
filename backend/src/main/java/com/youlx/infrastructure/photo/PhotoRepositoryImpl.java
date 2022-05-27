@@ -9,6 +9,7 @@ import com.youlx.domain.utils.ApiNotFoundException;
 import com.youlx.infrastructure.offer.OfferTuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
     private final HashId hashId;
 
     @Override
+    @Transactional
     public Photo savePhoto(String offerId, Photo photo) throws ApiException {
         final var decoded = hashId.decode(offerId);
 
@@ -50,7 +52,7 @@ public class PhotoRepositoryImpl implements PhotoRepository {
         }
 
         try {
-            return savedPhoto.toDomain(hashId);
+            return savedPhoto.toDomain();
         } catch (NullPointerException e) {
             throw new ApiImageException("Cannot transform photo from null data: " + e.getMessage());
         }

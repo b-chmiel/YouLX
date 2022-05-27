@@ -19,6 +19,4 @@ public interface OfferService {
     Page<Offer> findBy(Pageable pageable, String username, String status);
 
     Page<Offer> findOpen(Pageable pageable);
-
-    void savePhoto(String offerId, Photo photo) throws Exception;
 }

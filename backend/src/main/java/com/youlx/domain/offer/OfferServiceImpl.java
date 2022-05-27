@@ -70,27 +70,4 @@ public class OfferServiceImpl implements OfferService {
         );
     }
 
-    @Override
-    public void savePhoto(String offerId, Photo photo) throws Exception {
-        if (findById(offerId).isEmpty()) {
-            throw new Exception("Offer does not exist.");
-        }
-        if (!isPhotoValid(photo)) {
-            throw new Exception("File uploaded is not photo.");
-        }
-
-        photoRepository.savePhoto(offerId, photo);
-    }
-
-    private static boolean isPhotoValid(Photo photo) {
-        try {
-            if (ImageIO.read(new ByteArrayInputStream(photo.getData())) == null) {
-                return false;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot store file: " + e.getMessage());
-        }
-
-        return true;
-    }
 }

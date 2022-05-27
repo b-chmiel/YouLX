@@ -1,8 +1,11 @@
 package com.youlx.api.rest.offer.photo;
 
 import com.youlx.api.Routes;
-import com.youlx.domain.offer.OfferService;
 import com.youlx.domain.photo.Photo;
+import com.youlx.domain.photo.PhotoService;
+import com.youlx.domain.utils.ApiException;
+import com.youlx.domain.utils.ApiNotFoundException;
+import com.youlx.domain.utils.uuid.Uuid;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +25,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping(Routes.Offer.OFFERS)
 class OfferPhotoController {
-    private final OfferService service;
+    private final PhotoService service;
+    private final Uuid uuid;
 
     @PostMapping(value = "{offerId}/photos", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     ResponseEntity<?> postPhoto(
@@ -30,8 +34,10 @@ class OfferPhotoController {
             @Parameter(content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)) @RequestParam("file") MultipartFile file
     ) {
         try {
-            service.savePhoto(offerId, new Photo(file));
+            service.save(offerId, new Photo(uuid, file));
             return ResponseEntity.ok(null);
+        } catch (ApiNotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -39,7 +45,18 @@ class OfferPhotoController {
 
     @GetMapping("{offerId}/photos")
     ResponseEntity<?> getPhotos(@Valid @PathVariable String offerId) {
-        throw new NotImplementedException();
+        try {
+            final var result = service
+                    .findAllForOffer(offerId)
+                    .stream()
+                    .map(p -> Routes.Offer.OFFERS + "/" + offerId + "/photos/" + p.getId())
+                    .toList();
+            return ResponseEntity.ok(result);
+        } catch (ApiNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (ApiException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping(value = "{offerId}/photos/{photoId}", produces = MediaType.IMAGE_JPEG_VALUE)

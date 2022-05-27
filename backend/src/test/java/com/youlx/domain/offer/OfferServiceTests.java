@@ -35,35 +35,4 @@ class OfferServiceTests {
             assertFalse(service.isClosable(user, offer));
         }
     }
-
-    @Nested
-    class SavePhotoTests {
-        @Test
-        void offerDoesNotExist() throws Exception {
-            final var offerId = "a";
-            final var photo = new Photo(null, null);
-            when(offerRepository.findById(offerId)).thenReturn(Optional.empty());
-
-            assertThrows(Exception.class, () -> service.savePhoto(offerId, photo));
-        }
-
-        @Test
-        void photoInvalid() throws Exception {
-            final var offerId = "a";
-            final var photo = new Photo(null, null);
-            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null)));
-
-            assertThrows(Exception.class, () -> service.savePhoto(offerId, photo));
-        }
-
-        @Test
-        void photoValid() throws Exception {
-            final var offerId = "a";
-            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null)));
-
-            service.savePhoto(offerId, Fixtures.photo);
-
-            verify(photoRepository, times(1)).savePhoto(offerId, Fixtures.photo);
-        }
-    }
 }
