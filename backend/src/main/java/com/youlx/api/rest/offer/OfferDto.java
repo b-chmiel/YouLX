@@ -9,6 +9,7 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -25,6 +26,8 @@ class OfferDto extends RepresentationModel<OfferDto> {
     private LocalDateTime creationDate;
     private OfferCloseReason closeReason;
     private UserDto user;
+    private String coverUrl;
+    private List<String> imageUrls;
 
     OfferDto(Offer offer) {
         this.id = offer.getId();
@@ -34,5 +37,11 @@ class OfferDto extends RepresentationModel<OfferDto> {
         this.creationDate = offer.getCreationDate();
         this.closeReason = offer.getCloseReason().orElse(null);
         this.user = new UserDto(offer.getUser());
+
+        final var urls = offer.photosUrls();
+        if (!urls.isEmpty()) {
+            this.coverUrl = urls.get(0);
+        }
+        this.imageUrls = urls;
     }
 }

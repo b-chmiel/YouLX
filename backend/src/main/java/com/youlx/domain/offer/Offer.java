@@ -1,5 +1,6 @@
 package com.youlx.domain.offer;
 
+import com.youlx.api.Routes;
 import com.youlx.domain.photo.Photo;
 import com.youlx.domain.user.User;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,10 @@ public class Offer {
         this.closeReason = Optional.empty();
         this.user = user;
         this.photos = photos;
+    }
+
+    public List<String> photosUrls() {
+        return this.photos.stream().map(p -> Routes.Offer.OFFERS + "/" + this.id + "/photos/" + p.getId()).toList();
     }
 
     public void close(OfferCloseReason reason) {
