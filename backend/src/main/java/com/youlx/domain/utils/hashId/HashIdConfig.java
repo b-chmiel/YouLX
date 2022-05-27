@@ -1,4 +1,4 @@
-package com.youlx.domain.utils;
+package com.youlx.domain.utils.hashId;
 
 import org.hashids.Hashids;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,9 +13,9 @@ public class HashIdConfig {
     private static final int minHashLength = 10;
 
     @Bean
-    public HashId hashId() throws HashIdException {
+    public HashId hashId() throws ApiHashIdException {
         if (salt.isEmpty()) {
-            throw new HashIdException("Salt cannot be empty");
+            throw new ApiHashIdException("Salt cannot be empty");
         }
         final var hashids = new Hashids(salt, minHashLength);
         return new HashIdImpl(hashids);

@@ -18,8 +18,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @NoArgsConstructor
-public
-class UserTuple {
+public class UserTuple {
     @Id
     private String id;
 
@@ -31,7 +30,7 @@ class UserTuple {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> authorities;
 
-    UserTuple(User user) {
+    public UserTuple(User user) {
         this.id = user.getUsername();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();

@@ -3,16 +3,20 @@ package com.youlx.infrastructure.offer;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferCloseReason;
 import com.youlx.domain.offer.OfferStatus;
-import com.youlx.domain.user.User;
+import com.youlx.domain.utils.hashId.HashId;
+import com.youlx.infrastructure.photo.PhotoTuple;
 import com.youlx.infrastructure.user.UserTuple;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Type;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,25 +33,39 @@ public class OfferTuple {
 
     private String name;
     @Lob
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     private String description;
     private OfferStatus status;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private UserTuple user;
     private LocalDateTime creationDate;
     @Nullable
     private OfferCloseReason closeReason;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = PhotoTuple.class)
+    private List<PhotoTuple> photos;
+
     public OfferTuple(Offer offer, UserTuple user) {
-        name = offer.getName();
-        description = offer.getDescription();
-        status = offer.getStatus();
+        this.name = offer.getName();
+        this.description = offer.getDescription();
+        this.status = offer.getStatus();
         this.user = user;
-        creationDate = offer.getCreationDate();
-        closeReason = offer.getCloseReason().orElse(null);
+        this.creationDate = offer.getCreationDate();
+        this.closeReason = offer.getCloseReason().orElse(null);
+        this.photos = new ArrayList<>();
     }
 
-    public Offer toDomain(String hashedId) {
-        return new Offer(hashedId, name, description, status, creationDate, Optional.ofNullable(closeReason), user.toDomain());
+    public Offer toDomain(HashId hasher) {
+        return new Offer(
+                hasher.encode(id),
+                name,
+                description,
+                status,
+                creationDate,
+                Optional.ofNullable(closeReason),
+                user.toDomain(),
+                photos.stream().map(PhotoTuple::toDomain).toList()
+        );
     }
 
     @Override

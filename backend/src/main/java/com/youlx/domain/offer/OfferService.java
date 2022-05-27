@@ -1,5 +1,6 @@
 package com.youlx.domain.offer;
 
+import com.youlx.domain.photo.Photo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,5 +17,6 @@ public interface OfferService {
     boolean isClosable(UserDetails user, Offer offer);
 
     Page<Offer> findBy(Pageable pageable, String username, String status);
+
     Page<Offer> findOpen(Pageable pageable);
 }
