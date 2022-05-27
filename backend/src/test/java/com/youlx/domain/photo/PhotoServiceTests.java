@@ -61,4 +61,20 @@ class PhotoServiceTests {
             assertEquals(Fixtures.photo, service.findAllForOffer(id).get(1));
         }
     }
+
+    @Nested
+    class DeleteTests {
+        @Test
+        void delete() {
+            final var offerId = "a";
+            final var photoId = "b";
+
+            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer("", "", null)));
+            when(photoRepository.findById(photoId)).thenReturn(Optional.of(Fixtures.photo));
+
+            service.delete(offerId, photoId);
+
+            verify(photoRepository, times(1)).delete(offerId, photoId);
+        }
+    }
 }

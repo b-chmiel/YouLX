@@ -68,6 +68,13 @@ class OfferPhotoController {
 
     @DeleteMapping("{offerId}/photos/{photoId}")
     ResponseEntity<?> deletePhoto(@Valid @PathVariable String offerId, @Valid @PathVariable String photoId) {
-        throw new NotImplementedException();
+        try {
+            service.delete(offerId, photoId);
+            return ResponseEntity.ok().build();
+        } catch (ApiNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (ApiException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

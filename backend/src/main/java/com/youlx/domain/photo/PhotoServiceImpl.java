@@ -37,6 +37,17 @@ public class PhotoServiceImpl implements PhotoService {
                 .orElseThrow(() -> new ApiNotFoundException("Offer not found."));
     }
 
+    @Override
+    public void delete(String offerId, String photoId) throws ApiException {
+        if (offerService.findById(offerId).isEmpty()) {
+            throw new ApiNotFoundException("Offer not found.");
+        } else if (repository.findById(photoId).isEmpty()) {
+            throw new ApiNotFoundException("Photo not found.");
+        }
+
+        repository.delete(offerId, photoId);
+    }
+
     private static boolean isPhotoValid(Photo photo) {
         try {
             if (ImageIO.read(new ByteArrayInputStream(photo.getData())) == null) {

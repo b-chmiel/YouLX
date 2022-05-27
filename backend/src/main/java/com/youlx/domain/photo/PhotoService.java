@@ -7,4 +7,6 @@ import java.util.List;
 public interface PhotoService {
     void save(String offerId, Photo photo) throws ApiException;
     List<Photo> findAllForOffer(String offerId) throws ApiException;
+
+    void delete(String offerId, String photoId) throws ApiException;
 }

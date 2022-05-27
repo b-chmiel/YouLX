@@ -1,7 +1,9 @@
 package com.youlx.api.rest.offer.photo;
 
 import com.youlx.api.Routes;
+import com.youlx.domain.photo.ApiImageException;
 import com.youlx.domain.photo.PhotoService;
+import com.youlx.domain.utils.ApiNotFoundException;
 import com.youlx.domain.utils.uuid.Uuid;
 import com.youlx.testUtils.Fixtures;
 import com.youlx.testUtils.MvcHelpers;
@@ -73,6 +75,54 @@ class OfferPhotoControllerTest {
             final var result = helpers.getRequest(url).andExpect(status().isOk());
             final var expected = Routes.Offer.OFFERS + "/" + id + "/photos/" + Fixtures.photo.getId();
             assertEquals(expected, MvcHelpers.attributeFromResult("[0]", result));
+        }
+    }
+
+    @Nested
+    class DeleteTests {
+        @Test
+        void unauthorizedOnUnauthorized() throws Exception {
+            final var id = "a";
+            final var photoId = "b";
+            final var url = Routes.Offer.OFFERS + "/" + id + "/photos/" + photoId;
+
+            helpers.deleteRequest(url).andExpect(status().isForbidden());
+        }
+
+        @Test
+        @WithMockUser
+        void delete() throws Exception {
+            final var offerId = "a";
+            final var photoId = "b";
+            final var url = Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId;
+
+            helpers.deleteRequest(url).andExpect(status().isOk());
+
+            verify(service, times(1)).delete(offerId, photoId);
+        }
+
+        @Test
+        @WithMockUser
+        void notFoundOnNotFound() throws Exception {
+            final var offerId = "a";
+            final var photoId = "b";
+            final var url = Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId;
+
+            doThrow(new ApiNotFoundException("")).when(service).delete(offerId, photoId);
+
+            helpers.deleteRequest(url).andExpect(status().isNotFound());
+        }
+
+        @Test
+        @WithMockUser
+        void badRequestOnOtherExceptionThrown() throws Exception {
+            final var offerId = "a";
+            final var photoId = "b";
+            final var url = Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId;
+
+            doThrow(new ApiImageException("")).when(service).delete(offerId, photoId);
+
+            helpers.deleteRequest(url).andExpect(status().isBadRequest());
         }
     }
 }

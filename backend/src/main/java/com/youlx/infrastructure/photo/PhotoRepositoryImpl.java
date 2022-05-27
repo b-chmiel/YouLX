@@ -1,11 +1,11 @@
 package com.youlx.infrastructure.photo;
 
+import com.youlx.domain.photo.ApiImageException;
 import com.youlx.domain.photo.Photo;
 import com.youlx.domain.photo.PhotoRepository;
-import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.domain.utils.ApiException;
-import com.youlx.domain.photo.ApiImageException;
 import com.youlx.domain.utils.ApiNotFoundException;
+import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.offer.OfferTuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,10 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class PhotoRepositoryImpl implements PhotoRepository {
     public interface Repo extends JpaRepository<PhotoTuple, Long> {
+        Optional<PhotoTuple> findByIndex(String index);
+
+        void deleteByIndex(String index);
     }
 
     public interface OfferRepo extends JpaRepository<OfferTuple, Long> {
@@ -56,5 +60,18 @@ public class PhotoRepositoryImpl implements PhotoRepository {
         } catch (NullPointerException e) {
             throw new ApiImageException("Cannot transform photo from null data: " + e.getMessage());
         }
+    }
+
+    @Override
+    public Optional<Photo> findById(String id) {
+        return repo.findByIndex(id).map(PhotoTuple::toDomain);
+    }
+
+    @Override
+    public void delete(String offerId, String photoId) {
+        final var offer = offerRepo.getById(hashId.decode(offerId));
+        offer.getPhotos().removeIf(p -> p.getIndex().equals(photoId));
+        offerRepo.save(offer);
+        repo.deleteByIndex(photoId);
     }
 }

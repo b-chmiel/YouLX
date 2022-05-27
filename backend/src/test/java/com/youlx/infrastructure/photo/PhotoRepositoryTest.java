@@ -5,9 +5,9 @@ import com.youlx.domain.photo.ApiImageException;
 import com.youlx.domain.photo.PhotoRepository;
 import com.youlx.domain.user.UserRepository;
 import com.youlx.domain.utils.ApiNotFoundException;
-import com.youlx.domain.utils.uuid.Uuid;
 import com.youlx.domain.utils.hashId.ApiHashIdException;
 import com.youlx.domain.utils.hashId.HashId;
+import com.youlx.domain.utils.uuid.Uuid;
 import com.youlx.infrastructure.JpaConfig;
 import com.youlx.infrastructure.offer.OfferTuple;
 import com.youlx.infrastructure.user.UserTuple;
@@ -27,8 +27,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import javax.transaction.Transactional;
 
 import static com.youlx.testUtils.Fixtures.user;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -100,6 +99,27 @@ class PhotoRepositoryTest {
 
             assertEquals(Fixtures.photo.getId(), saved.getId());
 //            assertEquals(Fixtures.photo.getData(), saved.getData());
+        }
+    }
+
+    @Nested
+    class DeleteTests {
+        @Test
+        void delete() {
+            final var id = "a";
+            final var offer = new OfferTuple(new Offer("", "", user), new UserTuple(user));
+            final var offerSaved = offerRepo.save(offer);
+            when(hashId.decode(id)).thenReturn(offerSaved.getId());
+            when(uuid.generate()).thenReturn(Fixtures.photo.getId());
+
+            repository.savePhoto(id, Fixtures.photo);
+
+            assertTrue(repository.findById(Fixtures.photo.getId()).isPresent());
+
+            repository.delete(id, Fixtures.photo.getId());
+
+            assertTrue(repository.findById(Fixtures.photo.getId()).isEmpty());
+            assertTrue(repo.findAll().isEmpty());
         }
     }
 }

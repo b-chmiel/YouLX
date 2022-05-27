@@ -80,5 +80,9 @@ public class MvcHelpers {
         final var value = JsonPath.read(response.getContentAsString(), String.format("$.%s", attribute));
         return value.toString();
     }
+
+    public ResultActions  deleteRequest(String url) throws Exception {
+        return mockMvc.perform(delete(url));
+    }
 }
 
