@@ -9,8 +9,7 @@ import com.youlx.domain.utils.uuid.Uuid;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
@@ -60,10 +59,14 @@ class OfferPhotoController {
     }
 
     @GetMapping(value = "{offerId}/photos/{photoId}", produces = MediaType.IMAGE_JPEG_VALUE)
-    void getPhoto(HttpServletResponse response) throws IOException {
-        final var photo = new ClassPathResource("photos/cat.jpg");
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        StreamUtils.copy(photo.getInputStream(), response.getOutputStream());
+    void getPhoto(@Valid @PathVariable String offerId, @Valid @PathVariable String photoId, HttpServletResponse response) throws IOException {
+        final var photo = service.find(offerId, photoId);
+        if (photo.isPresent()) {
+            response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+            StreamUtils.copy(photo.get().getData(), response.getOutputStream());
+        } else {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+        }
     }
 
     @DeleteMapping("{offerId}/photos/{photoId}")

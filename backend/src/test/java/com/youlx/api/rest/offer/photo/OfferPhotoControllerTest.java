@@ -18,6 +18,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -123,6 +124,36 @@ class OfferPhotoControllerTest {
             doThrow(new ApiImageException("")).when(service).delete(offerId, photoId);
 
             helpers.deleteRequest(url).andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    class GetTests {
+        @Test
+        void unauthorizedOnUnauthorized() throws Exception {
+            final var offerId = "a";
+            final var photoId = "b";
+            final var url = Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId;
+            helpers.getRequest(url).andExpect(status().isForbidden());
+        }
+
+        @Test
+        @WithMockUser
+        void notFound() throws Exception {
+            final var offerId = "a";
+            final var photoId = "b";
+            final var url = Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId;
+            helpers.getRequest(url).andExpect(status().isNotFound());
+        }
+
+        @Test
+        @WithMockUser
+        void get() throws Exception {
+            final var offerId = "a";
+            final var photoId = "b";
+            final var url = Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId;
+            when(service.find(offerId, photoId)).thenReturn(Optional.of(Fixtures.photo));
+            helpers.getRequest(url).andExpect(status().isOk());
         }
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +47,15 @@ public class PhotoServiceImpl implements PhotoService {
         }
 
         repository.delete(offerId, photoId);
+    }
+
+    @Override
+    public Optional<Photo> find(String offerId, String photoId) {
+        if (offerService.findById(offerId).isEmpty()) {
+            throw new ApiNotFoundException("Offer not found.");
+        }
+
+        return repository.findById(photoId);
     }
 
     private static boolean isPhotoValid(Photo photo) {
