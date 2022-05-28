@@ -18,6 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -69,7 +70,7 @@ class OfferRepositoryTest {
 
     @Test
     void shouldCreate() throws Exception {
-        final var offer = new Offer("3", "a", "b", OfferStatus.OPEN, LocalDateTime.now(), Optional.empty(), user, List.of());
+        final var offer = new Offer("3", "a", "b", OfferStatus.OPEN, LocalDateTime.now(), Optional.empty(), user, List.of(), BigDecimal.TEN);
 
         final var result = repository.create(offer);
 
@@ -78,7 +79,7 @@ class OfferRepositoryTest {
 
     @Test
     void shouldPatch() throws Exception {
-        final var offer = new Offer("a", "b", user);
+        final var offer = new Offer("a", "b", user, BigDecimal.ONE);
 
         final var result = repository.create(offer);
 
@@ -91,7 +92,7 @@ class OfferRepositoryTest {
 
     @Test
     void shouldClose() {
-        final var offer = new Offer("1", "a", "b", LocalDateTime.now(), user, List.of());
+        final var offer = new Offer("1", "a", "b", LocalDateTime.now(), user, List.of(), BigDecimal.TEN);
         offer.setCloseReason(Optional.empty());
         offer.setStatus(OfferStatus.OPEN);
         final var created = repo.save(new OfferTuple(offer, new UserTuple(user))).toDomain(hashId);
@@ -109,18 +110,18 @@ class OfferRepositoryTest {
     void shouldGetAllByUserId() throws Exception {
         assertEquals(0, repository.findByUserId(user.getUsername()).size());
 
-        repository.create(new Offer("", "", user));
-        repository.create(new Offer("", "", user));
+        repository.create(new Offer("", "", user, null));
+        repository.create(new Offer("", "", user, null));
 
         assertEquals(2, repository.findByUserId(user.getUsername()).size());
     }
 
     @Test
     void shouldModify() throws Exception {
-        final var offer = new Offer("4", "", "", LocalDateTime.now(), user, List.of());
+        final var offer = new Offer("4", "", "", LocalDateTime.now(), user, List.of(), BigDecimal.ONE);
         offer.close(OfferCloseReason.MANUAL);
         final var created = repo.save(new OfferTuple(offer, new UserTuple(user))).toDomain(hashId);
-        final var modify = new OfferModify("a", "b");
+        final var modify = new OfferModify("a", "b", BigDecimal.TEN);
 
         assertTrue(repository.findById(created.getId()).isPresent());
         repository.modify(created.getId(), modify);
@@ -128,6 +129,7 @@ class OfferRepositoryTest {
         final var modified = repository.findById(created.getId());
         assertEquals(modify.name(), modified.get().getName());
         assertEquals(modify.description(), modified.get().getDescription());
+        assertEquals(modify.price(), modified.get().getPrice());
     }
 
     private static class Helpers {

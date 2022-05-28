@@ -81,7 +81,7 @@ class OfferController {
         }
 
         try {
-            service.modify(id, new OfferModify(offer.getName(), offer.getDescription()), user.getName());
+            service.modify(id, new OfferModify(offer.getName(), offer.getDescription(), offer.getPrice()), user.getName());
         } catch (ApiNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (ApiUnauthorizedException e) {

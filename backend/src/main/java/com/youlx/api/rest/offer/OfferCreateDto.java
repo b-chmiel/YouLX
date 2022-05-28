@@ -6,14 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @Getter
 @Setter
 class OfferCreateDto {
     private String name;
     private String description;
+    private BigDecimal price;
 
     Offer toDomain(User user) {
-        return new Offer(name, description, user);
+        return new Offer(name, description, user, price);
     }
 }

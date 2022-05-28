@@ -1,4 +1,6 @@
 package com.youlx.domain.offer;
 
-public record OfferModify(String name, String description) {
+import java.math.BigDecimal;
+
+public record OfferModify(String name, String description, BigDecimal price) {
 }

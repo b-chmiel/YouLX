@@ -100,6 +100,7 @@ public class OfferRepositoryImpl implements OfferRepository {
         final var tuple = repo.getById(hashId.decode(id));
         tuple.setName(offer.name());
         tuple.setDescription(offer.description());
+        tuple.setPrice(offer.price());
         repo.save(tuple);
     }
 }

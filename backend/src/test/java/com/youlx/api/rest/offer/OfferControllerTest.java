@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -37,7 +38,7 @@ class OfferControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    private final static User mockUser = new User(List.of(), "", "", "", "", "a");
+    private final static User mockUser = new User(List.of(), "", "", "", "", "a", "");
 
     @BeforeEach
     void setup() {
@@ -49,7 +50,7 @@ class OfferControllerTest {
         @Test
         @WithMockUser(value = "a")
         void shouldGetRecentlyCreated() throws Exception {
-            final var offer = new OfferDto(new Offer("", "", mockUser));
+            final var offer = new OfferDto(new Offer("", "", mockUser, null));
 
             final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
@@ -59,7 +60,7 @@ class OfferControllerTest {
         @Test
         @WithMockUser("a")
         void shouldShowHateoasCloseOnOfferOwner() throws Exception {
-            final var offer = new OfferDto(new Offer("", "", mockUser));
+            final var offer = new OfferDto(new Offer("", "", mockUser, null));
 
             final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
@@ -94,7 +95,8 @@ class OfferControllerTest {
         void create() throws Exception {
             final var name = "asdf";
             final var desc = "fdsa";
-            final var offer = new OfferCreateDto(name, desc);
+            final var price = BigDecimal.TEN;
+            final var offer = new OfferCreateDto(name, desc, price);
 
             final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
 
@@ -106,6 +108,7 @@ class OfferControllerTest {
             final var created = helpers.getRequest(location);
             assertEquals(name, MvcHelpers.attributeFromResult("name", created));
             assertEquals(desc, MvcHelpers.attributeFromResult("description", created));
+            assertEquals(price, BigDecimal.valueOf(Long.parseLong(MvcHelpers.attributeFromResult("price", created))));
             assertEquals(OfferStatus.OPEN.name(), MvcHelpers.attributeFromResult("status", created));
 
             final var expectedDate = LocalDateTime.now();
@@ -120,7 +123,7 @@ class OfferControllerTest {
         @Test
         @WithMockUser("a")
         void shouldCloseOffer() throws Exception {
-            final var offer = new OfferDto(new Offer("", "", mockUser));
+            final var offer = new OfferDto(new Offer("", "", mockUser, null));
 
             final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
@@ -134,7 +137,7 @@ class OfferControllerTest {
     class ModifyTests {
         @Test
         void unauthorized() throws Exception {
-            final var offer = new OfferCreateDto("", "");
+            final var offer = new OfferCreateDto("", "", null);
             final var id = "a";
             final var url = Routes.Offer.OFFERS + '/' + id;
             helpers.putRequest(offer, url).andExpect(status().isForbidden());
@@ -143,7 +146,7 @@ class OfferControllerTest {
         @Test
         @WithMockUser
         void notFound() throws Exception {
-            final var offer = new OfferCreateDto("", "");
+            final var offer = new OfferCreateDto("", "", null);
             final var id = "a";
             final var url = Routes.Offer.OFFERS + '/' + id;
 

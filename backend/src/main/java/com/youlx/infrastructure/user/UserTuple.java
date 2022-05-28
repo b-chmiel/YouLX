@@ -26,6 +26,7 @@ public class UserTuple {
     private String lastName;
     private String email;
     private String password;
+    private String phone;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> authorities;
@@ -37,6 +38,7 @@ public class UserTuple {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.authorities = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+        this.phone = user.getPhone();
     }
 
     public User toDomain() {
@@ -45,7 +47,7 @@ public class UserTuple {
             auth = authorities.stream().map(SimpleGrantedAuthority::new).toList();
         }
 
-        return new User(auth, firstName, lastName, email, password, id);
+        return new User(auth, firstName, lastName, email, password, id, phone);
     }
 
     @Override
