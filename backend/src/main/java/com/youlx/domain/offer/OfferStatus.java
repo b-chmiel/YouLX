@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum OfferStatus {
-    OPEN("OPEN"), CLOSED("CLOSED"), ERROR("ERROR");
+    OPEN("OPEN"), CLOSED("CLOSED"), DRAFT("DRAFT"), ERROR("ERROR");
 
     private final String name;
 

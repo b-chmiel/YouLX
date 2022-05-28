@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class OfferControllerTest {
+class OfferControllerFT {
     @Autowired
     private MvcHelpers helpers;
 
@@ -59,11 +59,24 @@ class OfferControllerTest {
 
         @Test
         @WithMockUser("a")
-        void shouldShowHateoasCloseOnOfferOwner() throws Exception {
+        void publishForNewlyCreatedOfferForOwner() throws Exception {
             final var offer = new OfferDto(new Offer("", "", mockUser, null));
 
             final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
+            final var result = helpers.getRequest(location);
+
+            assertThat(MvcHelpers.attributeFromResult("_links.publish.href", result), containsString("/publish"));
+        }
+
+        @Test
+        @WithMockUser("a")
+        void closeForPublishedOffer() throws Exception {
+            final var offer = new OfferDto(new Offer("", "", mockUser, null));
+            final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
+            final var location = response.andReturn().getResponse().getHeader("location");
+            helpers.postRequest(null, location + "/publish");
+
             final var result = helpers.getRequest(location);
 
             assertThat(MvcHelpers.attributeFromResult("_links.close.href", result), containsString("/close"));
@@ -76,7 +89,8 @@ class OfferControllerTest {
         void accessibleForUnauthenticatedUser() throws Exception {
             final var response = helpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
 
-            assertThat(MvcHelpers.attributeFromResult("_embedded.offers[0]._links.self.href", response), not(containsString("/close")));
+            assertThat(MvcHelpers.attributeFromResult("_embedded.offers[0]._links", response), not(containsString("/close")));
+            assertThat(MvcHelpers.attributeFromResult("_embedded.offers[0]._links", response), not(containsString("/publish")));
         }
 
         @Test
@@ -109,7 +123,7 @@ class OfferControllerTest {
             assertEquals(name, MvcHelpers.attributeFromResult("name", created));
             assertEquals(desc, MvcHelpers.attributeFromResult("description", created));
             assertEquals(price, BigDecimal.valueOf(Long.parseLong(MvcHelpers.attributeFromResult("price", created))));
-            assertEquals(OfferStatus.OPEN.name(), MvcHelpers.attributeFromResult("status", created));
+            assertEquals(OfferStatus.DRAFT.name(), MvcHelpers.attributeFromResult("status", created));
 
             final var expectedDate = LocalDateTime.now();
             final var actualDate = LocalDateTime.parse(MvcHelpers.attributeFromResult("creationDate", created));
@@ -125,10 +139,11 @@ class OfferControllerTest {
         void shouldCloseOffer() throws Exception {
             final var offer = new OfferDto(new Offer("", "", mockUser, null));
 
-            final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
+            final var response = helpers.postRequest(offer, Routes.Offer.OFFERS).andExpect(status().isCreated());
             final var location = response.andReturn().getResponse().getHeader("location");
-            helpers.postRequest(null, location + "/close");
-            final var result = helpers.getRequest(location);
+            helpers.postRequest(null, location + "/publish").andExpect(status().isOk());
+            helpers.postRequest(null, location + "/close").andExpect(status().isOk());
+            final var result = helpers.getRequest(location).andExpect(status().isOk());
             assertEquals(OfferCloseReason.MANUAL.name(), MvcHelpers.attributeFromResult("closeReason", result));
         }
     }

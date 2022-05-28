@@ -1,4 +1,4 @@
-package com.youlx.domain.utils;
+package com.youlx.domain.utils.exception;
 
 public class ApiNotFoundException extends ApiException {
     public ApiNotFoundException(String message) {

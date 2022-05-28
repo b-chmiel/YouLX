@@ -3,9 +3,9 @@ package com.youlx.api.rest.offer;
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.*;
 import com.youlx.domain.user.UserService;
-import com.youlx.domain.utils.ApiException;
-import com.youlx.domain.utils.ApiNotFoundException;
-import com.youlx.domain.utils.ApiUnauthorizedException;
+import com.youlx.domain.utils.exception.ApiException;
+import com.youlx.domain.utils.exception.ApiNotFoundException;
+import com.youlx.domain.utils.exception.ApiUnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -48,7 +48,11 @@ class OfferController {
     }
 
     @GetMapping("{id}")
-    ResponseEntity<?> get(@Valid @PathVariable String id) {
+    ResponseEntity<?> get(Principal user, @Valid @PathVariable String id) {
+        if (user == null || !service.isVisible(user.getName(), id)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         final var result = service.findById(id);
         return result.isPresent() ?
                 ResponseEntity.ok(modelAssembler.toModel(result.get())) :
@@ -61,10 +65,14 @@ class OfferController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        final var result = service.close(id, new OfferClose(OfferCloseReason.MANUAL), user.getName());
-        return result.isPresent() ?
-                ResponseEntity.ok(modelAssembler.toModel(result.get())) :
-                ResponseEntity.notFound().build();
+        try {
+            final var result = service.close(id, new OfferClose(OfferCloseReason.MANUAL), user.getName());
+            return ResponseEntity.ok(modelAssembler.toModel(result));
+        } catch (ApiNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (ApiException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping
@@ -91,5 +99,19 @@ class OfferController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("{id}/publish")
+    ResponseEntity<?> publish(Principal user, @Valid @PathVariable String id) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        try {
+            service.publish(user.getName(), id);
+            return ResponseEntity.ok().build();
+        } catch (ApiException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

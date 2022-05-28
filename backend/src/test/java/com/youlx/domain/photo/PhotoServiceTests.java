@@ -2,8 +2,8 @@ package com.youlx.domain.photo;
 
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferService;
-import com.youlx.domain.utils.ApiNotFoundException;
-import com.youlx.domain.utils.ApiUnauthorizedException;
+import com.youlx.domain.utils.exception.ApiNotFoundException;
+import com.youlx.domain.utils.exception.ApiUnauthorizedException;
 import com.youlx.testUtils.Fixtures;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

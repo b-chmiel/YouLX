@@ -1,9 +1,8 @@
 package com.youlx.domain.offer;
 
-import com.youlx.domain.utils.ApiException;
+import com.youlx.domain.utils.exception.ApiException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
@@ -12,9 +11,11 @@ public interface OfferService {
 
     Offer create(Offer offer) throws Exception;
 
-    Optional<Offer> close(String id, OfferClose offerClose, String username);
+    Offer close(String id, OfferClose offerClose, String username);
 
-    boolean isClosable(UserDetails user, Offer offer);
+    boolean isClosable(String username, Offer offer);
+
+    boolean isPublishable(String username, String offerId);
 
     Page<Offer> findBy(Pageable pageable, String username, String status);
 
@@ -23,4 +24,8 @@ public interface OfferService {
     void modify(String id, OfferModify offer, String username) throws ApiException;
 
     boolean isOwnerOf(String offerId, String username);
+
+    void publish(String username, String offerId) throws ApiException;
+
+    boolean isVisible(String username, String offerId);
 }

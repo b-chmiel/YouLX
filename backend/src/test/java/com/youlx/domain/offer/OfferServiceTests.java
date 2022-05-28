@@ -1,8 +1,9 @@
 package com.youlx.domain.offer;
 
 import com.youlx.domain.user.User;
-import com.youlx.domain.utils.ApiNotFoundException;
-import com.youlx.domain.utils.ApiUnauthorizedException;
+import com.youlx.domain.utils.exception.ApiCustomException;
+import com.youlx.domain.utils.exception.ApiNotFoundException;
+import com.youlx.domain.utils.exception.ApiUnauthorizedException;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.offer.OfferPagedRepository;
 import org.junit.jupiter.api.Nested;
@@ -23,16 +24,124 @@ class OfferServiceTests {
     private final OfferService service = new OfferServiceImpl(offerRepository, offerPagedRepository, hashId);
 
     @Nested
+    class FindByIdTests {
+        @Test
+        void findById() {
+            final var id = "a";
+
+            service.findById(id);
+
+            verify(offerRepository, times(1)).findById(id);
+        }
+    }
+
+    @Nested
+    class CreateTests {
+        @Test
+        void create() throws Exception {
+            final var offer = new Offer(null, null, null, null);
+
+            service.create(offer);
+
+            verify(offerRepository, times(1)).create(offer);
+        }
+    }
+
+    @Nested
+    class CloseTests {
+        @Test
+        void close() {
+            final var id = "aa";
+            final var user = new User(List.of(), "", "", "", "", "b", "");
+            final var offerClose = new OfferClose(OfferCloseReason.EXPIRED);
+            final var offer = new Offer(null, null, user, null);
+            offer.setStatus(OfferStatus.OPEN);
+
+            when(offerRepository.findById(id)).thenReturn(Optional.of(offer));
+            when(offerRepository.close(id, offerClose)).thenReturn(Optional.of(offer));
+
+            service.close(id, offerClose, user.getUsername());
+
+            verify(offerRepository, times(1)).close(id, offerClose);
+        }
+
+        @Test
+        void offerNotFound() {
+            final var id = "b";
+            final var offerClose = new OfferClose(OfferCloseReason.EXPIRED);
+            final var user = new User(List.of(), "", "", "", "", "b", "");
+
+            when(offerRepository.findById(id)).thenReturn(Optional.empty());
+
+            assertThrows(ApiNotFoundException.class, () -> service.close(id, offerClose, user.getUsername()));
+        }
+
+        @Test
+        void offerNotClosable() {
+            final var id = "aa";
+            final var user = new User(List.of(), "", "", "", "", "b", "");
+            final var offerClose = new OfferClose(OfferCloseReason.EXPIRED);
+            final var offer = new Offer(null, null, user, null);
+            offer.setStatus(OfferStatus.OPEN);
+
+            when(offerRepository.findById(id)).thenReturn(Optional.of(offer));
+            when(offerRepository.close(id, offerClose)).thenReturn(Optional.of(offer));
+
+            assertThrows(ApiCustomException.class, () -> service.close(id, offerClose, user.getUsername() + "a"));
+        }
+    }
+
+    @Nested
     class IsClosableTests {
         @Test
         void isClosable() {
             final var user = new User(null, "", "", "", "", "", "");
             final var offer = new Offer("", "", user, null);
+            offer.setStatus(OfferStatus.OPEN);
 
-            assertTrue(service.isClosable(user, offer));
-            assertFalse(service.isClosable(new User(null, "", "", "", "", "asdf", ""), offer));
+            assertTrue(service.isClosable(user.getUsername(), offer));
+            assertFalse(service.isClosable(user.getUsername() + "a", offer));
             offer.close(OfferCloseReason.EXPIRED);
-            assertFalse(service.isClosable(user, offer));
+            assertFalse(service.isClosable(user.getUsername(), offer));
+        }
+
+        @Test
+        void newlyCreatedNotClosable() {
+            final var user = new User(null, "", "", "", "", "", "");
+            final var offer = new Offer("", "", user, null);
+
+            assertFalse(service.isClosable(user.getUsername(), offer));
+        }
+
+        @Test
+        void closedNotClosable() {
+            final var user = new User(null, "", "", "", "", "", "");
+            final var offer = new Offer("", "", user, null);
+            offer.setStatus(OfferStatus.CLOSED);
+
+            assertFalse(service.isClosable(user.getUsername(), offer));
+        }
+
+        @Test
+        void notClosableForOtherUser() {
+            final var user = new User(null, "", "", "", "", "", "");
+            final var offer = new Offer("", "", user, null);
+            offer.setStatus(OfferStatus.OPEN);
+
+            assertFalse(service.isClosable(user.getUsername() + "a", offer));
+        }
+    }
+
+    @Nested
+    class IsPublishableTests {
+        @Test
+        void isPublishable() {
+            final var user = new User(null, "", "", "", "", "", "");
+            final var id = "a";
+
+            service.isPublishable(user.getUsername(), id);
+
+            verify(offerRepository, times(1)).findById(id);
         }
     }
 

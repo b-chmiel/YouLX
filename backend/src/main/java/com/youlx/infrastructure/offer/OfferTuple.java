@@ -43,6 +43,7 @@ public class OfferTuple {
     @Nullable
     private OfferCloseReason closeReason;
     private BigDecimal price;
+    private LocalDateTime publishedDate;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = PhotoTuple.class)
     private List<PhotoTuple> photos;
@@ -56,6 +57,7 @@ public class OfferTuple {
         this.closeReason = offer.getCloseReason().orElse(null);
         this.photos = new ArrayList<>();
         this.price = offer.getPrice();
+        this.publishedDate = offer.getPublishedDate();
     }
 
     public Offer toDomain(HashId hasher) {
@@ -68,7 +70,8 @@ public class OfferTuple {
                 Optional.ofNullable(closeReason),
                 user.toDomain(),
                 photos.stream().map(PhotoTuple::toDomain).toList(),
-                price
+                price,
+                publishedDate
         );
     }
 

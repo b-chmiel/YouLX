@@ -5,6 +5,7 @@ import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferService;
 import com.youlx.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -27,7 +28,7 @@ class OfferUserController {
 
     @GetMapping("/{username}/offers")
     ResponseEntity<PagedModel<EntityModel<OfferDto>>> offers(
-            @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
+            @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
             @Valid @PathVariable String username,
             @RequestParam(required = false, defaultValue = "OPEN") String status
     ) {
