@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class OfferPhotoControllerTest {
+class OfferPhotoControllerTests {
     @Autowired
     private MvcHelpers helpers;
     @MockBean

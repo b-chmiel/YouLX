@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
         loader = AnnotationConfigContextLoader.class
 )
 @DataJpaTest
-class OfferRepositoryTest {
+class OfferRepositoryTests {
     @MockBean
     private HashId hashId;
 
@@ -69,7 +69,7 @@ class OfferRepositoryTest {
     }
 
     @Test
-    void shouldCreate() throws Exception {
+    void shouldCreate() {
         final var offer = new Offer("a", "b", user, List.of(), BigDecimal.TEN);
 
         final var result = repository.create(offer);
@@ -78,7 +78,7 @@ class OfferRepositoryTest {
     }
 
     @Test
-    void shouldPatch() throws Exception {
+    void shouldPatch() {
         final var offer = new Offer("a", "b", user, BigDecimal.ONE);
 
         final var result = repository.create(offer);
@@ -107,7 +107,7 @@ class OfferRepositoryTest {
     }
 
     @Test
-    void shouldGetAllByUserId() throws Exception {
+    void shouldGetAllByUserId() {
         assertEquals(0, repository.findByUserId(user.getUsername()).size());
 
         repository.create(new Offer("", "", user, null));
@@ -117,7 +117,7 @@ class OfferRepositoryTest {
     }
 
     @Test
-    void shouldModify() throws Exception {
+    void shouldModify() {
         final var offer = new Offer("4", "", "", LocalDateTime.now(), user, List.of(), BigDecimal.ONE);
         offer.close(OfferCloseReason.MANUAL);
         final var created = repo.save(new OfferTuple(offer, new UserTuple(user))).toDomain(hashId);
