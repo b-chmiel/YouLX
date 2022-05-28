@@ -20,4 +20,10 @@ export class AuthService {
 
     return this.http.get<Profile>(this.profileUrl).pipe(catchError(err => of(null)), tap(profile => this.profile = profile));
   }
+
+  saveProfileInfo(profile: Profile) {
+    return this.http.put<Profile>(this.profileUrl, profile).pipe(tap(profile => {
+      this.profile = profile;
+    }));
+  }
 }

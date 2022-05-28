@@ -1,0 +1,26 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="form-control">
+    <label for="firstName" class="label">
+      <span class="label-text">First Name</span>
+    </label>
+    <input id="firstName" type="text" formControlName="firstName" [placeholder]="profile.firstName" class="input input-bordered w-full">
+  </div>
+
+  <div class="form-control">
+    <label for="lastName" class="label">
+      <span class="label-text">Last Name</span>
+    </label>
+    <input id="lastName" type="text" formControlName="lastName" [placeholder]="profile.lastName" class="input input-bordered w-full">
+  </div>
+
+  <div class="form-control">
+    <label for="email" class="label">
+      <span class="label-text">Email</span>
+    </label>
+    <input id="email" type="text" formControlName="email" [placeholder]="getEmailPlaceholder()" class="input input-bordered w-full">
+  </div>
+
+  <div class="form-control">
+    <input type="submit" value="Save" class="btn mt-3" [disabled]="!form.valid" />
+  </div>
+</form>
