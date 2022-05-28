@@ -9,4 +9,14 @@ export interface Offer {
   description: string | null;
   coverUrl: string | null;
   price: number | null;
+  creationDate: string;
+  user: {
+    login: string
+  };
+  status: string;
+  _links: {
+    close: {
+      href: string
+    }
+  };
 }
