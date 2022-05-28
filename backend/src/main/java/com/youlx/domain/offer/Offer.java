@@ -30,6 +30,7 @@ public class Offer {
     private final List<Photo> photos;
     private final BigDecimal price;
     private LocalDateTime publishedDate;
+    private LocalDateTime closedDate;
 
     public Offer(String name, String description, User user, BigDecimal price) {
         this(name, description, user, List.of(), price);
@@ -46,6 +47,7 @@ public class Offer {
         this.photos = photos;
         this.price = price;
         this.publishedDate = null;
+        this.closedDate = null;
     }
 
     public List<String> photosUrls() {

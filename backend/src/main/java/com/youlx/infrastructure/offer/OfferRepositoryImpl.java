@@ -10,6 +10,7 @@ import com.youlx.infrastructure.user.UserTuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -74,6 +75,7 @@ public class OfferRepositoryImpl implements OfferRepository {
 
         found.get().setStatus(OfferStatus.CLOSED);
         found.get().setCloseReason(offer.reason());
+        found.get().setClosedDate(LocalDateTime.now());
         return Optional.of(repo.save(found.get()).toDomain(hashId));
     }
 
@@ -108,6 +110,7 @@ public class OfferRepositoryImpl implements OfferRepository {
     }
 
     @Override
+    @Transactional
     public void publish(String offerId) {
         final var tuple = repo.getById(hashId.decode(offerId));
         tuple.setStatus(OfferStatus.OPEN);

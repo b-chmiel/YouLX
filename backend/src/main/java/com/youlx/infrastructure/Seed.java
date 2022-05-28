@@ -4,7 +4,6 @@ import com.youlx.api.config.SecurityRoles;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferCloseReason;
 import com.youlx.domain.offer.OfferRepository;
-import com.youlx.domain.offer.OfferStatus;
 import com.youlx.domain.photo.Photo;
 import com.youlx.domain.user.User;
 import com.youlx.domain.user.UserRepository;
@@ -18,9 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -42,7 +39,16 @@ public class Seed implements ApplicationRunner {
         userRepository.create(admin);
 
         final var photo = new Photo(uuid.generate(), new ClassPathResource("fixtures/index.jpg").getInputStream().readAllBytes());
-        offerRepository.create(new Offer(null, "Offer0", mockDescription, OfferStatus.OPEN, LocalDateTime.now(), Optional.empty(), admin, List.of(photo), BigDecimal.valueOf(1.123), LocalDateTime.now()));
-        offerRepository.create(new Offer(null, "Offer1", mockDescription, OfferStatus.CLOSED, LocalDateTime.now(), Optional.of(OfferCloseReason.EXPIRED), user1, List.of(), BigDecimal.ONE, LocalDateTime.now()));
+        offerRepository.create(new Offer("Offer0", mockDescription, admin, List.of(photo), BigDecimal.valueOf(1.123)));
+        final var o = new Offer("Offer1", mockDescription, admin, List.of(photo, photo, photo), BigDecimal.valueOf(2.123));
+        offerRepository.publish(offerRepository.create(o).getId());
+
+        final var o2 = new Offer("Offer2", mockDescription, admin, List.of(photo, photo, photo), BigDecimal.valueOf(2.123));
+        o2.close(OfferCloseReason.EXPIRED);
+        offerRepository.create(o2);
+
+        final var offer = new Offer("Offer3", mockDescription, user1, List.of(photo, photo, photo), BigDecimal.valueOf(2.123));
+        offer.close(OfferCloseReason.EXPIRED);
+        offerRepository.create(offer);
     }
 }
