@@ -90,7 +90,7 @@ class PhotoRepositoryTest {
         @Test
         void save() {
             final var id = "a";
-            final var offer = new OfferTuple(new Offer("", "", user), new UserTuple(user));
+            final var offer = new OfferTuple(new Offer("", "", user, null), new UserTuple(user));
             final var offerSaved = offerRepo.save(offer);
             when(hashId.decode(id)).thenReturn(offerSaved.getId());
             when(uuid.generate()).thenReturn(Fixtures.photo.getId());
@@ -107,7 +107,7 @@ class PhotoRepositoryTest {
         @Test
         void delete() {
             final var id = "a";
-            final var offer = new OfferTuple(new Offer("", "", user), new UserTuple(user));
+            final var offer = new OfferTuple(new Offer("", "", user, null), new UserTuple(user));
             final var offerSaved = offerRepo.save(offer);
             when(hashId.decode(id)).thenReturn(offerSaved.getId());
             when(uuid.generate()).thenReturn(Fixtures.photo.getId());

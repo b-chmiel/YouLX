@@ -14,6 +14,7 @@ import org.hibernate.annotations.Type;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class OfferTuple {
     private LocalDateTime creationDate;
     @Nullable
     private OfferCloseReason closeReason;
+    private BigDecimal price;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = PhotoTuple.class)
     private List<PhotoTuple> photos;
@@ -53,6 +55,7 @@ public class OfferTuple {
         this.creationDate = offer.getCreationDate();
         this.closeReason = offer.getCloseReason().orElse(null);
         this.photos = new ArrayList<>();
+        this.price = offer.getPrice();
     }
 
     public Offer toDomain(HashId hasher) {
@@ -64,7 +67,8 @@ public class OfferTuple {
                 creationDate,
                 Optional.ofNullable(closeReason),
                 user.toDomain(),
-                photos.stream().map(PhotoTuple::toDomain).toList()
+                photos.stream().map(PhotoTuple::toDomain).toList(),
+                price
         );
     }
 

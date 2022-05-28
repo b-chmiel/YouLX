@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,12 +28,13 @@ public class Offer {
     private Optional<OfferCloseReason> closeReason;
     private final User user;
     private final List<Photo> photos;
+    private final BigDecimal price;
 
-    public Offer(String name, String description, User user) {
-        this(name, description, user, List.of());
+    public Offer(String name, String description, User user, BigDecimal price) {
+        this(name, description, user, List.of(), price);
     }
 
-    public Offer(String name, String description, User user, List<Photo> photos) {
+    public Offer(String name, String description, User user, List<Photo> photos, BigDecimal price) {
         this.id = null;
         this.name = name;
         this.description = description;
@@ -41,6 +43,7 @@ public class Offer {
         this.closeReason = Optional.empty();
         this.user = user;
         this.photos = photos;
+        this.price = price;
     }
 
     public List<String> photosUrls() {

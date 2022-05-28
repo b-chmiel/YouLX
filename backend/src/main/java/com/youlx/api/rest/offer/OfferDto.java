@@ -8,6 +8,7 @@ import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,6 +29,7 @@ class OfferDto extends RepresentationModel<OfferDto> {
     private UserDto user;
     private String coverUrl;
     private List<String> imageUrls;
+    private BigDecimal price;
 
     OfferDto(Offer offer) {
         this.id = offer.getId();
@@ -43,5 +45,6 @@ class OfferDto extends RepresentationModel<OfferDto> {
             this.coverUrl = urls.get(0);
         }
         this.imageUrls = urls;
+        this.price = offer.getPrice();
     }
 }

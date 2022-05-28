@@ -38,7 +38,7 @@ class PhotoServiceTests {
             final var offerId = "a";
             final var photo = new Photo("", null);
             final var username = "user";
-            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null)));
+            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null, null)));
             when(offerService.isOwnerOf(offerId, username)).thenReturn(true);
 
             assertThrows(ApiImageException.class, () -> service.save(offerId, photo, username));
@@ -49,7 +49,7 @@ class PhotoServiceTests {
             final var offerId = "a";
             final var photo = new Photo("", null);
             final var username = "user";
-            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null)));
+            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null, null)));
             when(offerService.isOwnerOf(offerId, username)).thenReturn(false);
 
             assertThrows(ApiUnauthorizedException.class, () -> service.save(offerId, photo, username));
@@ -59,7 +59,7 @@ class PhotoServiceTests {
         void save() {
             final var offerId = "a";
             final var username = "user";
-            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null)));
+            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null, null)));
             when(offerService.isOwnerOf(offerId, username)).thenReturn(true);
 
             service.save(offerId, Fixtures.photo, username);
@@ -73,7 +73,7 @@ class PhotoServiceTests {
         @Test
         void findAll() {
             final var id = "a";
-            final var offer = new Offer("", "", null, List.of(Fixtures.photo, Fixtures.photo));
+            final var offer = new Offer("", "", null, List.of(Fixtures.photo, Fixtures.photo), null);
             when(offerService.findById(id)).thenReturn(Optional.of(offer));
             assertEquals(Fixtures.photo, service.findAllForOffer(id).get(0));
             assertEquals(Fixtures.photo, service.findAllForOffer(id).get(1));
@@ -88,7 +88,7 @@ class PhotoServiceTests {
             final var photoId = "b";
             final var username = "c";
 
-            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer("", "", null)));
+            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer("", "", null, null)));
             when(photoRepository.findById(photoId)).thenReturn(Optional.of(Fixtures.photo));
             when(offerService.isOwnerOf(offerId, username)).thenReturn(true);
 
@@ -114,7 +114,7 @@ class PhotoServiceTests {
             final var photoId = "b";
             final var username = "c";
 
-            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer("", "", null)));
+            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer("", "", null, null)));
             when(offerService.isOwnerOf(offerId, username)).thenReturn(false);
 
             assertThrows(ApiUnauthorizedException.class, () -> service.delete(offerId, photoId, username));
@@ -126,7 +126,7 @@ class PhotoServiceTests {
             final var photoId = "b";
             final var username = "c";
 
-            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer("", "", null)));
+            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer("", "", null, null)));
             when(offerService.isOwnerOf(offerId, username)).thenReturn(true);
             when(photoRepository.findById(photoId)).thenReturn(Optional.empty());
 

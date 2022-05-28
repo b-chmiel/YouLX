@@ -8,6 +8,7 @@ import com.youlx.infrastructure.offer.OfferPagedRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ class OfferServiceTests {
         @Test
         void isClosable() {
             final var user = new User(null, "", "", "", "", "");
-            final var offer = new Offer("", "", user);
+            final var offer = new Offer("", "", user, null);
 
             assertTrue(service.isClosable(user, offer));
             assertFalse(service.isClosable(new User(null, "", "", "", "", "asdf"), offer));
@@ -40,7 +41,7 @@ class OfferServiceTests {
         @Test
         void offerNotFound() {
             final var offerId = "a";
-            final var offer = new OfferModify("b", "c");
+            final var offer = new OfferModify("b", "c", BigDecimal.ONE);
             final var username = "d";
 
             assertThrows(ApiNotFoundException.class, () -> service.modify(offerId, offer, username));
@@ -49,18 +50,18 @@ class OfferServiceTests {
         @Test
         void userNotOwnerOf() {
             final var offerId = "a";
-            final var offer = new OfferModify("b", "c");
+            final var offer = new OfferModify("b", "c", BigDecimal.ONE);
             final var username = "d";
-            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username + "a"))));
+            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username + "a"), null)));
             assertThrows(ApiUnauthorizedException.class, () -> service.modify(offerId, offer, username));
         }
 
         @Test
         void modify() {
             final var offerId = "a";
-            final var offer = new OfferModify("b", "c");
+            final var offer = new OfferModify("b", "c", BigDecimal.ONE);
             final var username = "d";
-            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username))));
+            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username), null)));
             service.modify(offerId, offer, username);
 
             verify(offerRepository, times(1)).modify(offerId, offer);
@@ -83,7 +84,7 @@ class OfferServiceTests {
             final var offerId = "a";
             final var username = "b";
 
-            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username + "a"))));
+            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username + "a"), null)));
             assertFalse(service.isOwnerOf(offerId, username));
         }
 
@@ -92,7 +93,7 @@ class OfferServiceTests {
             final var offerId = "a";
             final var username = "b";
 
-            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username))));
+            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username), null)));
             assertTrue(service.isOwnerOf(offerId, username));
         }
     }
