@@ -34,9 +34,9 @@ public class Seed implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        final var user1 = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user1", "user1", "user1", passwordEncoder.encode("user1"), "user1");
-        final var user2 = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user2", "user2", "user2", passwordEncoder.encode("user2"), "user2");
-        final var admin = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "admin", "admin", "admin", passwordEncoder.encode("admin"), "admin");
+        final var user1 = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user1", "user1", "user1", passwordEncoder.encode("user1"), "user1", "+48555555555");
+        final var user2 = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user2", "user2", "user2", passwordEncoder.encode("user2"), "user2", "+48555555555");
+        final var admin = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "admin", "admin", "admin", passwordEncoder.encode("admin"), "admin", "+48555555555");
         userRepository.create(user1);
         userRepository.create(user2);
         userRepository.create(admin);

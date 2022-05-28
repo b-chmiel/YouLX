@@ -52,7 +52,7 @@ class MeControllerTest {
         @Test
         @WithMockUser("e")
         void profileReturnsInfoOfUser() throws Exception {
-            final var user = new User(List.of(), "a", "b", "c", "d", "e");
+            final var user = new User(List.of(), "a", "b", "c", "d", "e", "");
             userRepository.create(user);
 
             final var result = helpers.getRequest(Routes.User.ME);
@@ -80,22 +80,33 @@ class MeControllerTest {
         @Test
         @WithMockUser("doesnotexist")
         void returns304WhenUserDoesNotExist() throws Exception {
-            helpers.putRequest(new UserEditDto("", "", ""), Routes.User.ME).andExpect(status().is(HttpStatus.NOT_MODIFIED.value()));
+            helpers.putRequest(new UserEditDto("a", "a", "a", "+48555555555"), Routes.User.ME).andExpect(status().is(HttpStatus.NOT_MODIFIED.value()));
+        }
+
+        @Test
+        @WithMockUser("e")
+        void invalidData() throws Exception {
+            final var user = new User(List.of(), "a", "b", "c", "d", "e", "");
+            userRepository.create(user);
+
+            final var userEdit = new UserEditDto("", "", "", "");
+            helpers.putRequest(userEdit, Routes.User.ME).andExpect(status().isBadRequest());
         }
 
         @Test
         @WithMockUser("e")
         void editsUserData() throws Exception {
-            final var user = new User(List.of(), "a", "b", "c", "d", "e");
+            final var user = new User(List.of(), "a", "b", "c", "d", "e", "");
             userRepository.create(user);
 
-            final var userEdit = new UserEditDto("aa", "bb", "cc");
+            final var userEdit = new UserEditDto("aa", "bb", "cc", "+48555555555");
             helpers.putRequest(userEdit, Routes.User.ME).andExpect(status().isOk());
 
             final var edited = userRepository.findByUsername(user.getUsername());
             assertEquals(userEdit.getEmail(), edited.get().getEmail());
             assertEquals(userEdit.getFirstName(), edited.get().getFirstName());
             assertEquals(userEdit.getLastName(), edited.get().getLastName());
+            assertEquals(userEdit.getPhone(), edited.get().getPhone());
         }
     }
 }

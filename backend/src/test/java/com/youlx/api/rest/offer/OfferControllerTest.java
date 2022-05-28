@@ -38,7 +38,7 @@ class OfferControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    private final static User mockUser = new User(List.of(), "", "", "", "", "a");
+    private final static User mockUser = new User(List.of(), "", "", "", "", "a", "");
 
     @BeforeEach
     void setup() {

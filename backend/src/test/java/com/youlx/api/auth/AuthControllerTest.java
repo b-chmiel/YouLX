@@ -46,25 +46,26 @@ class AuthControllerTest {
     @Nested
     class RegisterTests {
         @Test
-        public void registerReturns200IfNotAuthenticated() throws Exception {
+        void registerReturns200IfNotAuthenticated() throws Exception {
             helpers.getRequest(Routes.Auth.REGISTER).andExpect(status().isOk());
         }
 
         @Test
-        public void registerValidation() throws Exception {
+        void registerValidation() throws Exception {
             final var params = new HashMap<String, String>();
 
             helpers.postFormRequest(params, Routes.Auth.REGISTER).andExpect(redirectedUrl(Routes.Auth.REGISTER + "?error"));
         }
 
         @Test
-        public void registerAndLogin() throws Exception {
+        void registerAndLogin() throws Exception {
             final var params = new HashMap<String, String>();
             params.put("username", "a");
             params.put("firstName", "b");
             params.put("lastName", "c");
             params.put("email", "d");
             params.put("password", "e");
+            params.put("phone", "f");
 
             helpers.postFormRequest(params, Routes.Auth.REGISTER).andExpect(redirectedUrl(Routes.Auth.LOGIN));
 

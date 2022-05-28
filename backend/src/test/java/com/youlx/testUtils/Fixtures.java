@@ -20,5 +20,5 @@ public class Fixtures {
         }
     }
 
-    public final static User user = new User(List.of(), "", "", "", "", "a");
+    public final static User user = new User(List.of(), "", "", "", "", "a", "");
 }

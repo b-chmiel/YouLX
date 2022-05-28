@@ -26,11 +26,11 @@ class OfferServiceTests {
     class IsClosableTests {
         @Test
         void isClosable() {
-            final var user = new User(null, "", "", "", "", "");
+            final var user = new User(null, "", "", "", "", "", "");
             final var offer = new Offer("", "", user, null);
 
             assertTrue(service.isClosable(user, offer));
-            assertFalse(service.isClosable(new User(null, "", "", "", "", "asdf"), offer));
+            assertFalse(service.isClosable(new User(null, "", "", "", "", "asdf", ""), offer));
             offer.close(OfferCloseReason.EXPIRED);
             assertFalse(service.isClosable(user, offer));
         }
@@ -52,7 +52,8 @@ class OfferServiceTests {
             final var offerId = "a";
             final var offer = new OfferModify("b", "c", BigDecimal.ONE);
             final var username = "d";
-            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username + "a"), null)));
+            final var user = new User(List.of(), "", "", "", "", username + "a", "");
+            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", user, null)));
             assertThrows(ApiUnauthorizedException.class, () -> service.modify(offerId, offer, username));
         }
 
@@ -61,7 +62,8 @@ class OfferServiceTests {
             final var offerId = "a";
             final var offer = new OfferModify("b", "c", BigDecimal.ONE);
             final var username = "d";
-            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username), null)));
+            final var user = new User(List.of(), "", "", "", "", username, "");
+            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", user, null)));
             service.modify(offerId, offer, username);
 
             verify(offerRepository, times(1)).modify(offerId, offer);
@@ -83,8 +85,9 @@ class OfferServiceTests {
         void usernameDoesNotMatch() {
             final var offerId = "a";
             final var username = "b";
+            final var user = new User(List.of(), "", "", "", "", username + "a", "");
 
-            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username + "a"), null)));
+            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", user, null)));
             assertFalse(service.isOwnerOf(offerId, username));
         }
 
@@ -92,8 +95,9 @@ class OfferServiceTests {
         void isOwnerOf() {
             final var offerId = "a";
             final var username = "b";
+            final var user = new User(List.of(), "", "", "", "", username, "");
 
-            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", new User(List.of(), "", "", "", "", username), null)));
+            when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", user, null)));
             assertTrue(service.isOwnerOf(offerId, username));
         }
     }

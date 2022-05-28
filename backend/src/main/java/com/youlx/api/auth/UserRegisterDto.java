@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @AllArgsConstructor
@@ -15,14 +16,21 @@ import java.util.List;
 @Getter
 @Setter
 class UserRegisterDto {
+    @NotNull
     private String username;
+    @NotNull
     private String firstName;
+    @NotNull
     private String lastName;
+    @NotNull
     private String email;
+    @NotNull
     private String password;
+    @NotNull
+    private String phone;
 
     User toDomain() {
         final var authorities = List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name()));
-        return new User(authorities, firstName, lastName, email, password, username);
+        return new User(authorities, firstName, lastName, email, password, username, phone);
     }
 }

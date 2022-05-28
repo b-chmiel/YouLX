@@ -18,14 +18,16 @@ public class User implements UserDetails {
     private String password;
 
     private final String username;
+    private final String phone;
 
-    public User(Collection<? extends GrantedAuthority> authorities, String firstName, String lastName, String email, String password, String username) {
+    public User(Collection<? extends GrantedAuthority> authorities, String firstName, String lastName, String email, String password, String username, String phone) {
         this.authorities = authorities;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.username = username;
+        this.phone = phone;
     }
 
     @Override
