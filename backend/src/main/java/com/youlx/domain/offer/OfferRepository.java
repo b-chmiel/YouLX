@@ -13,4 +13,6 @@ public interface OfferRepository {
     void clear();
 
     List<Offer> findByUserId(String id);
+
+    void modify(String id, OfferModify offer);
 }

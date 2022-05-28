@@ -6,6 +6,7 @@ import com.youlx.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,8 +19,11 @@ public class Offer {
     private final String id;
     private final String name;
     private final String description;
+    @Setter
     private OfferStatus status;
     private final LocalDateTime creationDate;
+
+    @Setter
     private Optional<OfferCloseReason> closeReason;
     private final User user;
     private final List<Photo> photos;

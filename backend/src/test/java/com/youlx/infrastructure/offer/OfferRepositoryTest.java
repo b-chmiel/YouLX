@@ -2,9 +2,10 @@ package com.youlx.infrastructure.offer;
 
 import com.youlx.domain.offer.*;
 import com.youlx.domain.user.UserRepository;
-import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.domain.utils.hashId.ApiHashIdException;
+import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.JpaConfig;
+import com.youlx.infrastructure.user.UserTuple;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 import static com.youlx.testUtils.Fixtures.user;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -42,15 +44,20 @@ class OfferRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private OfferRepositoryImpl.Repo repo;
+
 
     @BeforeEach
     void setup() throws ApiHashIdException {
         when(hashId.encode(1L)).thenReturn("1");
         when(hashId.encode(2L)).thenReturn("2");
         when(hashId.encode(3L)).thenReturn("3");
+        when(hashId.encode(4L)).thenReturn("4");
         when(hashId.decode("1")).thenReturn(1L);
         when(hashId.decode("2")).thenReturn(2L);
         when(hashId.decode("3")).thenReturn(3L);
+        when(hashId.decode("4")).thenReturn(4L);
         userRepository.create(user);
         repository.clear();
     }
@@ -61,13 +68,12 @@ class OfferRepositoryTest {
     }
 
     @Test
-    void shouldCreateAndFind() throws Exception {
+    void shouldCreate() throws Exception {
         final var offer = new Offer("3", "a", "b", OfferStatus.OPEN, LocalDateTime.now(), Optional.empty(), user, List.of());
 
         final var result = repository.create(offer);
 
         Helpers.assertOfferAttributesEqual(offer, result);
-        Helpers.assertOfferAttributesEqual(result, repository.findById("3").get());
     }
 
     @Test
@@ -84,15 +90,17 @@ class OfferRepositoryTest {
     }
 
     @Test
-    void shouldClose() throws Exception {
-        final var offer = new Offer("a", "b", user);
-        final var created = repository.create(offer);
+    void shouldClose() {
+        final var offer = new Offer("1", "a", "b", LocalDateTime.now(), user, List.of());
+        offer.setCloseReason(Optional.empty());
+        offer.setStatus(OfferStatus.OPEN);
+        final var created = repo.save(new OfferTuple(offer, new UserTuple(user))).toDomain(hashId);
 
         assertEquals(OfferStatus.OPEN, created.getStatus());
 
-        repository.close("1", new OfferClose(OfferCloseReason.EXPIRED));
+        repository.close(created.getId(), new OfferClose(OfferCloseReason.EXPIRED));
 
-        final var result = repository.findById("1").get();
+        final var result = repository.findById(created.getId()).get();
         assertEquals(OfferStatus.CLOSED, result.getStatus());
         assertEquals(OfferCloseReason.EXPIRED, result.getCloseReason().get());
     }
@@ -105,6 +113,21 @@ class OfferRepositoryTest {
         repository.create(new Offer("", "", user));
 
         assertEquals(2, repository.findByUserId(user.getUsername()).size());
+    }
+
+    @Test
+    void shouldModify() throws Exception {
+        final var offer = new Offer("4", "", "", LocalDateTime.now(), user, List.of());
+        offer.close(OfferCloseReason.MANUAL);
+        final var created = repo.save(new OfferTuple(offer, new UserTuple(user))).toDomain(hashId);
+        final var modify = new OfferModify("a", "b");
+
+        assertTrue(repository.findById(created.getId()).isPresent());
+        repository.modify(created.getId(), modify);
+
+        final var modified = repository.findById(created.getId());
+        assertEquals(modify.name(), modified.get().getName());
+        assertEquals(modify.description(), modified.get().getDescription());
     }
 
     private static class Helpers {

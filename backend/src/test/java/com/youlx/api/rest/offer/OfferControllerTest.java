@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class OfferControllerTest {
     @Autowired
-    private MvcHelpers commonHelpers;
+    private MvcHelpers helpers;
 
     @Autowired
     private UserRepository userRepository;
@@ -51,9 +51,9 @@ class OfferControllerTest {
         void shouldGetRecentlyCreated() throws Exception {
             final var offer = new OfferDto(new Offer("", "", mockUser));
 
-            final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
+            final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
-            commonHelpers.getRequest(location).andExpect(status().isOk());
+            helpers.getRequest(location).andExpect(status().isOk());
         }
 
         @Test
@@ -61,9 +61,9 @@ class OfferControllerTest {
         void shouldShowHateoasCloseOnOfferOwner() throws Exception {
             final var offer = new OfferDto(new Offer("", "", mockUser));
 
-            final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
+            final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
-            final var result = commonHelpers.getRequest(location);
+            final var result = helpers.getRequest(location);
 
             assertThat(MvcHelpers.attributeFromResult("_links.close.href", result), containsString("/close"));
         }
@@ -73,7 +73,7 @@ class OfferControllerTest {
     class GetAllTests {
         @Test
         void accessibleForUnauthenticatedUser() throws Exception {
-            final var response = commonHelpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
+            final var response = helpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
 
             assertThat(MvcHelpers.attributeFromResult("_embedded.offers[0]._links.self.href", response), not(containsString("/close")));
         }
@@ -81,7 +81,7 @@ class OfferControllerTest {
         @Test
         @WithMockUser()
         void accessibleForAuthenticatedNotRegisteredUser() throws Exception {
-            final var response = commonHelpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
+            final var response = helpers.getRequest(Routes.Offer.OFFERS).andDo(print()).andExpect(status().isOk());
 
             assertThat(MvcHelpers.attributeFromResult("_embedded.offers[0]._links.self.href", response), not(containsString("/close")));
         }
@@ -96,14 +96,14 @@ class OfferControllerTest {
             final var desc = "fdsa";
             final var offer = new OfferCreateDto(name, desc);
 
-            final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
+            final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
 
             response.andExpect(status().isCreated());
 
             final var location = response.andReturn().getResponse().getHeader("location");
             assertTrue(Objects.requireNonNull(response.andReturn().getResponse().getHeader("location")).contains(Routes.Offer.OFFERS));
 
-            final var created = commonHelpers.getRequest(location);
+            final var created = helpers.getRequest(location);
             assertEquals(name, MvcHelpers.attributeFromResult("name", created));
             assertEquals(desc, MvcHelpers.attributeFromResult("description", created));
             assertEquals(OfferStatus.OPEN.name(), MvcHelpers.attributeFromResult("status", created));
@@ -122,11 +122,32 @@ class OfferControllerTest {
         void shouldCloseOffer() throws Exception {
             final var offer = new OfferDto(new Offer("", "", mockUser));
 
-            final var response = commonHelpers.postRequest(offer, Routes.Offer.OFFERS);
+            final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
-            commonHelpers.postRequest(null, location + "/close");
-            final var result = commonHelpers.getRequest(location);
+            helpers.postRequest(null, location + "/close");
+            final var result = helpers.getRequest(location);
             assertEquals(OfferCloseReason.MANUAL.name(), MvcHelpers.attributeFromResult("closeReason", result));
+        }
+    }
+
+    @Nested
+    class ModifyTests {
+        @Test
+        void unauthorized() throws Exception {
+            final var offer = new OfferCreateDto("", "");
+            final var id = "a";
+            final var url = Routes.Offer.OFFERS + '/' + id;
+            helpers.putRequest(offer, url).andExpect(status().isForbidden());
+        }
+
+        @Test
+        @WithMockUser
+        void notFound() throws Exception {
+            final var offer = new OfferCreateDto("", "");
+            final var id = "a";
+            final var url = Routes.Offer.OFFERS + '/' + id;
+
+            helpers.putRequest(offer, url).andExpect(status().isNotFound());
         }
     }
 }
