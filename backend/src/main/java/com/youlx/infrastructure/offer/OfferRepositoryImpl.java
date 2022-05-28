@@ -2,12 +2,16 @@ package com.youlx.infrastructure.offer;
 
 import com.youlx.domain.offer.*;
 import com.youlx.domain.photo.PhotoRepository;
+import com.youlx.domain.utils.exception.ApiException;
+import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.hashId.ApiHashIdException;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.user.UserTuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,10 +31,10 @@ public class OfferRepositoryImpl implements OfferRepository {
     private final PhotoRepository photoRepository;
 
     @Override
-    public Offer create(Offer offer) throws Exception {
+    public Offer create(Offer offer) throws ApiException {
         final var user = userRepo.getUserTupleById(offer.getUser().getUsername());
         if (user.isEmpty()) {
-            throw new Exception("Cannot create offer for non existing user");
+            throw new ApiNotFoundException("Cannot create offer for non existing user");
         }
 
         final var tuple = new OfferTuple(offer, user.get());
@@ -71,6 +75,7 @@ public class OfferRepositoryImpl implements OfferRepository {
 
         found.get().setStatus(OfferStatus.CLOSED);
         found.get().setCloseReason(offer.reason());
+        found.get().setClosedDate(LocalDateTime.now());
         return Optional.of(repo.save(found.get()).toDomain(hashId));
     }
 
@@ -101,6 +106,15 @@ public class OfferRepositoryImpl implements OfferRepository {
         tuple.setName(offer.name());
         tuple.setDescription(offer.description());
         tuple.setPrice(offer.price());
+        repo.save(tuple);
+    }
+
+    @Override
+    @Transactional
+    public void publish(String offerId) {
+        final var tuple = repo.getById(hashId.decode(offerId));
+        tuple.setStatus(OfferStatus.OPEN);
+        tuple.setPublishedDate(LocalDateTime.now());
         repo.save(tuple);
     }
 }

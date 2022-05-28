@@ -70,7 +70,7 @@ class OfferRepositoryTest {
 
     @Test
     void shouldCreate() throws Exception {
-        final var offer = new Offer("3", "a", "b", OfferStatus.OPEN, LocalDateTime.now(), Optional.empty(), user, List.of(), BigDecimal.TEN);
+        final var offer = new Offer("a", "b", user, List.of(), BigDecimal.TEN);
 
         final var result = repository.create(offer);
 

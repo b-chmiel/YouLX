@@ -1,4 +1,4 @@
-package com.youlx.domain.utils;
+package com.youlx.domain.utils.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

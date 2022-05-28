@@ -1,6 +1,6 @@
 package com.youlx.domain.photo;
 
-import com.youlx.domain.utils.ApiException;
+import com.youlx.domain.utils.exception.ApiException;
 
 import java.util.List;
 import java.util.Optional;

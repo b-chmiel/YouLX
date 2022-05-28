@@ -2,7 +2,6 @@ package com.youlx.api.rest.offer;
 
 import com.sun.security.auth.UserPrincipal;
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferCloseReason;
 import com.youlx.domain.offer.OfferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -35,17 +34,17 @@ class OfferModelAssembler implements RepresentationModelAssembler<Offer, EntityM
         var links = new ArrayList<Link>();
 
         if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof final UserDetails user) {
-            if (offerService.isClosable(user, entity)) {
-                final var principal = new UserPrincipal(user.getUsername());
+            final var principal = new UserPrincipal(user.getUsername());
+            links.add(linkTo(methodOn(OfferController.class).get(principal, entity.getId())).withSelfRel());
+            if (offerService.isClosable(user.getUsername(), entity)) {
                 links.add(linkTo(methodOn(OfferController.class).close(principal, entity.getId())).withRel("close"));
+            } else if (offerService.isPublishable(user.getUsername(), entity.getId())) {
+                links.add(linkTo(methodOn(OfferController.class).publish(principal, entity.getId())).withRel("publish"));
             }
         }
 
-        links.addAll(
-                List.of(
-                        linkTo(methodOn(OfferController.class).get(entity.getId())).withSelfRel(),
-                        linkTo(methodOn(OfferController.class).getAllOpen(Pageable.unpaged())).withRel("allOpenOffers")
-                )
+        links.add(
+                linkTo(methodOn(OfferController.class).getAllOpen(Pageable.unpaged())).withRel("allOpenOffers")
         );
 
         return links;

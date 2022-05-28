@@ -2,9 +2,9 @@ package com.youlx.domain.photo;
 
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferService;
-import com.youlx.domain.utils.ApiException;
-import com.youlx.domain.utils.ApiNotFoundException;
-import com.youlx.domain.utils.ApiUnauthorizedException;
+import com.youlx.domain.utils.exception.ApiException;
+import com.youlx.domain.utils.exception.ApiNotFoundException;
+import com.youlx.domain.utils.exception.ApiUnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

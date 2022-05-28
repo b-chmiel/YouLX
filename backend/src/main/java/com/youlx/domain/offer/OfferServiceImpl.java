@@ -1,14 +1,14 @@
 package com.youlx.domain.offer;
 
-import com.youlx.domain.utils.ApiException;
-import com.youlx.domain.utils.ApiNotFoundException;
-import com.youlx.domain.utils.ApiUnauthorizedException;
+import com.youlx.domain.utils.exception.ApiCustomException;
+import com.youlx.domain.utils.exception.ApiException;
+import com.youlx.domain.utils.exception.ApiNotFoundException;
+import com.youlx.domain.utils.exception.ApiUnauthorizedException;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.offer.OfferPagedRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,23 +28,41 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public Offer create(Offer offer) throws Exception {
+    public Offer create(Offer offer) throws ApiException {
         return offerRepository.create(offer);
     }
 
     @Override
-    public Optional<Offer> close(String id, OfferClose offerClose, String username) {
+    public Offer close(String id, OfferClose offerClose, String username) throws ApiException {
         final var offer = offerRepository.findById(id);
-        if (offer.isPresent() && offer.get().getUser().getUsername().equals(username)) {
-            return offerRepository.close(id, offerClose);
+        if (offer.isEmpty()) {
+            throw new ApiNotFoundException("Offer not found.");
+        }
+        if (!isClosable(username, offer.get())) {
+            throw new ApiCustomException("Offer is not closable.");
         }
 
-        return Optional.empty();
+        final var result = offerRepository.close(id, offerClose);
+
+        if (result.isEmpty()) {
+            throw new ApiNotFoundException("Offer not found.");
+        }
+
+        return result.get();
     }
 
     @Override
-    public boolean isClosable(UserDetails user, Offer offer) {
-        return offer.getUser().getUsername().equals(user.getUsername()) && offer.getStatus().equals(OfferStatus.OPEN);
+    public boolean isClosable(String username, Offer offer) {
+        return offer.getUser().getUsername().equals(username) && offer.getStatus().equals(OfferStatus.OPEN);
+    }
+
+    @Override
+    public boolean isPublishable(String username, String offerId) {
+        return isOwnerOf(offerId, username) &&
+                offerRepository
+                        .findById(offerId)
+                        .map(o -> o.getStatus().equals(OfferStatus.DRAFT))
+                        .orElse(false);
     }
 
     @Override
@@ -81,6 +99,21 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public boolean isOwnerOf(String offerId, String username) {
         final var offer = offerRepository.findById(offerId);
-        return offer.isPresent() && offer.get().getUser().getUsername().equals(username);
+        return offer.map(o -> o.getUser().getUsername().equals(username)).orElse(false);
+    }
+
+    @Override
+    public void publish(String username, String offerId) throws ApiException {
+        if (!isPublishable(username, offerId)) {
+            throw new ApiCustomException("Offer is not publishable.");
+        }
+
+        offerRepository.publish(offerId);
+    }
+
+    @Override
+    public boolean isVisible(String username, String offerId) {
+        final var offer = offerRepository.findById(offerId);
+        return offer.map(o -> o.getStatus().equals(OfferStatus.OPEN) || o.getUser().getUsername().equals(username)).orElse(false);
     }
 }

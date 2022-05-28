@@ -30,6 +30,8 @@ class OfferDto extends RepresentationModel<OfferDto> {
     private String coverUrl;
     private List<String> imageUrls;
     private BigDecimal price;
+    private LocalDateTime publishedDate;
+    private LocalDateTime closedDate;
 
     OfferDto(Offer offer) {
         this.id = offer.getId();
@@ -46,5 +48,7 @@ class OfferDto extends RepresentationModel<OfferDto> {
         }
         this.imageUrls = urls;
         this.price = offer.getPrice();
+        this.publishedDate = offer.getPublishedDate();
+        this.closedDate = offer.getClosedDate();
     }
 }

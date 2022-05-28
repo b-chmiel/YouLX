@@ -4,7 +4,7 @@ import com.youlx.domain.offer.Offer;
 import com.youlx.domain.photo.ApiImageException;
 import com.youlx.domain.photo.PhotoRepository;
 import com.youlx.domain.user.UserRepository;
-import com.youlx.domain.utils.ApiNotFoundException;
+import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.hashId.ApiHashIdException;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.domain.utils.uuid.Uuid;
