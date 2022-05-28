@@ -114,4 +114,11 @@ class OfferController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/search")
+    ResponseEntity<?> search(Principal user, @Valid @RequestParam String query) {
+        final var username = user == null ? null : user.getName();
+        final var result = service.search(username, query).stream().map(OfferDto::new);
+        return ResponseEntity.ok(result);
+    }
 }

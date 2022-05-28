@@ -19,9 +19,10 @@ import static org.mockito.Mockito.*;
 class OfferServiceTests {
     private final OfferRepository offerRepository = mock(OfferRepository.class);
     private final OfferPagedRepository offerPagedRepository = mock(OfferPagedRepository.class);
+    private final OfferSearchRepository offerSearchRepository = mock(OfferSearchRepository.class);
     private final HashId hashId = mock(HashId.class);
 
-    private final OfferService service = new OfferServiceImpl(offerRepository, offerPagedRepository, hashId);
+    private final OfferService service = new OfferServiceImpl(offerRepository, offerPagedRepository, offerSearchRepository, hashId);
 
     @Nested
     class FindByIdTests {
@@ -208,6 +209,41 @@ class OfferServiceTests {
 
             when(offerRepository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", user, null)));
             assertTrue(service.isOwnerOf(offerId, username));
+        }
+    }
+
+    @Nested
+    class SearchTests {
+        @Test
+        void search() {
+            final var user1 = new User(List.of(), "", "", "", "", "a", "");
+            final var user2 = new User(List.of(), "", "", "", "", "b", "");
+            final var query = "asdf";
+
+            final var offer1 = new Offer("1", "", user1, null);
+            offer1.setStatus(OfferStatus.OPEN);
+            final var offer2 = new Offer("2", "", user2, null);
+            offer2.setStatus(OfferStatus.OPEN);
+            final var offer3 = new Offer("3", "", user2, null);
+            final var offer4 = new Offer("4", "", user1, null);
+            final var offer5 = new Offer("5", "", user1, null);
+            offer5.close(OfferCloseReason.EXPIRED);
+            final var offer6 = new Offer("6", "", user2, null);
+            offer6.close(OfferCloseReason.EXPIRED);
+
+            final var offers = List.of(
+                    offer1, offer2, offer3, offer4, offer5, offer6
+            );
+
+            when(offerSearchRepository.search(query)).thenReturn(offers);
+
+            final var expected = List.of(
+                    offer1, offer2, offer4, offer5
+            );
+
+            assertEquals(expected, service.search(user1.getUsername(), query));
+
+            verify(offerSearchRepository, times(1)).search(query);
         }
     }
 }

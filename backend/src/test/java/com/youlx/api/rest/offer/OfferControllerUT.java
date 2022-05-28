@@ -19,8 +19,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.List;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -68,6 +67,17 @@ class OfferControllerUT {
             doThrow(new ApiCustomException("")).when(service).close(id, new OfferClose(OfferCloseReason.MANUAL), "user");
 
             helpers.postRequest(null, url + "/" + id + "/close").andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    class SearchTests {
+        @Test
+        void search() throws Exception {
+            final var query = "asdf";
+            helpers.getRequest(Routes.Offer.OFFERS + "/search?query=" + query).andExpect(status().isOk());
+
+            verify(service).search(null, query);
         }
     }
 }

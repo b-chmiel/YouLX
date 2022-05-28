@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
         loader = AnnotationConfigContextLoader.class
 )
 @DataJpaTest
-class PhotoRepositoryTest {
+class PhotoRepositoryTests {
     @MockBean
     private HashId hashId;
     @MockBean

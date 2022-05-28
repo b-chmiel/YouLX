@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.TermVector;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -21,20 +24,23 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Entity
+@Table(name = "LX_OFFER")
+@Indexed
 @Getter
 @Setter
 @ToString
-@Entity
 @NoArgsConstructor
-@Table(name = "LX_OFFER")
 public class OfferTuple {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Field(termVector = TermVector.YES)
     private String name;
     @Lob
     @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Field(termVector = TermVector.YES)
     private String description;
     private OfferStatus status;
     @ManyToOne(fetch = FetchType.LAZY)

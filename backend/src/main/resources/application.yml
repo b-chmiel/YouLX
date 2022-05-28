@@ -45,3 +45,9 @@ logging:
 
 hashids:
   salt: DefaultSaltWhoCares
+
+hibernate:
+  search:
+    default:
+      directory_provider: filesystem
+      indexBase: /data/index/default

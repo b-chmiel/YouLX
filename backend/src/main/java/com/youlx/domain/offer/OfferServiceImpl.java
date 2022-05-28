@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
     private final OfferPagedRepository offerPagedRepository;
+    private final OfferSearchRepository offerSearchRepository;
     private final HashId hashId;
 
     @Override
@@ -114,6 +116,21 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public boolean isVisible(String username, String offerId) {
         final var offer = offerRepository.findById(offerId);
-        return offer.map(o -> o.getStatus().equals(OfferStatus.OPEN) || o.getUser().getUsername().equals(username)).orElse(false);
+        return isVisible(username, offer);
+    }
+
+    @Override
+    public List<Offer> search(String username, String query) {
+        return offerSearchRepository
+                .search(query)
+                .stream()
+                .filter(offer -> isVisible(username, Optional.of(offer)))
+                .toList();
+    }
+
+    private boolean isVisible(String username, Optional<Offer> offer) {
+        return offer.map(
+                o -> o.getStatus().equals(OfferStatus.OPEN) || o.getUser().getUsername().equals(username)
+        ).orElse(false);
     }
 }
