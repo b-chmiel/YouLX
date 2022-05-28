@@ -7,6 +7,7 @@ import com.youlx.domain.utils.ApiException;
 import com.youlx.domain.utils.ApiNotFoundException;
 import com.youlx.domain.utils.ApiUnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -68,7 +69,7 @@ class OfferController {
 
     @GetMapping
     PagedModel<EntityModel<OfferDto>> getAllOpen(
-            @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable
+            @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return resourcesAssembler.toModel(service.findOpen(pageable), modelAssembler);
     }

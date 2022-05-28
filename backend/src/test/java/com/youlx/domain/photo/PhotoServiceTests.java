@@ -3,6 +3,7 @@ package com.youlx.domain.photo;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferService;
 import com.youlx.domain.utils.ApiNotFoundException;
+import com.youlx.domain.utils.ApiUnauthorizedException;
 import com.youlx.testUtils.Fixtures;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,26 +26,43 @@ class PhotoServiceTests {
         void offerDoesNotExist() {
             final var offerId = "a";
             final var photo = new Photo("", null);
+            final var username = "user";
             when(offerService.findById(offerId)).thenReturn(Optional.empty());
+            when(offerService.isOwnerOf(offerId, username)).thenReturn(true);
 
-            assertThrows(ApiNotFoundException.class, () -> service.save(offerId, photo));
+            assertThrows(ApiNotFoundException.class, () -> service.save(offerId, photo, username));
         }
 
         @Test
         void photoInvalid() {
             final var offerId = "a";
             final var photo = new Photo("", null);
+            final var username = "user";
             when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null)));
+            when(offerService.isOwnerOf(offerId, username)).thenReturn(true);
 
-            assertThrows(ApiImageException.class, () -> service.save(offerId, photo));
+            assertThrows(ApiImageException.class, () -> service.save(offerId, photo, username));
         }
 
         @Test
-        void photoValid() {
+        void userIsNotOwner() {
             final var offerId = "a";
+            final var photo = new Photo("", null);
+            final var username = "user";
             when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null)));
+            when(offerService.isOwnerOf(offerId, username)).thenReturn(false);
 
-            service.save(offerId, Fixtures.photo);
+            assertThrows(ApiUnauthorizedException.class, () -> service.save(offerId, photo, username));
+        }
+
+        @Test
+        void save() {
+            final var offerId = "a";
+            final var username = "user";
+            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer(null, null, null)));
+            when(offerService.isOwnerOf(offerId, username)).thenReturn(true);
+
+            service.save(offerId, Fixtures.photo, username);
 
             verify(photoRepository, times(1)).savePhoto(offerId, Fixtures.photo);
         }
@@ -68,13 +86,51 @@ class PhotoServiceTests {
         void delete() {
             final var offerId = "a";
             final var photoId = "b";
+            final var username = "c";
 
             when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer("", "", null)));
             when(photoRepository.findById(photoId)).thenReturn(Optional.of(Fixtures.photo));
+            when(offerService.isOwnerOf(offerId, username)).thenReturn(true);
 
-            service.delete(offerId, photoId);
+            service.delete(offerId, photoId, username);
 
             verify(photoRepository, times(1)).delete(offerId, photoId);
+        }
+
+        @Test
+        void offerNotFound() {
+            final var offerId = "a";
+            final var photoId = "b";
+            final var username = "c";
+
+            when(offerService.findById(offerId)).thenReturn(Optional.empty());
+
+            assertThrows(ApiNotFoundException.class, () -> service.delete(offerId, photoId, username));
+        }
+
+        @Test
+        void userNotOwnerOf() {
+            final var offerId = "a";
+            final var photoId = "b";
+            final var username = "c";
+
+            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer("", "", null)));
+            when(offerService.isOwnerOf(offerId, username)).thenReturn(false);
+
+            assertThrows(ApiUnauthorizedException.class, () -> service.delete(offerId, photoId, username));
+        }
+
+        @Test
+        void photoNotFound() {
+            final var offerId = "a";
+            final var photoId = "b";
+            final var username = "c";
+
+            when(offerService.findById(offerId)).thenReturn(Optional.of(new Offer("", "", null)));
+            when(offerService.isOwnerOf(offerId, username)).thenReturn(true);
+            when(photoRepository.findById(photoId)).thenReturn(Optional.empty());
+
+            assertThrows(ApiNotFoundException.class, () -> service.delete(offerId, photoId, username));
         }
     }
 }
