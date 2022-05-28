@@ -23,6 +23,16 @@ describe('OfferComponent', () => {
       description: 'A house in the suburbs, contact me through my email at notta.scammy@estate.real',
       coverUrl: 'https://api.lorem.space/image/house?w=400&h=225',
       price: 600_000,
+      user: {
+        login: 'john'
+      },
+      status: 'OPEN',
+      creationDate: '',
+      _links: {
+        close: {
+          href: ''
+        }
+      }
     };
     fixture.detectChanges();
   });
