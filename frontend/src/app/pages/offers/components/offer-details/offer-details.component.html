@@ -4,9 +4,15 @@
       <a routerLink="/" class="btn btn-sm btn-outline">go back</a>
     </div>
     <article class="bg-white shadow-xl p-3 rounded-box prose max-w-none">
-      <h4>{{offer.name}}</h4>
+      <div *ngIf="offer.status == 'OPEN'; else closed" class="badge badge-success badge-outline">Open</div>
+      <ng-template #closed>
+        <div class="badge badge-error badge-outline">Closed</div>
+      </ng-template>
+      <span class="ml-2 text-xs text-gray-400">posted by {{offer.user.login}} on {{offer.creationDate | date}}</span>
+      <h4 class="mt-1">{{offer.name}}</h4>
       <hr class="mb-2"/>
       <p>{{offer.description}}</p>
+      <button *ngIf="offer._links.close" class="btn btn-outline" (click)="closeOffer()">Close offer</button>
     </article>
   </div>
 </ng-container>

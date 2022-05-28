@@ -52,6 +52,16 @@ export class OffersService {
       return null;
     }));
   }
+
+  closeOffer(offer: Offer): Observable<Offer | null> {
+    const closeUrl = offer._links?.close?.href;
+
+    if (closeUrl) {
+      return this.http.post<Offer>(closeUrl, {})
+    }
+
+    return of(null);
+  }
 }
 
 interface GetOffersResponse {
