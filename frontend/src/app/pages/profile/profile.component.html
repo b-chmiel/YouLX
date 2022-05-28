@@ -1,0 +1,10 @@
+<div class="container max-w-4xl mx-auto">
+  <div class="my-3">
+    <a routerLink="/" class="btn btn-sm btn-outline">go back</a>
+  </div>
+  <div class="bg-white shadow-xl p-3 rounded-box max-w-none">
+    <app-profile-brief [profile]="profile"></app-profile-brief>
+    <div class="divider">EDIT</div>
+    <app-profile-edit [profile]="profile" (saveProfile)="onSaveProfile($event)"></app-profile-edit>
+  </div>
+</div>
