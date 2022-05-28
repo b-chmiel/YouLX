@@ -1,12 +1,13 @@
 package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
-import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferClose;
-import com.youlx.domain.offer.OfferCloseReason;
-import com.youlx.domain.offer.OfferService;
+import com.youlx.domain.offer.*;
 import com.youlx.domain.user.UserService;
+import com.youlx.domain.utils.ApiException;
+import com.youlx.domain.utils.ApiNotFoundException;
+import com.youlx.domain.utils.ApiUnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -68,8 +69,27 @@ class OfferController {
 
     @GetMapping
     PagedModel<EntityModel<OfferDto>> getAllOpen(
-            @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable
+            @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return resourcesAssembler.toModel(service.findOpen(pageable), modelAssembler);
+    }
+
+    @PutMapping("{id}")
+    ResponseEntity<?> modify(Principal user, @Valid @PathVariable String id, @Valid @RequestBody OfferCreateDto offer) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        try {
+            service.modify(id, new OfferModify(offer.getName(), offer.getDescription()), user.getName());
+        } catch (ApiNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (ApiUnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (ApiException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+        return ResponseEntity.ok().build();
     }
 }

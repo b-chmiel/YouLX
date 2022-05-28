@@ -1,7 +1,8 @@
 package com.youlx.domain.offer;
 
-import com.youlx.domain.photo.Photo;
-import com.youlx.domain.photo.PhotoRepository;
+import com.youlx.domain.utils.ApiException;
+import com.youlx.domain.utils.ApiNotFoundException;
+import com.youlx.domain.utils.ApiUnauthorizedException;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.offer.OfferPagedRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.imageio.ImageIO;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -22,7 +20,6 @@ import java.util.Optional;
 public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
     private final OfferPagedRepository offerPagedRepository;
-    private final PhotoRepository photoRepository;
     private final HashId hashId;
 
     @Override
@@ -36,9 +33,9 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public Optional<Offer> close(String id, OfferClose offerClose, String user) {
+    public Optional<Offer> close(String id, OfferClose offerClose, String username) {
         final var offer = offerRepository.findById(id);
-        if (offer.isPresent() && offer.get().getUser().getUsername().equals(user)) {
+        if (offer.isPresent() && offer.get().getUser().getUsername().equals(username)) {
             return offerRepository.close(id, offerClose);
         }
 
@@ -70,4 +67,20 @@ public class OfferServiceImpl implements OfferService {
         );
     }
 
+    @Override
+    public void modify(String id, OfferModify offer, String username) throws ApiException {
+        if (findById(id).isEmpty()) {
+            throw new ApiNotFoundException("Offer not found.");
+        } else if (!isOwnerOf(id, username)) {
+            throw new ApiUnauthorizedException("User is not the owner of offer.");
+        }
+
+        offerRepository.modify(id, offer);
+    }
+
+    @Override
+    public boolean isOwnerOf(String offerId, String username) {
+        final var offer = offerRepository.findById(offerId);
+        return offer.isPresent() && offer.get().getUser().getUsername().equals(username);
+    }
 }

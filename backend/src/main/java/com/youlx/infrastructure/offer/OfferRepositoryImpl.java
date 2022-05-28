@@ -1,9 +1,6 @@
 package com.youlx.infrastructure.offer;
 
-import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferClose;
-import com.youlx.domain.offer.OfferRepository;
-import com.youlx.domain.offer.OfferStatus;
+import com.youlx.domain.offer.*;
 import com.youlx.domain.photo.PhotoRepository;
 import com.youlx.domain.utils.hashId.ApiHashIdException;
 import com.youlx.domain.utils.hashId.HashId;
@@ -96,5 +93,13 @@ public class OfferRepositoryImpl implements OfferRepository {
                 .map(
                         o -> o.toDomain(hashId)
                 ).toList();
+    }
+
+    @Override
+    public void modify(String id, OfferModify offer) {
+        final var tuple = repo.getById(hashId.decode(id));
+        tuple.setName(offer.name());
+        tuple.setDescription(offer.description());
+        repo.save(tuple);
     }
 }

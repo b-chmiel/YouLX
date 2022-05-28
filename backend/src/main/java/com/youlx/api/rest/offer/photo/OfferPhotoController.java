@@ -5,6 +5,7 @@ import com.youlx.domain.photo.Photo;
 import com.youlx.domain.photo.PhotoService;
 import com.youlx.domain.utils.ApiException;
 import com.youlx.domain.utils.ApiNotFoundException;
+import com.youlx.domain.utils.ApiUnauthorizedException;
 import com.youlx.domain.utils.uuid.Uuid;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,14 +31,21 @@ class OfferPhotoController {
 
     @PostMapping(value = "{offerId}/photos", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     ResponseEntity<?> postPhoto(
+            Principal user,
             @Valid @PathVariable String offerId,
             @Parameter(content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)) @RequestParam("file") MultipartFile file
     ) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         try {
-            service.save(offerId, new Photo(uuid, file));
+            service.save(offerId, new Photo(uuid, file), user.getName());
             return ResponseEntity.ok(null);
         } catch (ApiNotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (ApiUnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -70,12 +79,17 @@ class OfferPhotoController {
     }
 
     @DeleteMapping("{offerId}/photos/{photoId}")
-    ResponseEntity<?> deletePhoto(@Valid @PathVariable String offerId, @Valid @PathVariable String photoId) {
+    ResponseEntity<?> deletePhoto(Principal user, @Valid @PathVariable String offerId, @Valid @PathVariable String photoId) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
-            service.delete(offerId, photoId);
+            service.delete(offerId, photoId, user.getName());
             return ResponseEntity.ok().build();
         } catch (ApiNotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (ApiUnauthorizedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (ApiException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

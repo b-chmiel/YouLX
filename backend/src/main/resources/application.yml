@@ -9,9 +9,9 @@ spring:
       path: /h2-console
       enabled: true
   datasource:
-    #    url: jdbc:postgresql://localhost:5432/db
-    #    username: postgres
-    #    password: postgres
+#    url: jdbc:postgresql://localhost:5432/db
+#    username: postgres
+#    password: postgres
     url: jdbc:h2:mem:db;Mode=Oracle
     username: sa
     password: password
@@ -24,7 +24,6 @@ spring:
     properties:
       hibernate:
         format_sql=true:
-  #    database-platform: org.hibernate.dialect.PostgreSQLDialect
   data:
     rest:
       default-page-size: 10
