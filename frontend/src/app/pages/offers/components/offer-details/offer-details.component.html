@@ -1,7 +1,7 @@
 <ng-container *ngIf="offer; else notFound">
   <div class="container max-w-4xl mx-auto">
     <div class="my-3">
-      <a routerLink="/" class="btn btn-sm btn-outline">go back</a>
+      <button backButton class="btn btn-sm btn-outline">go back</button>
     </div>
     <article class="bg-white shadow-xl p-3 rounded-box prose max-w-none">
       <div *ngIf="offer.status == 'OPEN'; else closed" class="badge badge-success badge-outline">Open</div>

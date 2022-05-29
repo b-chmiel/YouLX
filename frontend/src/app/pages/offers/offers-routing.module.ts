@@ -3,6 +3,8 @@ import {RouterModule, Routes} from '@angular/router';
 import {OfferDetailsComponent} from './components/offer-details/offer-details.component';
 import {OfferResolver} from './resolvers/offer.resolver';
 import {OfferNewComponent} from './components/offer-new/offer-new.component';
+import {BrowseMyOffersComponent} from './components/browse-my-offers/browse-my-offers.component';
+import {MyOffersResolver} from './resolvers/my-offers.resolver';
 
 const routes: Routes = [
   {
@@ -11,6 +13,13 @@ const routes: Routes = [
     resolve: {
       offer: OfferResolver,
     },
+  },
+  {
+    path: 'offers/owned',
+    component: BrowseMyOffersComponent,
+    resolve: {
+      offers: MyOffersResolver
+    }
   },
   {
     path: 'offers/create',
