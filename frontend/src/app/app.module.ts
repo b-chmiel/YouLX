@@ -7,7 +7,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {LayoutModule} from './layout/layout.module';
 import {HomeModule} from './pages/home/home.module';
 import {HttpClientModule} from '@angular/common/http';
-import { OffersModule } from './pages/offers/offers.module';
+import {OffersModule} from './pages/offers/offers.module';
 import {ProfileModule} from './pages/profile/profile.module';
 
 @NgModule({

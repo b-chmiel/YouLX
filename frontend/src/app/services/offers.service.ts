@@ -8,6 +8,7 @@ import {CreateOfferDto, Offer} from '../models/offer';
 })
 export class OffersService {
   private readonly offersUrl = '/api/offers';
+  private readonly ownOffersUrl = '/api/me/offers';
 
   constructor(private http: HttpClient) {
   }
@@ -18,6 +19,36 @@ export class OffersService {
     }
 
     return this.http.get<GetOffersResponse>(this.offersUrl).pipe(
+      map(value => value._embedded.offers.map(offer => {
+        if (offer.price === undefined) {
+          offer.price = null;
+        }
+
+        if (offer.coverUrl === undefined) {
+          offer.coverUrl = null;
+        }
+
+        if (offer.description === undefined) {
+          offer.description = null;
+        }
+
+        return offer;
+      })),
+      catchError(err => of([] as Offer[])));
+  }
+
+  getOwnOffers(page: number, size: number, status: string = 'OPEN;CLOSED;DRAFT'): Observable<Offer[]> {
+    if (page < 0 || size < 1) {
+      return of([] as Offer[]);
+    }
+
+    return this.http.get<GetOffersResponse>(this.ownOffersUrl, {
+      params: {
+        page,
+        size,
+        status,
+      },
+    }).pipe(
       map(value => value._embedded.offers.map(offer => {
         if (offer.price === undefined) {
           offer.price = null;
@@ -57,7 +88,7 @@ export class OffersService {
     const closeUrl = offer._links?.close?.href;
 
     if (closeUrl) {
-      return this.http.post<Offer>(closeUrl, {})
+      return this.http.post<Offer>(closeUrl, {});
     }
 
     return of(null);
