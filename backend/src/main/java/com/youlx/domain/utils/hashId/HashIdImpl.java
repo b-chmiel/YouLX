@@ -2,6 +2,8 @@ package com.youlx.domain.utils.hashId;
 
 import lombok.RequiredArgsConstructor;
 import org.hashids.Hashids;
+import org.springframework.stereotype.Component;
+import org.springframework.test.annotation.Commit;
 
 @RequiredArgsConstructor
 public class HashIdImpl implements HashId {

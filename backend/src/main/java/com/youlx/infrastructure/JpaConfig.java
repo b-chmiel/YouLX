@@ -31,7 +31,7 @@ public class JpaConfig {
     }
 
     @Bean
-    TagRepositoryImpl tagRepository(TagRepositoryImpl.Repo repo) {
-        return new TagRepositoryImpl(repo);
+    TagRepositoryImpl tagRepository(TagRepositoryImpl.Repo repo, TagRepositoryImpl.OfferRepo offerRepo, HashId hashId) {
+        return new TagRepositoryImpl(repo, offerRepo, hashId);
     }
 }

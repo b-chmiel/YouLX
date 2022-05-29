@@ -17,7 +17,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-class TagTuple {
+public class TagTuple {
     @Id
     private String name;
 

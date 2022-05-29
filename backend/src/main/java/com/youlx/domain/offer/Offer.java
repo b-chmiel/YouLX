@@ -2,6 +2,7 @@ package com.youlx.domain.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.photo.Photo;
+import com.youlx.domain.tag.Tag;
 import com.youlx.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -31,6 +33,7 @@ public class Offer {
     private final BigDecimal price;
     private LocalDateTime publishedDate;
     private LocalDateTime closedDate;
+    private final Set<Tag> tags;
 
     public Offer(String name, String description, User user, BigDecimal price) {
         this(name, description, user, List.of(), price);
@@ -48,6 +51,7 @@ public class Offer {
         this.price = price;
         this.publishedDate = null;
         this.closedDate = null;
+        this.tags = Set.of();
     }
 
     public List<String> photosUrls() {

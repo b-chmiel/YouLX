@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.youlx.testUtils.Fixtures.user;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,7 +93,7 @@ class OfferRepositoryTests {
 
     @Test
     void shouldClose() {
-        final var offer = new Offer("1", "a", "b", LocalDateTime.now(), user, List.of(), BigDecimal.TEN);
+        final var offer = new Offer("1", "a", "b", LocalDateTime.now(), user, List.of(), BigDecimal.TEN, Set.of());
         offer.setCloseReason(Optional.empty());
         offer.setStatus(OfferStatus.OPEN);
         final var created = repo.save(new OfferTuple(offer, new UserTuple(user))).toDomain(hashId);
@@ -118,7 +119,7 @@ class OfferRepositoryTests {
 
     @Test
     void shouldModify() {
-        final var offer = new Offer("4", "", "", LocalDateTime.now(), user, List.of(), BigDecimal.ONE);
+        final var offer = new Offer("4", "", "", LocalDateTime.now(), user, List.of(), BigDecimal.ONE, Set.of());
         offer.close(OfferCloseReason.MANUAL);
         final var created = repo.save(new OfferTuple(offer, new UserTuple(user))).toDomain(hashId);
         final var modify = new OfferModify("a", "b", BigDecimal.TEN);

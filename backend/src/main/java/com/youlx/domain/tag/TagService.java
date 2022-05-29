@@ -8,4 +8,6 @@ public interface TagService {
     List<Tag> getAll();
 
     void create(Tag tag) throws ApiException;
+
+    void assignToOffer(String username, String offerId, Tag tag) throws ApiException;
 }
