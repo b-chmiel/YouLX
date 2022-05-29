@@ -71,11 +71,21 @@ class TagRepositoryTests {
         offerRepository.clear();
     }
 
-    @Test
-    void createAndGet() {
-        final var tags = List.of(new Tag("a"), new Tag("b"));
-        tags.forEach(tag -> repository.create(tag));
-        assertEquals(tags, repository.getAll());
+    @Nested
+    class CreateTests {
+        @Test
+        void conflict() {
+            final var tag = new Tag("a");
+            repository.create(tag);
+            assertThrows(ApiConflictException.class, () -> repository.create(tag));
+        }
+
+        @Test
+        void create() {
+            final var tags = List.of(new Tag("a"), new Tag("b"));
+            tags.forEach(tag -> repository.create(tag));
+            assertEquals(tags, repository.getAll());
+        }
     }
 
     @Nested

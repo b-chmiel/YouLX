@@ -19,4 +19,6 @@ public interface OfferRepository {
     void modify(String id, OfferModify offer);
 
     void publish(String offerId);
+
+    boolean exists(String offerId);
 }

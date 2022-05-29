@@ -1,6 +1,7 @@
 package com.youlx.domain.tag;
 
-import com.youlx.domain.offer.OfferService;
+import com.youlx.domain.offer.OfferModifyService;
+import com.youlx.domain.offer.OfferStateCheckService;
 import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TagServiceImpl implements TagService {
     private final TagRepository repository;
-    private final OfferService offerService;
+    private final OfferModifyService offerService;
+    private final OfferStateCheckService offerStateCheckService;
 
     @Override
     public List<Tag> getAll() {
@@ -26,7 +28,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public void assignToOffer(String username, String offerId, Tag tag) throws ApiException {
-        if (!offerService.isOwnerOf(offerId, username)) {
+        if (!offerStateCheckService.isOwnerOf(offerId, username)) {
             throw new ApiUnauthorizedException("User must be owner of offer to change it's tags.");
         }
 

@@ -35,7 +35,7 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public void create(Tag tag) throws ApiException {
-        if (repo.findById(tag.name()).isPresent()) {
+        if (repo.existsById(tag.name())) {
             throw new ApiConflictException("Tag with the same name exists.");
         }
 

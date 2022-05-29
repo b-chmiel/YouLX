@@ -2,7 +2,9 @@ package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferService;
+import com.youlx.domain.offer.OfferFindService;
+import com.youlx.domain.user.UserShallow;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -26,13 +28,14 @@ import java.security.Principal;
 class OfferMeController {
     private final PagedResourcesAssembler<Offer> resourcesAssembler;
     private final OfferModelAssembler modelAssembler;
-    private final OfferService service;
+    private final OfferFindService service;
 
     @GetMapping("/offers")
     ResponseEntity<PagedModel<EntityModel<OfferDto>>> offers(
             @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
             Principal user,
-            @RequestParam(required = false, defaultValue = "OPEN") String status
+            @Parameter(description = "Statuses delimited with ';' symbol. Pass 'ALL' for no filtering.") @RequestParam(required = false, defaultValue = "OPEN") String statuses,
+            @Parameter(description = "Tags delimited with ';' symbol. Empty list means no filtering.") @RequestParam(required = false, defaultValue = "") String tags
     ) {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -40,7 +43,7 @@ class OfferMeController {
 
         final var username = user.getName();
         return ResponseEntity.ok(
-                resourcesAssembler.toModel(service.findBy(pageable, username, status)
+                resourcesAssembler.toModel(service.findBy(pageable, new UserShallow(username), statuses, tags)
                         , modelAssembler
                 )
         );

@@ -2,8 +2,9 @@ package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferService;
+import com.youlx.domain.offer.OfferFindService;
 import com.youlx.domain.user.UserService;
+import com.youlx.domain.user.UserShallow;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -24,21 +25,21 @@ class OfferUserController {
     private final PagedResourcesAssembler<Offer> resourcesAssembler;
     private final OfferModelAssembler modelAssembler;
     private final UserService userService;
-    private final OfferService offerService;
+    private final OfferFindService offerFindService;
 
     @GetMapping("/{username}/offers")
     ResponseEntity<PagedModel<EntityModel<OfferDto>>> offers(
             @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
             @Valid @PathVariable String username,
-            @RequestParam(required = false, defaultValue = "OPEN") String status
+            @RequestParam(required = false, defaultValue = "") String tags
     ) {
-        if (userService.findById(username).isEmpty()) {
+        if (!userService.exists(username)) {
             return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.ok(
                 resourcesAssembler.toModel(
-                        offerService.findBy(pageable, username, status)
+                        offerFindService.findOpen(pageable, new UserShallow(username), tags)
                         , modelAssembler
                 )
         );

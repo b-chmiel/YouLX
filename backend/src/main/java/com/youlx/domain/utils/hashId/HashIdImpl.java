@@ -16,6 +16,10 @@ public class HashIdImpl implements HashId {
 
     @Override
     public Long decode(String id) throws ApiHashIdException {
+        if (id == null) {
+            throw new ApiHashIdException("Cannot decode null string.");
+        }
+
         final var result = hashids.decode(id);
         if (result.length != 1) {
             throw new ApiHashIdException("Cannot decode id: " + id);
