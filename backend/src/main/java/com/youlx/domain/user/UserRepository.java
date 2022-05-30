@@ -10,4 +10,6 @@ public interface UserRepository {
     void clear();
 
     Optional<User> edit(String id, UserEdit user);
+
+    boolean exists(String id);
 }

@@ -3,6 +3,7 @@ package com.youlx.api.rest.offer;
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.*;
 import com.youlx.domain.user.UserService;
+import com.youlx.domain.user.UserShallow;
 import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
@@ -28,8 +29,10 @@ import java.security.Principal;
 class OfferController {
     private final PagedResourcesAssembler<Offer> resourcesAssembler;
     private final OfferModelAssembler modelAssembler;
-    private final OfferService service;
+    private final OfferModifyService service;
+    private final OfferFindService offerFindService;
     private final UserService userService;
+    private final OfferStateCheckService offerStateCheckService;
 
     @PostMapping
     ResponseEntity<?> create(Principal user, @Valid @RequestBody OfferCreateDto offer) throws Exception {
@@ -49,14 +52,14 @@ class OfferController {
 
     @GetMapping("{id}")
     ResponseEntity<?> get(Principal user, @Valid @PathVariable String id) {
-        if (user == null || !service.isVisible(user.getName(), id)) {
+        if (user == null || !offerStateCheckService.isVisible(user.getName(), id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        final var result = service.findById(id);
-        return result.isPresent() ?
-                ResponseEntity.ok(modelAssembler.toModel(result.get())) :
-                ResponseEntity.notFound().build();
+        return offerFindService
+                .findById(id)
+                .map(o -> ResponseEntity.ok(modelAssembler.toModel(o)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("{id}/close")
@@ -77,9 +80,11 @@ class OfferController {
 
     @GetMapping
     PagedModel<EntityModel<OfferDto>> getAllOpen(
-            @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable
+            @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false, defaultValue = "") String tags
     ) {
-        return resourcesAssembler.toModel(service.findOpen(pageable), modelAssembler);
+        final var result = offerFindService.findOpen(pageable, null, tags);
+        return resourcesAssembler.toModel(result, modelAssembler);
     }
 
     @PutMapping("{id}")
@@ -118,7 +123,7 @@ class OfferController {
     @GetMapping("/search")
     ResponseEntity<?> search(Principal user, @Valid @RequestParam String query) {
         final var username = user == null ? null : user.getName();
-        final var result = service.search(username, query).stream().map(OfferDto::new);
+        final var result = offerFindService.search(new UserShallow(username), query).stream().map(OfferDto::new);
         return ResponseEntity.ok(result);
     }
 }

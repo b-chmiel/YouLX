@@ -19,6 +19,7 @@ import java.util.Optional;
 public class OfferRepositoryImpl implements OfferRepository {
     public interface Repo extends JpaRepository<OfferTuple, Long> {
         List<OfferTuple> findAllByUser(UserTuple user);
+
     }
 
     public interface UserRepo extends JpaRepository<UserTuple, Long> {
@@ -116,5 +117,14 @@ public class OfferRepositoryImpl implements OfferRepository {
         tuple.setStatus(OfferStatus.OPEN);
         tuple.setPublishedDate(LocalDateTime.now());
         repo.save(tuple);
+    }
+
+    @Override
+    public boolean exists(String offerId) {
+        try {
+            return repo.existsById(hashId.decode(offerId));
+        } catch (ApiHashIdException e) {
+            return false;
+        }
     }
 }

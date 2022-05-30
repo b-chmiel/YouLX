@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.youlx.api.rest.user.UserDto;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferCloseReason;
+import com.youlx.domain.tag.Tag;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
@@ -11,6 +12,7 @@ import org.springframework.hateoas.server.core.Relation;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -32,6 +34,7 @@ class OfferDto extends RepresentationModel<OfferDto> {
     private BigDecimal price;
     private LocalDateTime publishedDate;
     private LocalDateTime closedDate;
+    private Set<Tag> tags;
 
     OfferDto(Offer offer) {
         this.id = offer.getId();
@@ -50,5 +53,6 @@ class OfferDto extends RepresentationModel<OfferDto> {
         this.price = offer.getPrice();
         this.publishedDate = offer.getPublishedDate();
         this.closedDate = offer.getClosedDate();
+        this.tags = offer.getTags();
     }
 }

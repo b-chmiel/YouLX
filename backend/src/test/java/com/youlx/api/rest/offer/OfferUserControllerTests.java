@@ -31,14 +31,14 @@ class OfferUserControllerTests {
         @Test
         void shouldReturn404OnNonExistingUser() throws Exception {
             final var username = "a";
-            when(userService.findById(username)).thenReturn(Optional.empty());
+            when(userService.exists(username)).thenReturn(false);
             helpers.getRequest(Routes.User.USER + "/" + username + "/offers").andExpect(status().isNotFound());
         }
 
         @Test
         void showOffersWhenUserExists() throws Exception {
             final var username = "a";
-            when(userService.findById(username)).thenReturn(Optional.of(new User(List.of(), "", "", "", "", "", "")));
+            when(userService.exists(username)).thenReturn(true);
             helpers.getRequest(Routes.User.USER + "/" + username + "/offers").andExpect(status().isOk());
         }
     }

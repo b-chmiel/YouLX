@@ -1,4 +1,4 @@
-package com.youlx.api.rest.offer.photo;
+package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.photo.ApiImageException;

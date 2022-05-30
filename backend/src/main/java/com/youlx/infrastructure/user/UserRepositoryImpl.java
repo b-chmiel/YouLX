@@ -11,7 +11,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     public interface Repo extends JpaRepository<UserTuple, String> {
-        Optional<UserTuple> findById(String s);
     }
 
     private final Repo repo;
@@ -48,5 +47,10 @@ public class UserRepositoryImpl implements UserRepository {
         toEdit.get().setPhone(user.phone());
 
         return Optional.of(repo.save(toEdit.get()).toDomain());
+    }
+
+    @Override
+    public boolean exists(String id) {
+        return repo.existsById(id);
     }
 }

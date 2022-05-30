@@ -2,6 +2,8 @@ package com.youlx.domain.utils.hashId;
 
 import lombok.RequiredArgsConstructor;
 import org.hashids.Hashids;
+import org.springframework.stereotype.Component;
+import org.springframework.test.annotation.Commit;
 
 @RequiredArgsConstructor
 public class HashIdImpl implements HashId {
@@ -14,6 +16,10 @@ public class HashIdImpl implements HashId {
 
     @Override
     public Long decode(String id) throws ApiHashIdException {
+        if (id == null) {
+            throw new ApiHashIdException("Cannot decode null string.");
+        }
+
         final var result = hashids.decode(id);
         if (result.length != 1) {
             throw new ApiHashIdException("Cannot decode id: " + id);

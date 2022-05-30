@@ -4,13 +4,14 @@ import com.youlx.domain.offer.OfferRepository;
 import com.youlx.domain.offer.OfferSearchRepository;
 import com.youlx.domain.user.UserRepository;
 import com.youlx.domain.utils.hashId.HashId;
+import com.youlx.domain.utils.hashId.HashIdImpl;
 import com.youlx.infrastructure.JpaConfig;
+import org.hashids.Hashids;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -20,17 +21,16 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import static com.youlx.testUtils.Fixtures.user;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ContextConfiguration(
-        classes = {OfferSearchRepositoryImpl.class, JpaConfig.class},
+        classes = {OfferSearchRepositoryImpl.class, JpaConfig.class, HashIdImpl.class, Hashids.class},
         loader = AnnotationConfigContextLoader.class
 )
 @DataJpaTest
 class OfferSearchRepositoryTests {
-    @MockBean
+    @Autowired
     private HashId hashId;
 
     @Autowired
@@ -47,18 +47,6 @@ class OfferSearchRepositoryTests {
 
     @BeforeEach
     void setup() {
-        when(hashId.encode(1L)).thenReturn("1");
-        when(hashId.encode(2L)).thenReturn("2");
-        when(hashId.encode(3L)).thenReturn("3");
-        when(hashId.encode(4L)).thenReturn("4");
-        when(hashId.encode(5L)).thenReturn("5");
-        when(hashId.encode(6L)).thenReturn("6");
-        when(hashId.decode("1")).thenReturn(1L);
-        when(hashId.decode("2")).thenReturn(2L);
-        when(hashId.decode("3")).thenReturn(3L);
-        when(hashId.decode("4")).thenReturn(4L);
-        when(hashId.decode("5")).thenReturn(5L);
-        when(hashId.decode("6")).thenReturn(6L);
         userRepository.create(user);
         offerRepository.clear();
     }

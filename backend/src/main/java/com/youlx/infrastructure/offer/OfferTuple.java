@@ -5,6 +5,7 @@ import com.youlx.domain.offer.OfferCloseReason;
 import com.youlx.domain.offer.OfferStatus;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.photo.PhotoTuple;
+import com.youlx.infrastructure.tag.TagTuple;
 import com.youlx.infrastructure.user.UserTuple;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,10 +20,8 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "LX_OFFER")
@@ -55,6 +54,9 @@ public class OfferTuple {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = PhotoTuple.class)
     private List<PhotoTuple> photos;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = TagTuple.class)
+    private Set<TagTuple> tags;
+
     public OfferTuple(Offer offer, UserTuple user) {
         this.name = offer.getName();
         this.description = offer.getDescription();
@@ -66,6 +68,7 @@ public class OfferTuple {
         this.price = offer.getPrice();
         this.publishedDate = offer.getPublishedDate();
         this.closedDate = offer.getClosedDate();
+        this.tags = new HashSet<>();
     }
 
     public Offer toDomain(HashId hasher) {
@@ -80,7 +83,8 @@ public class OfferTuple {
                 photos.stream().map(PhotoTuple::toDomain).toList(),
                 price,
                 publishedDate,
-                closedDate
+                closedDate,
+                tags.stream().map(TagTuple::toDomain).collect(Collectors.toSet())
         );
     }
 

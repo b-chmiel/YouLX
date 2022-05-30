@@ -48,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(Routes.Offer.OFFERS + "/**").permitAll()
                 .antMatchers(Routes.Auth.REGISTER).permitAll()
                 .antMatchers(Routes.User.USER + "/**").permitAll()
+                .antMatchers(Routes.Tag.TAG).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

@@ -1,7 +1,9 @@
 package com.youlx.domain.photo;
 
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferService;
+import com.youlx.domain.offer.OfferFindService;
+import com.youlx.domain.offer.OfferModifyService;
+import com.youlx.domain.offer.OfferStateCheckService;
 import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
@@ -16,15 +18,17 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PhotoServiceImpl implements PhotoService {
-    private final OfferService offerService;
+    private final OfferModifyService offerService;
+    private final OfferFindService offerFindService;
     private final PhotoRepository repository;
+    private final OfferStateCheckService offerStateCheckService;
 
     @Override
     public void save(String offerId, Photo photo, String username) throws ApiException {
-        if (offerService.findById(offerId).isEmpty()) {
+        if (!offerFindService.exists(offerId)) {
             throw new ApiNotFoundException("Offer does not exist.");
         }
-        if (!offerService.isOwnerOf(offerId, username)) {
+        if (!offerStateCheckService.isOwnerOf(offerId, username)) {
             throw new ApiUnauthorizedException("User is not owner of offer.");
         }
         if (!isPhotoValid(photo)) {
@@ -48,7 +52,7 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public List<Photo> findAllForOffer(String offerId) throws ApiException {
-        return offerService
+        return offerFindService
                 .findById(offerId)
                 .map(Offer::getPhotos)
                 .orElseThrow(() -> new ApiNotFoundException("Offer not found."));
@@ -56,10 +60,10 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public void delete(String offerId, String photoId, String username) throws ApiException {
-        if (offerService.findById(offerId).isEmpty()) {
+        if (!offerFindService.exists(offerId)) {
             throw new ApiNotFoundException("Offer not found.");
         }
-        if (!offerService.isOwnerOf(offerId, username)) {
+        if (!offerStateCheckService.isOwnerOf(offerId, username)) {
             throw new ApiUnauthorizedException("User is not owner of offer.");
         }
         if (repository.findById(photoId).isEmpty()) {
@@ -71,7 +75,7 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public Optional<Photo> find(String offerId, String photoId) {
-        if (offerService.findById(offerId).isEmpty()) {
+        if (!offerFindService.exists(offerId)) {
             throw new ApiNotFoundException("Offer not found.");
         }
 

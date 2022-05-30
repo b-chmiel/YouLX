@@ -1,11 +1,9 @@
 package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
-import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferClose;
-import com.youlx.domain.offer.OfferCloseReason;
-import com.youlx.domain.offer.OfferService;
+import com.youlx.domain.offer.*;
 import com.youlx.domain.user.User;
+import com.youlx.domain.user.UserShallow;
 import com.youlx.domain.utils.exception.ApiCustomException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.testUtils.MvcHelpers;
@@ -29,7 +27,9 @@ class OfferControllerUT {
     private MvcHelpers helpers;
 
     @MockBean
-    private OfferService service;
+    private OfferModifyService service;
+    @MockBean
+    private OfferFindService offerFindService;
 
     private static final String url = Routes.Offer.OFFERS;
 
@@ -77,7 +77,7 @@ class OfferControllerUT {
             final var query = "asdf";
             helpers.getRequest(Routes.Offer.OFFERS + "/search?query=" + query).andExpect(status().isOk());
 
-            verify(service).search(null, query);
+            verify(offerFindService).search(new UserShallow(null), query);
         }
     }
 }
