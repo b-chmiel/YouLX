@@ -45,7 +45,6 @@ public class UserRepositoryImpl implements UserRepository {
         toEdit.get().setEmail(user.email());
         toEdit.get().setFirstName(user.firstName());
         toEdit.get().setLastName(user.lastName());
-        toEdit.get().setPhone(user.phone());
 
         return Optional.of(repo.save(toEdit.get()).toDomain());
     }

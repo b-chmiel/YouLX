@@ -31,23 +31,23 @@ public class Seed implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        final var user1 = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user1", "user1", "user1", passwordEncoder.encode("user1"), "user1", "+48555555555");
-        final var user2 = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user2", "user2", "user2", passwordEncoder.encode("user2"), "user2", "+48555555555");
-        final var admin = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "admin", "admin", "admin", passwordEncoder.encode("admin"), "admin", "+48555555555");
+        final var user1 = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user1", "user1", "user1@mail.com", passwordEncoder.encode("user1"), "user1", "+48555555555");
+        final var user2 = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "user2", "user2", "user2@mail.com", passwordEncoder.encode("user2"), "user2", "+48555555555");
+        final var admin = new User(List.of(new SimpleGrantedAuthority(SecurityRoles.USER.name())), "admin", "admin", "admin@mail.com", passwordEncoder.encode("admin"), "admin", "+48555555555");
         userRepository.create(user1);
         userRepository.create(user2);
         userRepository.create(admin);
 
         final var photo = new Photo(uuid.generate(), new ClassPathResource("fixtures/index.jpg").getInputStream().readAllBytes());
-        offerRepository.create(new Offer("Offer0", mockDescription, admin, List.of(photo), BigDecimal.valueOf(1.123)));
-        final var o = new Offer("Offer1", mockDescription, admin, List.of(photo, photo, photo), BigDecimal.valueOf(2.123));
+        offerRepository.create(new Offer("Offer0", mockDescription, admin, List.of(), BigDecimal.valueOf(1.123)));
+        final var o = new Offer("Offer1", mockDescription, admin, List.of(photo), BigDecimal.valueOf(2.123));
         offerRepository.publish(offerRepository.create(o).getId());
 
-        final var o2 = new Offer("Offer2", mockDescription, admin, List.of(photo, photo, photo), BigDecimal.valueOf(2.123));
+        final var o2 = new Offer("Offer2", mockDescription, admin, List.of(), BigDecimal.valueOf(2.123));
         o2.close(OfferCloseReason.EXPIRED);
         offerRepository.create(o2);
 
-        final var offer = new Offer("Offer3", mockDescription, user1, List.of(photo, photo, photo), BigDecimal.valueOf(2.123));
+        final var offer = new Offer("Offer3", mockDescription, user1, List.of(), BigDecimal.valueOf(2.123));
         offer.close(OfferCloseReason.EXPIRED);
         offerRepository.create(offer);
     }

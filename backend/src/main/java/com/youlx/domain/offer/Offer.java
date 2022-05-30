@@ -40,7 +40,7 @@ public class Offer {
         this.id = null;
         this.name = name;
         this.description = description;
-        this.status = OfferStatus.DRAFT;
+        this.status = OfferStatus.OPEN;
         this.creationDate = LocalDateTime.now();
         this.closeReason = Optional.empty();
         this.user = user;

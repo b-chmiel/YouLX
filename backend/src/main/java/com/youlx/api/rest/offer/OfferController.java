@@ -49,10 +49,6 @@ class OfferController {
 
     @GetMapping("{id}")
     ResponseEntity<?> get(Principal user, @Valid @PathVariable String id) {
-        if (user == null || !service.isVisible(user.getName(), id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         final var result = service.findById(id);
         return result.isPresent() ?
                 ResponseEntity.ok(modelAssembler.toModel(result.get())) :
