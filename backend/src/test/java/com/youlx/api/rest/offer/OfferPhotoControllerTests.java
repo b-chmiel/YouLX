@@ -3,6 +3,7 @@ package com.youlx.api.rest.offer;
 import com.youlx.api.Routes;
 import com.youlx.domain.photo.ApiImageException;
 import com.youlx.domain.photo.PhotoService;
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
 import com.youlx.domain.utils.uuid.Uuid;
@@ -49,7 +50,7 @@ class OfferPhotoControllerTests {
         void userIsNotOwner() throws Exception {
             final var id = "a";
             when(uuid.generate()).thenReturn(Fixtures.photo.getId());
-            doThrow(new ApiUnauthorizedException("")).when(service).save(id, Fixtures.photo, "user");
+            doThrow(new ApiUnauthorizedException("")).when(service).save(id, Fixtures.photo, new UserId("user"));
             final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, Fixtures.photo.getData());
             helpers.postFile(file, Routes.Offer.OFFERS + "/" + id + "/photos").andExpect(status().isForbidden());
         }
@@ -59,7 +60,7 @@ class OfferPhotoControllerTests {
         void offerNotFound() throws Exception {
             final var id = "a";
             when(uuid.generate()).thenReturn(Fixtures.photo.getId());
-            doThrow(new ApiNotFoundException("")).when(service).save(id, Fixtures.photo, "user");
+            doThrow(new ApiNotFoundException("")).when(service).save(id, Fixtures.photo, new UserId("user"));
             final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, Fixtures.photo.getData());
 
             helpers.postFile(file, Routes.Offer.OFFERS + "/" + id + "/photos").andExpect(status().isNotFound());
@@ -75,7 +76,7 @@ class OfferPhotoControllerTests {
             final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, Fixtures.photo.getData());
 
             helpers.postFile(file, url).andExpect(status().isOk());
-            verify(service, times(1)).save(id, Fixtures.photo, "user");
+            verify(service, times(1)).save(id, Fixtures.photo, new UserId("user"));
         }
     }
 
@@ -113,7 +114,7 @@ class OfferPhotoControllerTests {
 
             helpers.deleteRequest(url).andExpect(status().isOk());
 
-            verify(service, times(1)).delete(offerId, photoId, "user");
+            verify(service, times(1)).delete(offerId, photoId, new UserId("user"));
         }
 
         @Test
@@ -123,7 +124,7 @@ class OfferPhotoControllerTests {
             final var photoId = "b";
             final var url = Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId;
 
-            doThrow(new ApiNotFoundException("")).when(service).delete(offerId, photoId, "user");
+            doThrow(new ApiNotFoundException("")).when(service).delete(offerId, photoId, new UserId("user"));
 
             helpers.deleteRequest(url).andExpect(status().isNotFound());
         }
@@ -135,7 +136,7 @@ class OfferPhotoControllerTests {
             final var photoId = "b";
             final var url = Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId;
 
-            doThrow(new ApiUnauthorizedException("")).when(service).delete(offerId, photoId, "user");
+            doThrow(new ApiUnauthorizedException("")).when(service).delete(offerId, photoId, new UserId("user"));
 
             helpers.deleteRequest(url).andExpect(status().isForbidden());
         }
@@ -147,7 +148,7 @@ class OfferPhotoControllerTests {
             final var photoId = "b";
             final var url = Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId;
 
-            doThrow(new ApiImageException("")).when(service).delete(offerId, photoId, "user");
+            doThrow(new ApiImageException("")).when(service).delete(offerId, photoId, new UserId("user"));
 
             helpers.deleteRequest(url).andExpect(status().isBadRequest());
         }

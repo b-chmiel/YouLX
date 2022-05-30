@@ -3,7 +3,7 @@ package com.youlx.api.rest.offer;
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferFindService;
-import com.youlx.domain.user.UserShallow;
+import com.youlx.domain.user.UserId;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
@@ -43,7 +43,7 @@ class OfferMeController {
 
         final var username = user.getName();
         return ResponseEntity.ok(
-                resourcesAssembler.toModel(service.findBy(pageable, new UserShallow(username), statuses, tags)
+                resourcesAssembler.toModel(service.findBy(pageable, new UserId(username), statuses, tags)
                         , modelAssembler
                 )
         );

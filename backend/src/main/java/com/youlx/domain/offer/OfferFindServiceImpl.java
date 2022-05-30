@@ -1,6 +1,6 @@
 package com.youlx.domain.offer;
 
-import com.youlx.domain.user.UserShallow;
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.offer.OfferPagedRepository;
 import com.youlx.infrastructure.offer.OfferTuple;
@@ -36,8 +36,8 @@ public class OfferFindServiceImpl implements OfferFindService {
 
     @Override
     @Transactional
-    public Page<Offer> findBy(Pageable pageable, UserShallow user, String status, String tag) {
-        final var username = user == null ? null : user.username();
+    public Page<Offer> findBy(Pageable pageable, UserId user, String status, String tag) {
+        final var username = user.getUsername();
         final var statuses = Arrays.stream(status.split(";"))
                 .filter(t -> !t.isBlank())
                 .map(OfferStatus::fromString)
@@ -75,16 +75,16 @@ public class OfferFindServiceImpl implements OfferFindService {
 
     @Override
     @Transactional
-    public Page<Offer> findOpen(Pageable pageable, UserShallow user, String tags) {
+    public Page<Offer> findOpen(Pageable pageable, UserId user, String tags) {
         return findBy(pageable, user, "OPEN", tags);
     }
 
     @Override
-    public List<Offer> search(UserShallow user, String query) {
+    public List<Offer> search(UserId user, String query) {
         return offerSearchRepository
                 .search(query)
                 .stream()
-                .filter(offer -> offerStateCheckService.isVisible(user.username(), offer))
+                .filter(offer -> offerStateCheckService.isVisible(user, offer))
                 .toList();
     }
 }

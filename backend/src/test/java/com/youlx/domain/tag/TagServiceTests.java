@@ -1,7 +1,7 @@
 package com.youlx.domain.tag;
 
-import com.youlx.domain.offer.OfferModifyService;
 import com.youlx.domain.offer.OfferStateCheckService;
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,9 +12,8 @@ import static org.mockito.Mockito.*;
 
 class TagServiceTests {
     private final TagRepository repository = mock(TagRepository.class);
-    private final OfferModifyService offerService = mock(OfferModifyService.class);
     private final OfferStateCheckService offerStateCheckService = mock(OfferStateCheckService.class);
-    private final TagService service = new TagServiceImpl(repository, offerService, offerStateCheckService);
+    private final TagService service = new TagServiceImpl(repository, offerStateCheckService);
 
     @Nested
     class GetAllTests {
@@ -42,8 +41,8 @@ class TagServiceTests {
             final var username = "asdf";
             final var offerId = "fdsa";
             final var tag = new Tag("a");
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(false);
-            assertThrows(ApiUnauthorizedException.class, () -> service.assignToOffer(username, offerId, tag));
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(false);
+            assertThrows(ApiUnauthorizedException.class, () -> service.assignToOffer(new UserId(username), offerId, tag));
         }
 
         @Test
@@ -52,8 +51,8 @@ class TagServiceTests {
             final var offerId = "fdsa";
             final var tag = new Tag("a");
 
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(true);
-            service.assignToOffer(username, offerId, tag);
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(true);
+            service.assignToOffer(new UserId(username), offerId, tag);
 
             verify(repository, times(1)).assignToOffer(offerId, tag);
         }

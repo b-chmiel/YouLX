@@ -3,6 +3,7 @@ package com.youlx.api.rest.offer;
 import com.youlx.api.Routes;
 import com.youlx.api.rest.tag.TagDto;
 import com.youlx.domain.tag.TagService;
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiConflictException;
 import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
@@ -23,9 +24,8 @@ class OfferTagController {
 
     @PostMapping("{offerId}/tag")
     ResponseEntity<?> assign(Principal user, @PathVariable String offerId, @Valid @RequestBody TagDto tag) {
-        final var username = user == null ? null : user.getName();
         try {
-            service.assignToOffer(username, offerId, tag.toDomain());
+            service.assignToOffer(new UserId(user), offerId, tag.toDomain());
         } catch (ApiUnauthorizedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (ApiNotFoundException e) {

@@ -2,8 +2,8 @@ package com.youlx.domain.photo;
 
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferFindService;
-import com.youlx.domain.offer.OfferModifyService;
 import com.youlx.domain.offer.OfferStateCheckService;
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
 import com.youlx.testUtils.Fixtures;
@@ -19,10 +19,9 @@ import static org.mockito.Mockito.*;
 
 class PhotoServiceTests {
     private final PhotoRepository photoRepository = mock(PhotoRepository.class);
-    private final OfferModifyService offerService = mock(OfferModifyService.class);
     private final OfferFindService offerFindService = mock(OfferFindService.class);
     private final OfferStateCheckService offerStateCheckService = mock(OfferStateCheckService.class);
-    private final PhotoService service = new PhotoServiceImpl(offerService, offerFindService, photoRepository, offerStateCheckService);
+    private final PhotoService service = new PhotoServiceImpl(offerFindService, photoRepository, offerStateCheckService);
 
     @Nested
     class SavePhotoTests {
@@ -32,9 +31,9 @@ class PhotoServiceTests {
             final var photo = new Photo("", null);
             final var username = "user";
             when(offerFindService.exists(offerId)).thenReturn(false);
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(true);
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(true);
 
-            assertThrows(ApiNotFoundException.class, () -> service.save(offerId, photo, username));
+            assertThrows(ApiNotFoundException.class, () -> service.save(offerId, photo, new UserId(username)));
         }
 
         @Test
@@ -43,9 +42,9 @@ class PhotoServiceTests {
             final var photo = new Photo("", null);
             final var username = "user";
             when(offerFindService.exists(offerId)).thenReturn(true);
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(true);
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(true);
 
-            assertThrows(ApiImageException.class, () -> service.save(offerId, photo, username));
+            assertThrows(ApiImageException.class, () -> service.save(offerId, photo, new UserId(username)));
         }
 
         @Test
@@ -54,9 +53,9 @@ class PhotoServiceTests {
             final var photo = new Photo("", null);
             final var username = "user";
             when(offerFindService.exists(offerId)).thenReturn(true);
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(false);
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(false);
 
-            assertThrows(ApiUnauthorizedException.class, () -> service.save(offerId, photo, username));
+            assertThrows(ApiUnauthorizedException.class, () -> service.save(offerId, photo, new UserId(username)));
         }
 
         @Test
@@ -64,9 +63,9 @@ class PhotoServiceTests {
             final var offerId = "a";
             final var username = "user";
             when(offerFindService.exists(offerId)).thenReturn(true);
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(true);
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(true);
 
-            service.save(offerId, Fixtures.photo, username);
+            service.save(offerId, Fixtures.photo, new UserId(username));
 
             verify(photoRepository, times(1)).savePhoto(offerId, Fixtures.photo);
         }
@@ -94,9 +93,9 @@ class PhotoServiceTests {
 
             when(offerFindService.exists(offerId)).thenReturn(true);
             when(photoRepository.findById(photoId)).thenReturn(Optional.of(Fixtures.photo));
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(true);
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(true);
 
-            service.delete(offerId, photoId, username);
+            service.delete(offerId, photoId, new UserId(username));
 
             verify(photoRepository, times(1)).delete(offerId, photoId);
         }
@@ -109,7 +108,7 @@ class PhotoServiceTests {
 
             when(offerFindService.exists(offerId)).thenReturn(false);
 
-            assertThrows(ApiNotFoundException.class, () -> service.delete(offerId, photoId, username));
+            assertThrows(ApiNotFoundException.class, () -> service.delete(offerId, photoId, new UserId(username)));
         }
 
         @Test
@@ -119,9 +118,9 @@ class PhotoServiceTests {
             final var username = "c";
 
             when(offerFindService.exists(offerId)).thenReturn(true);
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(false);
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(false);
 
-            assertThrows(ApiUnauthorizedException.class, () -> service.delete(offerId, photoId, username));
+            assertThrows(ApiUnauthorizedException.class, () -> service.delete(offerId, photoId, new UserId(username)));
         }
 
         @Test
@@ -131,10 +130,10 @@ class PhotoServiceTests {
             final var username = "c";
 
             when(offerFindService.exists(offerId)).thenReturn(true);
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(true);
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(true);
             when(photoRepository.findById(photoId)).thenReturn(Optional.empty());
 
-            assertThrows(ApiNotFoundException.class, () -> service.delete(offerId, photoId, username));
+            assertThrows(ApiNotFoundException.class, () -> service.delete(offerId, photoId, new UserId(username)));
         }
     }
 }

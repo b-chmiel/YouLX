@@ -1,6 +1,7 @@
 package com.youlx.domain.offer;
 
 import com.youlx.domain.user.User;
+import com.youlx.domain.user.UserId;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -23,10 +24,10 @@ class OfferStateCheckServiceTests {
             final var offer = new Offer("", "", user, null);
             offer.setStatus(OfferStatus.OPEN);
 
-            assertTrue(service.isClosable(user.getUsername(), offer));
-            assertFalse(service.isClosable(user.getUsername() + "a", offer));
+            assertTrue(service.isClosable(new UserId(user.getUsername()), offer));
+            assertFalse(service.isClosable(new UserId(user.getUsername() + "a"), offer));
             offer.close(OfferCloseReason.EXPIRED);
-            assertFalse(service.isClosable(user.getUsername(), offer));
+            assertFalse(service.isClosable(new UserId(user.getUsername()), offer));
         }
 
         @Test
@@ -34,7 +35,7 @@ class OfferStateCheckServiceTests {
             final var user = new User(null, "", "", "", "", "", "");
             final var offer = new Offer("", "", user, null);
 
-            assertFalse(service.isClosable(user.getUsername(), offer));
+            assertFalse(service.isClosable(new UserId(user.getUsername()), offer));
         }
 
         @Test
@@ -43,7 +44,7 @@ class OfferStateCheckServiceTests {
             final var offer = new Offer("", "", user, null);
             offer.setStatus(OfferStatus.CLOSED);
 
-            assertFalse(service.isClosable(user.getUsername(), offer));
+            assertFalse(service.isClosable(new UserId(user.getUsername()), offer));
         }
 
         @Test
@@ -52,7 +53,7 @@ class OfferStateCheckServiceTests {
             final var offer = new Offer("", "", user, null);
             offer.setStatus(OfferStatus.OPEN);
 
-            assertFalse(service.isClosable(user.getUsername() + "a", offer));
+            assertFalse(service.isClosable(new UserId(user.getUsername() + "a"), offer));
         }
     }
 
@@ -63,7 +64,7 @@ class OfferStateCheckServiceTests {
             final var user = new User(null, "", "", "", "", "", "");
             final var id = "a";
 
-            service.isPublishable(user.getUsername(), id);
+            service.isPublishable(new UserId(user.getUsername()), id);
 
             verify(repository, times(1)).findById(id);
         }
@@ -77,7 +78,7 @@ class OfferStateCheckServiceTests {
             final var username = "b";
 
             when(repository.findById(offerId)).thenReturn(Optional.empty());
-            assertFalse(service.isOwnerOf(offerId, username));
+            assertFalse(service.isOwnerOf(offerId, new UserId(username)));
         }
 
         @Test
@@ -87,17 +88,16 @@ class OfferStateCheckServiceTests {
             final var user = new User(List.of(), "", "", "", "", username + "a", "");
 
             when(repository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", user, null)));
-            assertFalse(service.isOwnerOf(offerId, username));
+            assertFalse(service.isOwnerOf(offerId, new UserId(username)));
         }
 
         @Test
         void isOwnerOf() {
             final var offerId = "a";
-            final var username = "b";
-            final var user = new User(List.of(), "", "", "", "", username, "");
+            final var user = new User(List.of(), "", "", "", "", "b", "");
 
             when(repository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", user, null)));
-            assertTrue(service.isOwnerOf(offerId, username));
+            assertTrue(service.isOwnerOf(offerId, new UserId(user)));
         }
     }
 

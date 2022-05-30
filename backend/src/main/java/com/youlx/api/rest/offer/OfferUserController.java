@@ -4,7 +4,7 @@ import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferFindService;
 import com.youlx.domain.user.UserService;
-import com.youlx.domain.user.UserShallow;
+import com.youlx.domain.user.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +39,7 @@ class OfferUserController {
 
         return ResponseEntity.ok(
                 resourcesAssembler.toModel(
-                        offerFindService.findOpen(pageable, new UserShallow(username), tags)
+                        offerFindService.findOpen(pageable, new UserId(username), tags)
                         , modelAssembler
                 )
         );
