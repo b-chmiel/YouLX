@@ -3,6 +3,7 @@ package com.youlx.api.rest.offer;
 import com.sun.security.auth.UserPrincipal;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferStateCheckService;
+import com.youlx.domain.user.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
@@ -36,9 +37,9 @@ class OfferModelAssembler implements RepresentationModelAssembler<Offer, EntityM
         if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof final UserDetails user) {
             final var principal = new UserPrincipal(user.getUsername());
             links.add(linkTo(methodOn(OfferController.class).get(principal, entity.getId())).withSelfRel());
-            if (offerStateCheckService.isClosable(user.getUsername(), entity)) {
+            if (offerStateCheckService.isClosable(new UserId(user.getUsername()), entity)) {
                 links.add(linkTo(methodOn(OfferController.class).close(principal, entity.getId())).withRel("close"));
-            } else if (offerStateCheckService.isPublishable(user.getUsername(), entity.getId())) {
+            } else if (offerStateCheckService.isPublishable(new UserId(user.getUsername()), entity.getId())) {
                 links.add(linkTo(methodOn(OfferController.class).publish(principal, entity.getId())).withRel("publish"));
             }
         }

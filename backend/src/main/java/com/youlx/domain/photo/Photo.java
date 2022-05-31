@@ -1,6 +1,5 @@
 package com.youlx.domain.photo;
 
-import com.youlx.domain.utils.uuid.Uuid;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +14,13 @@ public class Photo {
     private final String id;
     private final byte[] data;
 
-    public Photo(Uuid uuid, MultipartFile file) throws IOException {
-        this.id = uuid.generate();
+    public Photo(MultipartFile file) throws IOException {
+        this.id = null;
         this.data = file.getInputStream().readAllBytes();
+    }
+
+    public Photo(byte[] data) throws IOException {
+        this.id = null;
+        this.data = data;
     }
 }

@@ -1,10 +1,9 @@
 package com.youlx.api.rest.offer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.youlx.api.Routes;
-import com.youlx.api.config.SecurityConfig;
 import com.youlx.api.rest.tag.TagDto;
 import com.youlx.domain.tag.TagService;
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiConflictException;
 import com.youlx.domain.utils.exception.ApiCustomException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.mockito.Mockito.*;
@@ -37,7 +35,7 @@ class OfferTagControllerTests {
         void unauthorized() throws Exception {
             final var offerId = "id";
             final var tag = new TagDto("asdf");
-            doThrow(new ApiUnauthorizedException("")).when(service).assignToOffer(null, offerId, tag.toDomain());
+            doThrow(new ApiUnauthorizedException("")).when(service).assignToOffer(new UserId(), offerId, tag.toDomain());
             helpers.postRequest(tag, Routes.Offer.OFFERS + "/" + offerId + "/tag").andExpect(status().isForbidden());
         }
 
@@ -45,7 +43,7 @@ class OfferTagControllerTests {
         void notFound() throws Exception {
             final var offerId = "id";
             final var tag = new TagDto("asdf");
-            doThrow(new ApiNotFoundException("")).when(service).assignToOffer(null, offerId, tag.toDomain());
+            doThrow(new ApiNotFoundException("")).when(service).assignToOffer(new UserId(), offerId, tag.toDomain());
             helpers.postRequest(tag, Routes.Offer.OFFERS + "/" + offerId + "/tag").andExpect(status().isNotFound());
         }
 
@@ -53,7 +51,7 @@ class OfferTagControllerTests {
         void conflict() throws Exception {
             final var offerId = "id";
             final var tag = new TagDto("asdf");
-            doThrow(new ApiConflictException("")).when(service).assignToOffer(null, offerId, tag.toDomain());
+            doThrow(new ApiConflictException("")).when(service).assignToOffer(new UserId(), offerId, tag.toDomain());
             helpers.postRequest(tag, Routes.Offer.OFFERS + "/" + offerId + "/tag").andExpect(status().isConflict());
         }
 
@@ -61,7 +59,7 @@ class OfferTagControllerTests {
         void badRequest() throws Exception {
             final var offerId = "id";
             final var tag = new TagDto("asdf");
-            doThrow(new ApiCustomException("")).when(service).assignToOffer(null, offerId, tag.toDomain());
+            doThrow(new ApiCustomException("")).when(service).assignToOffer(new UserId(), offerId, tag.toDomain());
             helpers.postRequest(tag, Routes.Offer.OFFERS + "/" + offerId + "/tag").andExpect(status().isBadRequest());
         }
 
@@ -71,7 +69,7 @@ class OfferTagControllerTests {
             final var offerId = "id";
             final var tag = new TagDto("asdf");
             helpers.postRequest(tag, Routes.Offer.OFFERS + "/" + offerId + "/tag").andExpect(status().isOk());
-            verify(service, times(1)).assignToOffer("user", offerId, tag.toDomain());
+            verify(service, times(1)).assignToOffer(new UserId("user"), offerId, tag.toDomain());
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.youlx.domain.offer;
 
-import com.youlx.domain.user.User;
-import com.youlx.domain.user.UserShallow;
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.offer.OfferPagedRepository;
 import org.junit.jupiter.api.Nested;
@@ -42,7 +41,7 @@ class OfferFindServiceTests {
 
             when(offerSearchRepository.search(query)).thenReturn(List.of());
 
-            assertEquals(List.of(), service.search(new UserShallow(user.getUsername()), query));
+            assertEquals(List.of(), service.search(new UserId(user.getUsername()), query));
         }
 
         @Test
@@ -50,9 +49,9 @@ class OfferFindServiceTests {
             final var query = "asdf";
 
             when(offerSearchRepository.search(query)).thenReturn(List.of(offer));
-            when(offerStateCheckService.isVisible(user.getUsername(), offer)).thenReturn(false);
+            when(offerStateCheckService.isVisible(new UserId(user.getUsername()), offer)).thenReturn(false);
 
-            assertEquals(List.of(), service.search(new UserShallow(user.getUsername()), query));
+            assertEquals(List.of(), service.search(new UserId(user.getUsername()), query));
         }
 
         @Test
@@ -60,9 +59,9 @@ class OfferFindServiceTests {
             final var query = "asdf";
 
             when(offerSearchRepository.search(query)).thenReturn(List.of(offer));
-            when(offerStateCheckService.isVisible(user.getUsername(), offer)).thenReturn(true);
+            when(offerStateCheckService.isVisible(new UserId(user.getUsername()), offer)).thenReturn(true);
 
-            assertEquals(List.of(offer), service.search(new UserShallow(user.getUsername()), query));
+            assertEquals(List.of(offer), service.search(new UserId(user.getUsername()), query));
 
             verify(offerSearchRepository, times(1)).search(query);
         }

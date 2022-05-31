@@ -1,6 +1,6 @@
 package com.youlx.domain.offer;
 
-import com.youlx.domain.user.UserShallow;
+import com.youlx.domain.user.UserId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,9 +12,9 @@ public interface OfferFindService {
 
     Optional<Offer> findById(String id);
 
-    Page<Offer> findBy(Pageable pageable, UserShallow user, String status, String tag);
+    Page<Offer> findBy(Pageable pageable, UserId user, String status, String tag);
 
-    Page<Offer> findOpen(Pageable pageable, UserShallow user, String tags);
+    Page<Offer> findOpen(Pageable pageable, UserId user, String tags);
 
-    List<Offer> search(UserShallow user, String query);
+    List<Offer> search(UserId user, String query);
 }

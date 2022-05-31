@@ -9,5 +9,6 @@ public interface PhotoRepository {
 
     Optional<Photo> findById(String id);
 
-    void delete(String offerId, String photoId);
+    void delete(String offerId, String photoId) throws ApiException;
+    boolean exists(String photoId);
 }

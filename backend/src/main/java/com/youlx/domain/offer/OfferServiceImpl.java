@@ -1,5 +1,6 @@
 package com.youlx.domain.offer;
 
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiCustomException;
 import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
@@ -20,12 +21,12 @@ public class OfferServiceImpl implements OfferModifyService {
     }
 
     @Override
-    public Offer close(String id, OfferClose offerClose, String username) throws ApiException {
+    public Offer close(String id, OfferClose offerClose, UserId user) throws ApiException {
         final var offer = offerRepository.findById(id);
         if (offer.isEmpty()) {
             throw new ApiNotFoundException("Offer not found.");
         }
-        if (!offerStateCheckService.isClosable(username, offer.get())) {
+        if (!offerStateCheckService.isClosable(user, offer.get())) {
             throw new ApiCustomException("Offer is not closable.");
         }
 
@@ -38,12 +39,11 @@ public class OfferServiceImpl implements OfferModifyService {
         return result.get();
     }
 
-
     @Override
-    public void modify(String id, OfferModify offer, String username) throws ApiException {
+    public void modify(String id, OfferModify offer, UserId user) throws ApiException {
         if (!offerFindService.exists(id)) {
             throw new ApiNotFoundException("Offer not found.");
-        } else if (!offerStateCheckService.isOwnerOf(id, username)) {
+        } else if (!offerStateCheckService.isOwnerOf(id, user)) {
             throw new ApiUnauthorizedException("User is not the owner of offer.");
         }
 
@@ -51,8 +51,8 @@ public class OfferServiceImpl implements OfferModifyService {
     }
 
     @Override
-    public void publish(String username, String offerId) throws ApiException {
-        if (!offerStateCheckService.isPublishable(username, offerId)) {
+    public void publish(UserId user, String offerId) throws ApiException {
+        if (!offerStateCheckService.isPublishable(user, offerId)) {
             throw new ApiCustomException("Offer is not publishable.");
         }
 

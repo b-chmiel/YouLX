@@ -2,8 +2,8 @@ package com.youlx.domain.photo;
 
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferFindService;
-import com.youlx.domain.offer.OfferModifyService;
 import com.youlx.domain.offer.OfferStateCheckService;
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
@@ -18,17 +18,16 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PhotoServiceImpl implements PhotoService {
-    private final OfferModifyService offerService;
     private final OfferFindService offerFindService;
     private final PhotoRepository repository;
     private final OfferStateCheckService offerStateCheckService;
 
     @Override
-    public void save(String offerId, Photo photo, String username) throws ApiException {
+    public void save(String offerId, Photo photo, UserId user) throws ApiException {
         if (!offerFindService.exists(offerId)) {
             throw new ApiNotFoundException("Offer does not exist.");
         }
-        if (!offerStateCheckService.isOwnerOf(offerId, username)) {
+        if (!offerStateCheckService.isOwnerOf(offerId, user)) {
             throw new ApiUnauthorizedException("User is not owner of offer.");
         }
         if (!isPhotoValid(photo)) {
@@ -59,14 +58,14 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
-    public void delete(String offerId, String photoId, String username) throws ApiException {
+    public void delete(String offerId, String photoId, UserId user) throws ApiException {
         if (!offerFindService.exists(offerId)) {
             throw new ApiNotFoundException("Offer not found.");
         }
-        if (!offerStateCheckService.isOwnerOf(offerId, username)) {
+        if (!offerStateCheckService.isOwnerOf(offerId, user)) {
             throw new ApiUnauthorizedException("User is not owner of offer.");
         }
-        if (repository.findById(photoId).isEmpty()) {
+        if (!exists(photoId)) {
             throw new ApiNotFoundException("Photo not found.");
         }
 
@@ -80,5 +79,10 @@ public class PhotoServiceImpl implements PhotoService {
         }
 
         return repository.findById(photoId);
+    }
+
+    @Override
+    public boolean exists(String photoId) {
+        return repository.exists(photoId);
     }
 }

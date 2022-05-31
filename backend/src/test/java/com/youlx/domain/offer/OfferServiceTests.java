@@ -1,6 +1,7 @@
 package com.youlx.domain.offer;
 
 import com.youlx.domain.user.User;
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiCustomException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
@@ -45,10 +46,10 @@ class OfferServiceTests {
             offer.setStatus(OfferStatus.OPEN);
 
             when(offerRepository.findById(id)).thenReturn(Optional.of(offer));
-            when(offerStateCheckService.isClosable(user.getUsername(), offer)).thenReturn(true);
+            when(offerStateCheckService.isClosable(new UserId(user), offer)).thenReturn(true);
             when(offerRepository.close(id, offerClose)).thenReturn(Optional.of(offer));
 
-            service.close(id, offerClose, user.getUsername());
+            service.close(id, offerClose, new UserId(user));
 
             verify(offerRepository, times(1)).close(id, offerClose);
         }
@@ -61,7 +62,7 @@ class OfferServiceTests {
 
             when(offerRepository.findById(id)).thenReturn(Optional.empty());
 
-            assertThrows(ApiNotFoundException.class, () -> service.close(id, offerClose, user.getUsername()));
+            assertThrows(ApiNotFoundException.class, () -> service.close(id, offerClose, new UserId(user)));
         }
 
         @Test
@@ -73,9 +74,9 @@ class OfferServiceTests {
             offer.setStatus(OfferStatus.OPEN);
 
             when(offerRepository.findById(id)).thenReturn(Optional.of(offer));
-            when(offerStateCheckService.isClosable(user.getUsername(), offer)).thenReturn(false);
+            when(offerStateCheckService.isClosable(new UserId(user.getUsername()), offer)).thenReturn(false);
 
-            assertThrows(ApiCustomException.class, () -> service.close(id, offerClose, user.getUsername() + "a"));
+            assertThrows(ApiCustomException.class, () -> service.close(id, offerClose, new UserId(user.getUsername() + "a")));
         }
     }
 
@@ -89,7 +90,7 @@ class OfferServiceTests {
 
             when(offerFindService.exists(offerId)).thenReturn(false);
 
-            assertThrows(ApiNotFoundException.class, () -> service.modify(offerId, offer, username));
+            assertThrows(ApiNotFoundException.class, () -> service.modify(offerId, offer, new UserId(username)));
         }
 
         @Test
@@ -99,9 +100,9 @@ class OfferServiceTests {
             final var username = "d";
 
             when(offerFindService.exists(offerId)).thenReturn(true);
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(false);
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(false);
 
-            assertThrows(ApiUnauthorizedException.class, () -> service.modify(offerId, offer, username));
+            assertThrows(ApiUnauthorizedException.class, () -> service.modify(offerId, offer, new UserId(username)));
         }
 
         @Test
@@ -111,8 +112,8 @@ class OfferServiceTests {
             final var username = "d";
 
             when(offerFindService.exists(offerId)).thenReturn(true);
-            when(offerStateCheckService.isOwnerOf(offerId, username)).thenReturn(true);
-            service.modify(offerId, offer, username);
+            when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(true);
+            service.modify(offerId, offer, new UserId(username));
 
             verify(offerRepository, times(1)).modify(offerId, offer);
         }

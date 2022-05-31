@@ -24,19 +24,17 @@ class PhotoTuple {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String index;
-
     @Lob
     @Type(type = "org.hibernate.type.ImageType")
     private byte[] data;
 
     public PhotoTuple(Photo photo) throws IOException {
-        index = photo.getId();
+        id = null;
         data = photo.getData();
     }
 
-    public Photo toDomain() {
-        return new Photo(index, data);
+    public Photo toDomain(HashId hashId) {
+        return new Photo(hashId.encode(id), data);
     }
 
     @Override

@@ -80,7 +80,7 @@ public class OfferTuple {
                 creationDate,
                 Optional.ofNullable(closeReason),
                 user.toDomain(),
-                photos.stream().map(PhotoTuple::toDomain).toList(),
+                photos.stream().map(p -> p.toDomain(hasher)).toList(),
                 price,
                 publishedDate,
                 closedDate,

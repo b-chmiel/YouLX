@@ -3,7 +3,7 @@ package com.youlx.api.rest.offer;
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.*;
 import com.youlx.domain.user.UserService;
-import com.youlx.domain.user.UserShallow;
+import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
@@ -52,7 +52,7 @@ class OfferController {
 
     @GetMapping("{id}")
     ResponseEntity<?> get(Principal user, @Valid @PathVariable String id) {
-        if (user == null || !offerStateCheckService.isVisible(user.getName(), id)) {
+        if (!offerStateCheckService.isVisible(new UserId(user), id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -69,7 +69,7 @@ class OfferController {
         }
 
         try {
-            final var result = service.close(id, new OfferClose(OfferCloseReason.MANUAL), user.getName());
+            final var result = service.close(id, new OfferClose(OfferCloseReason.MANUAL), new UserId(user));
             return ResponseEntity.ok(modelAssembler.toModel(result));
         } catch (ApiNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -83,7 +83,7 @@ class OfferController {
             @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, defaultValue = "") String tags
     ) {
-        final var result = offerFindService.findOpen(pageable, null, tags);
+        final var result = offerFindService.findOpen(pageable, new UserId(), tags);
         return resourcesAssembler.toModel(result, modelAssembler);
     }
 
@@ -94,7 +94,7 @@ class OfferController {
         }
 
         try {
-            service.modify(id, new OfferModify(offer.getName(), offer.getDescription(), offer.getPrice()), user.getName());
+            service.modify(id, new OfferModify(offer.getName(), offer.getDescription(), offer.getPrice()), new UserId(user));
         } catch (ApiNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (ApiUnauthorizedException e) {
@@ -113,7 +113,7 @@ class OfferController {
         }
 
         try {
-            service.publish(user.getName(), id);
+            service.publish(new UserId(user), id);
             return ResponseEntity.ok().build();
         } catch (ApiException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -122,8 +122,7 @@ class OfferController {
 
     @GetMapping("/search")
     ResponseEntity<?> search(Principal user, @Valid @RequestParam String query) {
-        final var username = user == null ? null : user.getName();
-        final var result = offerFindService.search(new UserShallow(username), query).stream().map(OfferDto::new);
+        final var result = offerFindService.search(new UserId(user), query).stream().map(OfferDto::new);
         return ResponseEntity.ok(result);
     }
 }
