@@ -18,7 +18,6 @@ class UserEditDto {
     private String lastName;
     @NotNull
     private String email;
-    @NotNull
     @Pattern(regexp = "[+]{1}[0-9]{11,14}")
     private String phone;
 
