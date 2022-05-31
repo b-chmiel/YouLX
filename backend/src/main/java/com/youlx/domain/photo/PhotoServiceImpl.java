@@ -65,7 +65,7 @@ public class PhotoServiceImpl implements PhotoService {
         if (!offerStateCheckService.isOwnerOf(offerId, user)) {
             throw new ApiUnauthorizedException("User is not owner of offer.");
         }
-        if (repository.findById(photoId).isEmpty()) {
+        if (!exists(photoId)) {
             throw new ApiNotFoundException("Photo not found.");
         }
 
@@ -79,5 +79,10 @@ public class PhotoServiceImpl implements PhotoService {
         }
 
         return repository.findById(photoId);
+    }
+
+    @Override
+    public boolean exists(String photoId) {
+        return repository.exists(photoId);
     }
 }

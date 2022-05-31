@@ -94,6 +94,7 @@ class PhotoServiceTests {
             when(offerFindService.exists(offerId)).thenReturn(true);
             when(photoRepository.findById(photoId)).thenReturn(Optional.of(Fixtures.photo));
             when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(true);
+            when(photoRepository.exists(photoId)).thenReturn(true);
 
             service.delete(offerId, photoId, new UserId(username));
 
@@ -131,7 +132,7 @@ class PhotoServiceTests {
 
             when(offerFindService.exists(offerId)).thenReturn(true);
             when(offerStateCheckService.isOwnerOf(offerId, new UserId(username))).thenReturn(true);
-            when(photoRepository.findById(photoId)).thenReturn(Optional.empty());
+            when(photoRepository.exists(photoId)).thenReturn(false);
 
             assertThrows(ApiNotFoundException.class, () -> service.delete(offerId, photoId, new UserId(username)));
         }

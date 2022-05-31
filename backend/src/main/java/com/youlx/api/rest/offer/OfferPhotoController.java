@@ -4,6 +4,7 @@ import com.youlx.api.Routes;
 import com.youlx.domain.photo.Photo;
 import com.youlx.domain.photo.PhotoService;
 import com.youlx.domain.user.UserId;
+import com.youlx.domain.utils.exception.ApiConflictException;
 import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
@@ -41,12 +42,14 @@ class OfferPhotoController {
         }
 
         try {
-            service.save(offerId, new Photo(uuid, file), new UserId(user));
+            service.save(offerId, new Photo(file), new UserId(user));
             return ResponseEntity.ok(null);
         } catch (ApiNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (ApiUnauthorizedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (ApiConflictException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

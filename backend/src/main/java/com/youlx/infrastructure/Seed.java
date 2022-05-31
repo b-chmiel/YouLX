@@ -25,7 +25,6 @@ public class Seed implements ApplicationRunner {
     private final OfferRepository offerRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final Uuid uuid;
 
     private static final String mockDescription = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
 
@@ -38,16 +37,16 @@ public class Seed implements ApplicationRunner {
         userRepository.create(user2);
         userRepository.create(admin);
 
-        final var photo = new Photo(uuid.generate(), new ClassPathResource("fixtures/index.jpg").getInputStream().readAllBytes());
-        offerRepository.create(new Offer("Offer0", mockDescription, admin, List.of(photo), BigDecimal.valueOf(1.123)));
-        final var o = new Offer("Offer1", mockDescription, admin, List.of(photo, photo, photo), BigDecimal.valueOf(2.123));
+        final var photo = new Photo(new ClassPathResource("fixtures/index.jpg").getInputStream().readAllBytes());
+        offerRepository.create(new Offer("Offer0", mockDescription, admin, List.of(), BigDecimal.valueOf(1.123)));
+        final var o = new Offer("Offer1", mockDescription, admin, List.of(photo), BigDecimal.valueOf(2.123));
         offerRepository.publish(offerRepository.create(o).getId());
 
-        final var o2 = new Offer("Offer2", mockDescription, admin, List.of(photo, photo, photo), BigDecimal.valueOf(2.123));
+        final var o2 = new Offer("Offer2", mockDescription, admin, List.of(), BigDecimal.valueOf(2.123));
         o2.close(OfferCloseReason.EXPIRED);
         offerRepository.create(o2);
 
-        final var offer = new Offer("Offer3", mockDescription, user1, List.of(photo, photo, photo), BigDecimal.valueOf(2.123));
+        final var offer = new Offer("Offer3", mockDescription, user1, List.of(), BigDecimal.valueOf(2.123));
         offer.close(OfferCloseReason.EXPIRED);
         offerRepository.create(offer);
     }
