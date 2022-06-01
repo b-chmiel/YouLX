@@ -72,6 +72,49 @@ class TagRepositoryTests {
     }
 
     @Nested
+    class GetTests {
+        @Test
+        void get() {
+            final var tag1 = new Tag("1");
+            final var tag2 = new Tag("2");
+            repository.create(tag1);
+            repository.create(tag2);
+
+            assertEquals(List.of(tag1, tag2), repository.getAll());
+        }
+
+        @Test
+        void getAfterAssignedInOrder() {
+            final var tag1 = new Tag("1");
+            final var tag2 = new Tag("2");
+            final var offer = new Offer(null, null, null, null, null, Optional.empty(), user, List.of(), BigDecimal.TEN, LocalDateTime.now(), LocalDateTime.now(), Set.of());
+            userRepository.create(user);
+            final var createdOffer = offerRepo.saveAndFlush(new OfferTuple(offer, new UserTuple(user))).toDomain(hashId);
+            repository.create(tag1);
+            repository.create(tag2);
+
+            repository.assignToOffer(createdOffer.getId(), tag1);
+
+            assertEquals(List.of(tag1, tag2), repository.getAll());
+        }
+
+        @Test
+        void getAfterAssignedReversed() {
+            final var tag1 = new Tag("1");
+            final var tag2 = new Tag("2");
+            final var offer = new Offer(null, null, null, null, null, Optional.empty(), user, List.of(), BigDecimal.TEN, LocalDateTime.now(), LocalDateTime.now(), Set.of());
+            userRepository.create(user);
+            final var createdOffer = offerRepo.saveAndFlush(new OfferTuple(offer, new UserTuple(user))).toDomain(hashId);
+            repository.create(tag1);
+            repository.create(tag2);
+
+            repository.assignToOffer(createdOffer.getId(), tag2);
+
+            assertEquals(List.of(tag2, tag1), repository.getAll());
+        }
+    }
+
+    @Nested
     class CreateTests {
         @Test
         void conflict() {

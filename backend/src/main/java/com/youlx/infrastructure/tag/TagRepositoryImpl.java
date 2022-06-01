@@ -13,12 +13,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
 public class TagRepositoryImpl implements TagRepository {
-    public interface Repo extends JpaRepository<TagTuple, String> {
+    public interface Repo extends JpaRepository<TagTuple, Long> {
+        boolean existsByName(String name);
+
+        TagTuple getByName(String name);
+
+        Optional<TagTuple> findByName(String name);
     }
 
     public interface OfferRepo extends JpaRepository<OfferTuple, Long> {
@@ -30,12 +37,16 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public List<Tag> getAll() {
-        return repo.findAll().stream().map(TagTuple::toDomain).toList();
+        return repo.findAll()
+                .stream()
+                .sorted(Comparator.reverseOrder())
+                .map(TagTuple::toDomain)
+                .toList();
     }
 
     @Override
     public void create(Tag tag) throws ApiException {
-        if (repo.existsById(tag.name())) {
+        if (repo.existsByName(tag.name())) {
             throw new ApiConflictException("Tag with the same name exists.");
         }
 
@@ -54,7 +65,7 @@ public class TagRepositoryImpl implements TagRepository {
 
         final TagTuple tagTuple;
         try {
-            tagTuple = repo.getById(tag.name());
+            tagTuple = repo.getByName(tag.name());
         } catch (EntityNotFoundException e) {
             throw new ApiNotFoundException("Tag not found: " + e.getMessage());
         } catch (Exception e) {
@@ -78,7 +89,19 @@ public class TagRepositoryImpl implements TagRepository {
             throw new ApiNotFoundException("Tag not found: " + e.getMessage());
         }
 
+        incrementReferences(tag);
         offerRepo.save(offer);
+    }
+
+    private void incrementReferences(Tag tag) throws ApiException {
+        final var tuple = repo.findByName(tag.name());
+        if (tuple.isEmpty()) {
+            throw new ApiNotFoundException("Tag not found.");
+        }
+
+        tuple.get().setReferences(tuple.get().getReferences() + 1);
+
+        repo.save(tuple.get());
     }
 
     @Override
