@@ -81,7 +81,7 @@ public class MvcHelpers {
         return value.toString();
     }
 
-    public ResultActions  deleteRequest(String url) throws Exception {
+    public ResultActions deleteRequest(String url) throws Exception {
         return mockMvc.perform(delete(url));
     }
 }

@@ -1,6 +1,8 @@
-package com.youlx.api.rest.offer;
+package com.youlx.api.rest.user;
 
 import com.youlx.api.Routes;
+import com.youlx.api.rest.offer.OfferDto;
+import com.youlx.api.rest.offer.OfferModelAssembler;
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferFindService;
 import com.youlx.domain.user.UserId;
@@ -13,8 +15,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,25 +27,21 @@ import java.security.Principal;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(Routes.User.ME)
-class OfferMeController {
+class MeOfferController {
     private final PagedResourcesAssembler<Offer> resourcesAssembler;
     private final OfferModelAssembler modelAssembler;
     private final OfferFindService service;
 
     @GetMapping("/offers")
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<PagedModel<EntityModel<OfferDto>>> offers(
             @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
             Principal user,
             @Parameter(description = "Statuses delimited with ';' symbol. Pass 'ALL' for no filtering.") @RequestParam(required = false, defaultValue = "OPEN") String statuses,
             @Parameter(description = "Tags delimited with ';' symbol. Empty list means no filtering.") @RequestParam(required = false, defaultValue = "") String tags
     ) {
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        final var username = user.getName();
         return ResponseEntity.ok(
-                resourcesAssembler.toModel(service.findBy(pageable, new UserId(username), statuses, tags)
+                resourcesAssembler.toModel(service.findBy(pageable, new UserId(user), statuses, tags)
                         , modelAssembler
                 )
         );

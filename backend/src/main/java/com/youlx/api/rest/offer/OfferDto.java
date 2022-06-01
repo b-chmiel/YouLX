@@ -21,7 +21,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 @Relation(collectionRelation = "offers", itemRelation = "offer")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class OfferDto extends RepresentationModel<OfferDto> {
+public class OfferDto extends RepresentationModel<OfferDto> {
     private String id;
     private String name;
     private String description;

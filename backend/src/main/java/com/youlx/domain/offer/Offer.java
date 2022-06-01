@@ -4,10 +4,7 @@ import com.youlx.api.Routes;
 import com.youlx.domain.photo.Photo;
 import com.youlx.domain.tag.Tag;
 import com.youlx.domain.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,6 +15,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
+@EqualsAndHashCode
 public class Offer {
     private final String id;
     private final String name;

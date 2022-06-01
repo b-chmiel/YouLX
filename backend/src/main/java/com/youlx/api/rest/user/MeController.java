@@ -5,6 +5,7 @@ import com.youlx.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -12,6 +13,7 @@ import java.security.Principal;
 
 @RestController
 @RequestMapping(Routes.User.ME)
+@PreAuthorize("isAuthenticated()")
 @RequiredArgsConstructor
 class MeController {
     private final UserService userService;
