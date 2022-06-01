@@ -5,20 +5,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.TermVector;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "LX_TAG")
-@NoArgsConstructor
+@Indexed
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class TagTuple {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Field(termVector = TermVector.WITH_POSITION_OFFSETS)
     private String name;
 
     TagTuple(Tag tag) {

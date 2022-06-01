@@ -2,6 +2,7 @@ package com.youlx.api.rest.tag;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.tag.Tag;
+import com.youlx.domain.tag.TagFindService;
 import com.youlx.domain.tag.TagService;
 import com.youlx.domain.utils.exception.ApiConflictException;
 import com.youlx.testUtils.MvcHelpers;
@@ -24,6 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TagControllerTests {
     @MockBean
     private TagService service;
+    @MockBean
+    private TagFindService findService;
 
     @Autowired
     private MvcHelpers helpers;
@@ -62,6 +65,16 @@ class TagControllerTests {
             final var tag = new Tag("asdf");
             helpers.postRequest(tag, Routes.Tag.TAG).andExpect(status().isCreated());
             verify(service, times(1)).create(tag);
+        }
+    }
+
+    @Nested
+    class SearchTests {
+        @Test
+        void search() throws Exception {
+            final var query = "a";
+            helpers.getRequest(Routes.Tag.TAG + "/search?query=" + query).andExpect(status().isOk());
+            verify(findService, times(1)).search(query);
         }
     }
 }
