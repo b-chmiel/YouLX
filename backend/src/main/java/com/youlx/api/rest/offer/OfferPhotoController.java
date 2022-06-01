@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ class OfferPhotoController {
 
     @PostMapping(value = "{offerId}/photos", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("isAuthenticated()")
-    ResponseEntity<?> postPhoto(
+    ResponseEntity<Void> postPhoto(
             Principal user,
             @Valid @PathVariable String offerId,
             @Parameter(content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)) @RequestParam("file") MultipartFile file
@@ -38,7 +39,7 @@ class OfferPhotoController {
     }
 
     @GetMapping("{offerId}/photos")
-    ResponseEntity<?> getPhotos(@Valid @PathVariable String offerId) {
+    ResponseEntity<List<String>> getPhotos(@Valid @PathVariable String offerId) {
         final var result = service
                 .findAllForOffer(offerId)
                 .stream()
@@ -60,7 +61,7 @@ class OfferPhotoController {
 
     @DeleteMapping("{offerId}/photos/{photoId}")
     @PreAuthorize("isAuthenticated()")
-    ResponseEntity<?> deletePhoto(Principal user, @Valid @PathVariable String offerId, @Valid @PathVariable String photoId) {
+    ResponseEntity<Void> deletePhoto(Principal user, @Valid @PathVariable String offerId, @Valid @PathVariable String photoId) {
         service.delete(offerId, photoId, new UserId(user));
         return ResponseEntity.ok().build();
     }

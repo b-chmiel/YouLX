@@ -20,7 +20,7 @@ class OfferTagController {
 
     @PostMapping("{offerId}/tag")
     @PreAuthorize("isAuthenticated()")
-    ResponseEntity<?> assign(Principal user, @PathVariable String offerId, @Valid @RequestBody TagDto tag) {
+    ResponseEntity<Void> assign(Principal user, @PathVariable String offerId, @Valid @RequestBody TagDto tag) {
         service.assignToOffer(new UserId(user), offerId, tag.toDomain());
         return ResponseEntity.ok().build();
     }

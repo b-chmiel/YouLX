@@ -7,7 +7,6 @@ import com.youlx.domain.offer.OfferRepository;
 import com.youlx.domain.photo.Photo;
 import com.youlx.domain.user.User;
 import com.youlx.domain.user.UserRepository;
-import com.youlx.domain.utils.uuid.Uuid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
