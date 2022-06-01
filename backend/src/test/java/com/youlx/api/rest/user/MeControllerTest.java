@@ -65,10 +65,10 @@ class MeControllerTest {
     }
 
     @Nested
-    class MePostTests {
+    class MePutTests {
         @Test
         void returns403IfUserIsNotAuthenticated() throws Exception {
-            helpers.postRequest(null, Routes.User.ME).andExpect(status().isForbidden());
+            helpers.putRequest(new UserEditDto("a", "a", "a", null), Routes.User.ME).andExpect(status().isForbidden());
         }
 
         @Test

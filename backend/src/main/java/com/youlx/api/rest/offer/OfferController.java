@@ -2,11 +2,8 @@ package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.*;
-import com.youlx.domain.user.UserService;
 import com.youlx.domain.user.UserId;
-import com.youlx.domain.utils.exception.ApiException;
-import com.youlx.domain.utils.exception.ApiNotFoundException;
-import com.youlx.domain.utils.exception.ApiUnauthorizedException;
+import com.youlx.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +14,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,11 +33,8 @@ class OfferController {
     private final OfferStateCheckService offerStateCheckService;
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<?> create(Principal user, @Valid @RequestBody OfferCreateDto offer) throws Exception {
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         final var userData = userService.findById(user.getName());
         if (userData.isEmpty()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -53,7 +48,7 @@ class OfferController {
     @GetMapping("{id}")
     ResponseEntity<?> get(Principal user, @Valid @PathVariable String id) {
         if (!offerStateCheckService.isVisible(new UserId(user), id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         return offerFindService
@@ -63,19 +58,10 @@ class OfferController {
     }
 
     @PostMapping("{id}/close")
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<?> close(Principal user, @Valid @PathVariable String id) {
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        try {
-            final var result = service.close(id, new OfferClose(OfferCloseReason.MANUAL), new UserId(user));
-            return ResponseEntity.ok(modelAssembler.toModel(result));
-        } catch (ApiNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (ApiException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        final var result = service.close(id, new OfferClose(OfferCloseReason.MANUAL), new UserId(user));
+        return ResponseEntity.ok(modelAssembler.toModel(result));
     }
 
     @GetMapping
@@ -88,36 +74,17 @@ class OfferController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<?> modify(Principal user, @Valid @PathVariable String id, @Valid @RequestBody OfferCreateDto offer) {
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        try {
-            service.modify(id, new OfferModify(offer.getName(), offer.getDescription(), offer.getPrice()), new UserId(user));
-        } catch (ApiNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (ApiUnauthorizedException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        } catch (ApiException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-
+        service.modify(id, new OfferModify(offer.getName(), offer.getDescription(), offer.getPrice()), new UserId(user));
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("{id}/publish")
+    @PreAuthorize("isAuthenticated()")
     ResponseEntity<?> publish(Principal user, @Valid @PathVariable String id) {
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        try {
-            service.publish(new UserId(user), id);
-            return ResponseEntity.ok().build();
-        } catch (ApiException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        service.publish(new UserId(user), id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/search")

@@ -6,8 +6,6 @@ import com.youlx.domain.photo.PhotoService;
 import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
-import com.youlx.domain.utils.uuid.Uuid;
-import com.youlx.testUtils.Fixtures;
 import com.youlx.testUtils.MvcHelpers;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,6 +20,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.util.List;
 import java.util.Optional;
 
+import static com.youlx.testUtils.Fixtures.photo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,15 +32,13 @@ class OfferPhotoControllerTests {
     private MvcHelpers helpers;
     @MockBean
     private PhotoService service;
-    @MockBean
-    private Uuid uuid;
 
     @Nested
     class PostPhotoTests {
         @Test
         void unauthorizedOnUnauthorized() throws Exception {
             final var id = "a";
-            final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, Fixtures.photo.getData());
+            final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, photo.getData());
             helpers.postFile(file, Routes.Offer.OFFERS + "/" + id + "/photos").andExpect(status().isForbidden());
         }
 
@@ -49,9 +46,8 @@ class OfferPhotoControllerTests {
         @WithMockUser("user")
         void userIsNotOwner() throws Exception {
             final var id = "a";
-            when(uuid.generate()).thenReturn(Fixtures.photo.getId());
-            doThrow(new ApiUnauthorizedException("")).when(service).save(id, Fixtures.photo, new UserId("user"));
-            final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, Fixtures.photo.getData());
+            doThrow(new ApiUnauthorizedException("")).when(service).save(id, photo, new UserId("user"));
+            final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, photo.getData());
             helpers.postFile(file, Routes.Offer.OFFERS + "/" + id + "/photos").andExpect(status().isForbidden());
         }
 
@@ -59,9 +55,8 @@ class OfferPhotoControllerTests {
         @WithMockUser("user")
         void offerNotFound() throws Exception {
             final var id = "a";
-            when(uuid.generate()).thenReturn(Fixtures.photo.getId());
-            doThrow(new ApiNotFoundException("")).when(service).save(id, Fixtures.photo, new UserId("user"));
-            final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, Fixtures.photo.getData());
+            doThrow(new ApiNotFoundException("")).when(service).save(id, photo, new UserId("user"));
+            final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, photo.getData());
 
             helpers.postFile(file, Routes.Offer.OFFERS + "/" + id + "/photos").andExpect(status().isNotFound());
         }
@@ -72,11 +67,10 @@ class OfferPhotoControllerTests {
             final var id = "a";
             final var url = Routes.Offer.OFFERS + "/" + id + "/photos";
 
-            when(uuid.generate()).thenReturn(Fixtures.photo.getId());
-            final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, Fixtures.photo.getData());
+            final var file = new MockMultipartFile("file", "index.jpg", MediaType.IMAGE_JPEG_VALUE, photo.getData());
 
             helpers.postFile(file, url).andExpect(status().isOk());
-            verify(service, times(1)).save(id, Fixtures.photo, new UserId("user"));
+            verify(service, times(1)).save(id, photo, new UserId("user"));
         }
     }
 
@@ -86,11 +80,30 @@ class OfferPhotoControllerTests {
         void getPhotos() throws Exception {
             final var id = "a";
             final var url = Routes.Offer.OFFERS + "/" + id + "/photos";
-            when(service.findAllForOffer(id)).thenReturn(List.of(Fixtures.photo));
+            when(service.findAllForOffer(id)).thenReturn(List.of(photo));
 
             final var result = helpers.getRequest(url).andExpect(status().isOk());
-            final var expected = Routes.Offer.OFFERS + "/" + id + "/photos/" + Fixtures.photo.getId();
+            final var expected = Routes.Offer.OFFERS + "/" + id + "/photos/" + photo.getId();
             assertEquals(expected, MvcHelpers.attributeFromResult("[0]", result));
+        }
+    }
+
+    @Nested
+    class GetPhotoTests {
+        @Test
+        void getPhoto() throws Exception {
+            final var offerId = "a";
+            final var photoId = "b";
+            when(service.find(offerId, photoId)).thenReturn(Optional.of(photo));
+            helpers.getRequest(Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId).andExpect(status().isOk());
+        }
+
+        @Test
+        void notFound() throws Exception {
+            final var offerId = "a";
+            final var photoId = "b";
+            when(service.find(offerId, photoId)).thenReturn(Optional.empty());
+            helpers.getRequest(Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId).andExpect(status().isNotFound());
         }
     }
 
@@ -169,7 +182,7 @@ class OfferPhotoControllerTests {
             final var offerId = "a";
             final var photoId = "b";
             final var url = Routes.Offer.OFFERS + "/" + offerId + "/photos/" + photoId;
-            when(service.find(offerId, photoId)).thenReturn(Optional.of(Fixtures.photo));
+            when(service.find(offerId, photoId)).thenReturn(Optional.of(photo));
             helpers.getRequest(url).andExpect(status().isOk());
         }
     }

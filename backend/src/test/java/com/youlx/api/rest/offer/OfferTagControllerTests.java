@@ -35,32 +35,7 @@ class OfferTagControllerTests {
         void unauthorized() throws Exception {
             final var offerId = "id";
             final var tag = new TagDto("asdf");
-            doThrow(new ApiUnauthorizedException("")).when(service).assignToOffer(new UserId(), offerId, tag.toDomain());
             helpers.postRequest(tag, Routes.Offer.OFFERS + "/" + offerId + "/tag").andExpect(status().isForbidden());
-        }
-
-        @Test
-        void notFound() throws Exception {
-            final var offerId = "id";
-            final var tag = new TagDto("asdf");
-            doThrow(new ApiNotFoundException("")).when(service).assignToOffer(new UserId(), offerId, tag.toDomain());
-            helpers.postRequest(tag, Routes.Offer.OFFERS + "/" + offerId + "/tag").andExpect(status().isNotFound());
-        }
-
-        @Test
-        void conflict() throws Exception {
-            final var offerId = "id";
-            final var tag = new TagDto("asdf");
-            doThrow(new ApiConflictException("")).when(service).assignToOffer(new UserId(), offerId, tag.toDomain());
-            helpers.postRequest(tag, Routes.Offer.OFFERS + "/" + offerId + "/tag").andExpect(status().isConflict());
-        }
-
-        @Test
-        void badRequest() throws Exception {
-            final var offerId = "id";
-            final var tag = new TagDto("asdf");
-            doThrow(new ApiCustomException("")).when(service).assignToOffer(new UserId(), offerId, tag.toDomain());
-            helpers.postRequest(tag, Routes.Offer.OFFERS + "/" + offerId + "/tag").andExpect(status().isBadRequest());
         }
 
         @Test
