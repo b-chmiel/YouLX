@@ -19,16 +19,18 @@ import java.util.Objects;
 @Setter
 @ToString
 @NoArgsConstructor
-public class TagTuple {
+public class TagTuple implements Comparable<TagTuple> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Field(termVector = TermVector.WITH_POSITION_OFFSETS)
     private String name;
+    private int references;
 
     TagTuple(Tag tag) {
         this.name = tag.name();
+        this.references = 0;
     }
 
     public TagTuple(String name) {
@@ -50,5 +52,10 @@ public class TagTuple {
 
     public Tag toDomain() {
         return new Tag(name);
+    }
+
+    @Override
+    public int compareTo(TagTuple o) {
+        return Integer.compare(getReferences(), o.getReferences());
     }
 }

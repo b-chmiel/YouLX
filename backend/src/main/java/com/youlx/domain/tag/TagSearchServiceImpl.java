@@ -7,8 +7,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TagFindServiceImpl implements TagFindService {
-    private final TagFindRepository repository;
+public class TagSearchServiceImpl implements TagSearchService {
+    private final TagSearchRepository repository;
 
     @Override
     public List<Tag> search(String query) {

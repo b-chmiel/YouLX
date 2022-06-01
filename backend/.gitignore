@@ -37,4 +37,4 @@ out/
 .vscode/
 
 com.youlx.infrastructure.offer.OfferTuple
-com.youlx.infrastructure.offer.TagTuple
+com.youlx.infrastructure.tag.TagTuple

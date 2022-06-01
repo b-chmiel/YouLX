@@ -1,7 +1,7 @@
 package com.youlx.infrastructure.tag;
 
 import com.youlx.domain.tag.Tag;
-import com.youlx.domain.tag.TagFindRepository;
+import com.youlx.domain.tag.TagSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.search.jpa.Search;
 import org.springframework.stereotype.Repository;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class TagFindRepositoryImpl implements TagFindRepository {
+public class TagSearchRepositoryImpl implements TagSearchRepository {
     @PersistenceContext
     private EntityManager entityManager;
 

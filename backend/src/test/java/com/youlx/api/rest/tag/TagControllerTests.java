@@ -2,7 +2,7 @@ package com.youlx.api.rest.tag;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.tag.Tag;
-import com.youlx.domain.tag.TagFindService;
+import com.youlx.domain.tag.TagSearchService;
 import com.youlx.domain.tag.TagService;
 import com.youlx.domain.utils.exception.ApiConflictException;
 import com.youlx.testUtils.MvcHelpers;
@@ -26,7 +26,7 @@ class TagControllerTests {
     @MockBean
     private TagService service;
     @MockBean
-    private TagFindService findService;
+    private TagSearchService findService;
 
     @Autowired
     private MvcHelpers helpers;

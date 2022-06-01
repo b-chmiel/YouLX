@@ -1,7 +1,7 @@
 package com.youlx.infrastructure.tag;
 
 import com.youlx.domain.tag.Tag;
-import com.youlx.domain.tag.TagFindRepository;
+import com.youlx.domain.tag.TagSearchRepository;
 import com.youlx.domain.tag.TagRepository;
 import com.youlx.domain.utils.hashId.HashIdImpl;
 import com.youlx.infrastructure.JpaConfig;
@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ContextConfiguration(
-        classes = {TagFindRepositoryImpl.class, JpaConfig.class, HashIdImpl.class, Hashids.class},
+        classes = {TagSearchRepositoryImpl.class, JpaConfig.class, HashIdImpl.class, Hashids.class},
         loader = AnnotationConfigContextLoader.class
 )
 @DataJpaTest
-class TagFindRepositoryTests {
+class TagSearchRepositoryTests {
     @Autowired
-    private TagFindRepository findRepository;
+    private TagSearchRepository findRepository;
     @Autowired
     private TagRepository repository;
 
