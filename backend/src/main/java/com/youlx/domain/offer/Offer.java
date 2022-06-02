@@ -1,6 +1,7 @@
 package com.youlx.domain.offer;
 
 import com.youlx.api.Routes;
+import com.youlx.domain.offer.modify.OfferCloseReason;
 import com.youlx.domain.photo.Photo;
 import com.youlx.domain.tag.Tag;
 import com.youlx.domain.user.User;

@@ -1,5 +1,7 @@
 package com.youlx.domain.offer;
 
+import com.youlx.domain.offer.modify.OfferClose;
+import com.youlx.domain.offer.modify.OfferModify;
 import com.youlx.domain.utils.exception.ApiException;
 
 import java.util.List;

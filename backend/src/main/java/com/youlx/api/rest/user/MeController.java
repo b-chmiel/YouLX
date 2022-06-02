@@ -19,14 +19,14 @@ class MeController {
     private final UserService userService;
 
     @GetMapping
-    ResponseEntity<?> me(Principal user) {
+    ResponseEntity<UserDto> me(Principal user) {
         return userService.findById(user.getName())
                 .map(u -> ResponseEntity.ok(new UserDto(u)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping
-    ResponseEntity<?> me(Principal user, @Valid @RequestBody UserEditDto userData) {
+    ResponseEntity<UserDto> me(Principal user, @Valid @RequestBody UserEditDto userData) {
         return userService.edit(user.getName(), userData.toDomain())
                 .map(u -> ResponseEntity.ok(new UserDto(u)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_MODIFIED).build());

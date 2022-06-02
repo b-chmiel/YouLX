@@ -2,7 +2,7 @@ package com.youlx.api.rest.offer;
 
 import com.sun.security.auth.UserPrincipal;
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferStateCheckService;
+import com.youlx.domain.offer.stateCheck.OfferStateCheckService;
 import com.youlx.domain.user.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

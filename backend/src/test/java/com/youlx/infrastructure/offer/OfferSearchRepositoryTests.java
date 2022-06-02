@@ -2,7 +2,7 @@ package com.youlx.infrastructure.offer;
 
 import com.youlx.domain.offer.Offer;
 import com.youlx.domain.offer.OfferRepository;
-import com.youlx.domain.offer.OfferSearchRepository;
+import com.youlx.domain.offer.find.OfferSearchRepository;
 import com.youlx.domain.user.UserRepository;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.domain.utils.hashId.HashIdImpl;

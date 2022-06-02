@@ -2,6 +2,12 @@ package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.*;
+import com.youlx.domain.offer.stateCheck.OfferStateCheckService;
+import com.youlx.domain.offer.find.OfferFindService;
+import com.youlx.domain.offer.modify.OfferClose;
+import com.youlx.domain.offer.modify.OfferCloseReason;
+import com.youlx.domain.offer.modify.OfferModify;
+import com.youlx.domain.offer.modify.OfferModifyService;
 import com.youlx.domain.user.User;
 import com.youlx.domain.user.UserId;
 import com.youlx.domain.user.UserService;

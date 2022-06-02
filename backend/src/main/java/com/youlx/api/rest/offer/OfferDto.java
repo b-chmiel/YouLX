@@ -3,9 +3,12 @@ package com.youlx.api.rest.offer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.youlx.api.rest.user.UserDto;
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferCloseReason;
+import com.youlx.domain.offer.modify.OfferCloseReason;
 import com.youlx.domain.tag.Tag;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
@@ -15,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
@@ -49,6 +51,7 @@ public class OfferDto extends RepresentationModel<OfferDto> {
         if (!urls.isEmpty()) {
             this.coverUrl = urls.get(0);
         }
+
         this.imageUrls = urls;
         this.price = offer.getPrice();
         this.publishedDate = offer.getPublishedDate();

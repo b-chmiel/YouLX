@@ -1,8 +1,8 @@
 package com.youlx.domain.photo;
 
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferFindService;
-import com.youlx.domain.offer.OfferStateCheckService;
+import com.youlx.domain.offer.find.OfferFindService;
+import com.youlx.domain.offer.stateCheck.OfferStateCheckService;
 import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;

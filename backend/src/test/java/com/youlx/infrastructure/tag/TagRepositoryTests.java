@@ -11,6 +11,7 @@ import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.domain.utils.hashId.HashIdImpl;
 import com.youlx.infrastructure.JpaConfig;
+import com.youlx.infrastructure.offer.JpaOfferRepository;
 import com.youlx.infrastructure.offer.OfferTuple;
 import com.youlx.infrastructure.user.UserTuple;
 import org.hashids.Hashids;
@@ -53,7 +54,7 @@ class TagRepositoryTests {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private TagRepositoryImpl.OfferRepo offerRepo;
+    private JpaOfferRepository offerRepo;
 
     @Autowired
     private HashId hashId;

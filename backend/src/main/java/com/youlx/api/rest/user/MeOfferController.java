@@ -4,7 +4,9 @@ import com.youlx.api.Routes;
 import com.youlx.api.rest.offer.OfferDto;
 import com.youlx.api.rest.offer.OfferModelAssembler;
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferFindService;
+import com.youlx.domain.offer.find.OfferFindService;
+import com.youlx.domain.offer.find.OfferStatusQuery;
+import com.youlx.domain.offer.find.OfferTagQuery;
 import com.youlx.domain.user.UserId;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +42,7 @@ class MeOfferController {
             @Parameter(description = "Statuses delimited with ';' symbol. Pass 'ALL' for no filtering.") @RequestParam(required = false, defaultValue = "OPEN") String statuses,
             @Parameter(description = "Tags delimited with ';' symbol. Empty list means no filtering.") @RequestParam(required = false, defaultValue = "") String tags
     ) {
-        return ResponseEntity.ok(
-                resourcesAssembler.toModel(service.findBy(pageable, new UserId(user), statuses, tags)
-                        , modelAssembler
-                )
-        );
+        final var result = service.findBy(pageable, new UserId(user), new OfferStatusQuery(statuses), new OfferTagQuery(tags));
+        return ResponseEntity.ok(resourcesAssembler.toModel(result, modelAssembler));
     }
 }

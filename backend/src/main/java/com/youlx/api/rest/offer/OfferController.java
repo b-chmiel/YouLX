@@ -2,6 +2,13 @@ package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.*;
+import com.youlx.domain.offer.find.OfferTagQuery;
+import com.youlx.domain.offer.stateCheck.OfferStateCheckService;
+import com.youlx.domain.offer.find.OfferFindService;
+import com.youlx.domain.offer.modify.OfferClose;
+import com.youlx.domain.offer.modify.OfferCloseReason;
+import com.youlx.domain.offer.modify.OfferModify;
+import com.youlx.domain.offer.modify.OfferModifyService;
 import com.youlx.domain.user.UserId;
 import com.youlx.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +42,7 @@ class OfferController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    ResponseEntity<?> create(Principal user, @Valid @RequestBody OfferCreateDto offer) throws Exception {
+    ResponseEntity<Void> create(Principal user, @Valid @RequestBody OfferCreateDto offer) throws Exception {
         final var userData = userService.findById(user.getName());
         if (userData.isEmpty()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -46,7 +54,7 @@ class OfferController {
     }
 
     @GetMapping("{id}")
-    ResponseEntity<?> get(Principal user, @Valid @PathVariable String id) {
+    ResponseEntity<EntityModel<OfferDto>> get(Principal user, @Valid @PathVariable String id) {
         if (!offerStateCheckService.isVisible(new UserId(user), id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -59,7 +67,7 @@ class OfferController {
 
     @PostMapping("{id}/close")
     @PreAuthorize("isAuthenticated()")
-    ResponseEntity<?> close(Principal user, @Valid @PathVariable String id) {
+    ResponseEntity<EntityModel<OfferDto>> close(Principal user, @Valid @PathVariable String id) {
         final var result = service.close(id, new OfferClose(OfferCloseReason.MANUAL), new UserId(user));
         return ResponseEntity.ok(modelAssembler.toModel(result));
     }
@@ -69,27 +77,31 @@ class OfferController {
             @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, defaultValue = "") String tags
     ) {
-        final var result = offerFindService.findOpen(pageable, new UserId(), tags);
+        final var result = offerFindService.findOpen(pageable, new UserId(), new OfferTagQuery(tags));
         return resourcesAssembler.toModel(result, modelAssembler);
     }
 
     @PutMapping("{id}")
     @PreAuthorize("isAuthenticated()")
-    ResponseEntity<?> modify(Principal user, @Valid @PathVariable String id, @Valid @RequestBody OfferCreateDto offer) {
+    ResponseEntity<Void> modify(Principal user, @Valid @PathVariable String id, @Valid @RequestBody OfferCreateDto offer) {
         service.modify(id, new OfferModify(offer.getName(), offer.getDescription(), offer.getPrice()), new UserId(user));
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("{id}/publish")
     @PreAuthorize("isAuthenticated()")
-    ResponseEntity<?> publish(Principal user, @Valid @PathVariable String id) {
+    ResponseEntity<Void> publish(Principal user, @Valid @PathVariable String id) {
         service.publish(new UserId(user), id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/search")
-    ResponseEntity<?> search(Principal user, @Valid @RequestParam String query) {
-        final var result = offerFindService.search(new UserId(user), query).stream().map(OfferDto::new);
+    ResponseEntity<List<OfferDto>> search(Principal user, @Valid @RequestParam String query) {
+        final var result = offerFindService
+                .search(new UserId(user), query)
+                .stream()
+                .map(OfferDto::new)
+                .toList();
         return ResponseEntity.ok(result);
     }
 }

@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
+import java.util.List;
 import java.util.stream.Stream;
 
 @RestController
@@ -27,21 +28,21 @@ class TagController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Returns tags sorted by reference count descending.")
     })
-    ResponseEntity<Stream<TagDto>> getAll() {
-        final var result = service.getAll().stream().map(TagDto::new);
+    ResponseEntity<List<TagDto>> getAll() {
+        final var result = service.getAll().stream().map(TagDto::new).toList();
         return ResponseEntity.ok(result);
     }
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    ResponseEntity<?> create(Principal user, @Valid @RequestBody TagDto tag) throws URISyntaxException {
+    ResponseEntity<Void> create(Principal user, @Valid @RequestBody TagDto tag) throws URISyntaxException {
         service.create(tag.toDomain());
         return ResponseEntity.created(new URI(Routes.Tag.TAG)).build();
     }
 
     @GetMapping("/search")
-    ResponseEntity<Stream<TagDto>> search(@Valid @RequestParam String query) {
-        final var result = findService.search(query).stream().map(TagDto::new);
+    ResponseEntity<List<TagDto>> search(@Valid @RequestParam String query) {
+        final var result = findService.search(query).stream().map(TagDto::new).toList();
         return ResponseEntity.ok(result);
     }
 }

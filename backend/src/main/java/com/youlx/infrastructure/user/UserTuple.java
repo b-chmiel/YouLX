@@ -42,9 +42,11 @@ public class UserTuple {
     }
 
     public User toDomain() {
-        List<SimpleGrantedAuthority> auth = List.of();
+        final List<SimpleGrantedAuthority> auth;
         if (authorities != null) {
             auth = authorities.stream().map(SimpleGrantedAuthority::new).toList();
+        } else {
+            auth = List.of();
         }
 
         return new User(auth, firstName, lastName, email, password, id, phone);

@@ -8,9 +8,9 @@ import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.hashId.ApiHashIdException;
 import com.youlx.domain.utils.hashId.HashId;
+import com.youlx.infrastructure.offer.JpaOfferRepository;
 import com.youlx.infrastructure.offer.OfferTuple;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
@@ -19,15 +19,9 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class PhotoRepositoryImpl implements PhotoRepository {
-    public interface Repo extends JpaRepository<PhotoTuple, Long> {
-    }
-
-    public interface OfferRepo extends JpaRepository<OfferTuple, Long> {
-    }
-
-    private final Repo repo;
-    private final OfferRepo offerRepo;
     private final HashId hashId;
+    private final JpaPhotoRepository repo;
+    private final JpaOfferRepository offerRepo;
 
     @Override
     @Transactional

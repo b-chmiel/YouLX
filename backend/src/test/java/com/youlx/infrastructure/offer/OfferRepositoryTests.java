@@ -1,6 +1,9 @@
 package com.youlx.infrastructure.offer;
 
 import com.youlx.domain.offer.*;
+import com.youlx.domain.offer.modify.OfferClose;
+import com.youlx.domain.offer.modify.OfferCloseReason;
+import com.youlx.domain.offer.modify.OfferModify;
 import com.youlx.domain.user.UserRepository;
 import com.youlx.domain.utils.hashId.ApiHashIdException;
 import com.youlx.domain.utils.hashId.HashId;
@@ -47,7 +50,7 @@ class OfferRepositoryTests {
     private UserRepository userRepository;
 
     @Autowired
-    private OfferRepositoryImpl.Repo repo;
+    private JpaOfferRepository repo;
 
 
     @BeforeEach

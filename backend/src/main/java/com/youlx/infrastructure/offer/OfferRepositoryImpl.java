@@ -1,14 +1,17 @@
 package com.youlx.infrastructure.offer;
 
-import com.youlx.domain.offer.*;
+import com.youlx.domain.offer.Offer;
+import com.youlx.domain.offer.OfferRepository;
+import com.youlx.domain.offer.OfferStatus;
+import com.youlx.domain.offer.modify.OfferClose;
+import com.youlx.domain.offer.modify.OfferModify;
 import com.youlx.domain.photo.PhotoRepository;
 import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.hashId.ApiHashIdException;
 import com.youlx.domain.utils.hashId.HashId;
-import com.youlx.infrastructure.user.UserTuple;
+import com.youlx.infrastructure.user.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -17,23 +20,15 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class OfferRepositoryImpl implements OfferRepository {
-    public interface Repo extends JpaRepository<OfferTuple, Long> {
-        List<OfferTuple> findAllByUser(UserTuple user);
 
-    }
-
-    public interface UserRepo extends JpaRepository<UserTuple, Long> {
-        Optional<UserTuple> getUserTupleById(String username);
-    }
-
-    private final Repo repo;
     private final HashId hashId;
-    private final UserRepo userRepo;
+    private final JpaUserRepository userRepo;
+    private final JpaOfferRepository repo;
     private final PhotoRepository photoRepository;
 
     @Override
     public Offer create(Offer offer) throws ApiException {
-        final var user = userRepo.getUserTupleById(offer.getUser().getUsername());
+        final var user = userRepo.findById(offer.getUser().getUsername());
         if (user.isEmpty()) {
             throw new ApiNotFoundException("Cannot create offer for non existing user");
         }
@@ -87,7 +82,7 @@ public class OfferRepositoryImpl implements OfferRepository {
 
     @Override
     public List<Offer> findByUserId(String id) {
-        final var user = userRepo.getUserTupleById(id);
+        final var user = userRepo.findById(id);
 
         if (user.isEmpty()) {
             return List.of();

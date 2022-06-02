@@ -1,7 +1,7 @@
 package com.youlx.api.rest.user;
 
 import com.youlx.api.Routes;
-import com.youlx.domain.offer.OfferFindService;
+import com.youlx.domain.offer.find.OfferFindService;
 import com.youlx.domain.user.UserId;
 import com.youlx.testUtils.MvcHelpers;
 import org.junit.jupiter.api.Nested;
@@ -14,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,7 +36,7 @@ public class MeOfferControllerTests {
         @Test
         @WithMockUser("user")
         void get() throws Exception {
-            when(service.findBy(any(), any(UserId.class), anyString(), anyString())).thenReturn(Page.empty());
+            when(service.findBy(any(), any(UserId.class), any(), any())).thenReturn(Page.empty());
             helpers.getRequest(Routes.User.ME + "/offers?size=0&page=0").andExpect(status().isOk());
         }
     }
