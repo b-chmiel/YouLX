@@ -15,10 +15,10 @@ export interface Offer {
   };
   status: string;
   _links: {
-    close: {
+    close?: {
       href: string
     },
-    publish: {
+    publish?: {
       href: string
     }
   };
