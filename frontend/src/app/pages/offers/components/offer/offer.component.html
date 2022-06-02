@@ -16,10 +16,7 @@
       FREE
     </div>
   </ng-template>
-  <div *ngIf="offer.status == 'OPEN'; else closed" class="my-2 mx-auto badge badge-success badge-outline">Open</div>
-  <ng-template #closed>
-    <div class="my-2 mx-auto badge badge-error badge-outline">Closed</div>
-  </ng-template>
+  <div class="my-2 mx-auto badge badge-outline" [ngClass]="getClassForStatus(offer.status)">{{offer.status}}</div>
   <div class="card-body items-center text-center pt-0 mt-0 pb-3">
     <h3 class="truncate inline-block w-full m-0">
       {{offer.name}}

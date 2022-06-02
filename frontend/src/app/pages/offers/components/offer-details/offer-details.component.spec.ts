@@ -7,7 +7,7 @@ import {OffersService} from '../../../../services/offers.service';
 describe('OfferDetailsComponent', () => {
   let component: OfferDetailsComponent;
   let fixture: ComponentFixture<OfferDetailsComponent>;
-  let offersServiceSpy: any = jasmine.createSpyObj('OffersService', ['createOffer']);
+  let offersServiceSpy: any = jasmine.createSpyObj('OffersService', ['closeOffer', 'publishOffer']);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

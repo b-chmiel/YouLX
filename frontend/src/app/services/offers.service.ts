@@ -37,7 +37,7 @@ export class OffersService {
       catchError(err => of([] as Offer[])));
   }
 
-  getOwnOffers(page: number, size: number, status: string = 'OPEN;CLOSED;DRAFT'): Observable<Offer[]> {
+  getOwnOffers(page: number, size: number, statuses: string = 'ALL'): Observable<Offer[]> {
     if (page < 0 || size < 1) {
       return of([] as Offer[]);
     }
@@ -46,7 +46,7 @@ export class OffersService {
       params: {
         page,
         size,
-        status,
+        statuses,
       },
     }).pipe(
       map(value => value._embedded.offers.map(offer => {
@@ -89,6 +89,16 @@ export class OffersService {
 
     if (closeUrl) {
       return this.http.post<Offer>(closeUrl, {});
+    }
+
+    return of(null);
+  }
+
+  publishOffer(offer: Offer): Observable<Offer | null> {
+    const publishUrl = offer._links?.publish?.href;
+
+    if (publishUrl) {
+      return this.http.post<Offer>(publishUrl, {});
     }
 
     return of(null);
