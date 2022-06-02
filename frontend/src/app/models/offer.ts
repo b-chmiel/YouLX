@@ -17,6 +17,9 @@ export interface Offer {
   _links: {
     close: {
       href: string
+    },
+    publish: {
+      href: string
     }
   };
 }
