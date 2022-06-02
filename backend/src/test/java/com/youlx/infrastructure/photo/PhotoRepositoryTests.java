@@ -9,6 +9,7 @@ import com.youlx.domain.utils.hashId.ApiHashIdException;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.domain.utils.hashId.HashIdImpl;
 import com.youlx.infrastructure.JpaConfig;
+import com.youlx.infrastructure.offer.JpaOfferRepository;
 import com.youlx.infrastructure.offer.OfferTuple;
 import com.youlx.infrastructure.user.UserTuple;
 import com.youlx.testUtils.Fixtures;
@@ -23,7 +24,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import org.springframework.test.context.transaction.TestTransaction;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -48,15 +48,16 @@ class PhotoRepositoryTests {
     private PhotoRepository repository;
 
     @Autowired
-    private PhotoRepositoryImpl.OfferRepo offerRepo;
+    private JpaOfferRepository offerRepo;
     @Autowired
-    private PhotoRepositoryImpl.Repo repo;
+    private JpaPhotoRepository repo;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private EntityManager em;
+
     @BeforeEach
     void setup() throws ApiHashIdException {
         userRepository.create(user);

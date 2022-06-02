@@ -1,5 +1,6 @@
-package com.youlx.domain.offer;
+package com.youlx.domain.offer.stateCheck;
 
+import com.youlx.domain.offer.Offer;
 import com.youlx.domain.user.UserId;
 
 public interface OfferStateCheckService {

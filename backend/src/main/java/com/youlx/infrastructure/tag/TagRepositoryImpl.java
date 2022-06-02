@@ -8,9 +8,10 @@ import com.youlx.domain.utils.exception.ApiException;
 import com.youlx.domain.utils.exception.ApiNotFoundException;
 import com.youlx.domain.utils.hashId.ApiHashIdException;
 import com.youlx.domain.utils.hashId.HashId;
+import com.youlx.infrastructure.offer.JpaOfferRepository;
 import com.youlx.infrastructure.offer.OfferTuple;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Comparator;
@@ -20,20 +21,9 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 public class TagRepositoryImpl implements TagRepository {
-    public interface Repo extends JpaRepository<TagTuple, Long> {
-        boolean existsByName(String name);
-
-        TagTuple getByName(String name);
-
-        Optional<TagTuple> findByName(String name);
-    }
-
-    public interface OfferRepo extends JpaRepository<OfferTuple, Long> {
-    }
-
-    private final Repo repo;
-    private final OfferRepo offerRepo;
     private final HashId hashId;
+    private final JpaTagRepository repo;
+    private final JpaOfferRepository offerRepo;
 
     @Override
     public List<Tag> getAll() {
@@ -63,15 +53,6 @@ public class TagRepositoryImpl implements TagRepository {
             throw new ApiNotFoundException("Offer not found: " + e.getMessage());
         }
 
-        final TagTuple tagTuple;
-        try {
-            tagTuple = repo.getByName(tag.name());
-        } catch (EntityNotFoundException e) {
-            throw new ApiNotFoundException("Tag not found: " + e.getMessage());
-        } catch (Exception e) {
-            throw new ApiCustomException(e.getMessage());
-        }
-
         Set<TagTuple> tags;
         try {
             tags = offer.getTags();
@@ -79,15 +60,22 @@ public class TagRepositoryImpl implements TagRepository {
             throw new ApiNotFoundException("Offer not found: " + e.getMessage());
         }
 
-        if (tags.contains(tagTuple)) {
+        final Optional<TagTuple> tagTuple;
+        try {
+            tagTuple = repo.findByName(tag.name());
+        } catch (DataIntegrityViolationException e) {
+            throw new ApiCustomException("WTF: " + e.getMostSpecificCause().getMessage());
+        }
+
+        if (tagTuple.isEmpty()) {
+            throw new ApiNotFoundException("Tag not found.");
+        }
+
+        if (tags.contains(tagTuple.get())) {
             throw new ApiConflictException("Offer already contains this tag.");
         }
 
-        try {
-            tags.add(tagTuple);
-        } catch (EntityNotFoundException e) {
-            throw new ApiNotFoundException("Tag not found: " + e.getMessage());
-        }
+        tags.add(tagTuple.get());
 
         incrementReferences(tag);
         offerRepo.save(offer);

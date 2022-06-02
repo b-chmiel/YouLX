@@ -1,7 +1,7 @@
 package com.youlx.infrastructure.offer;
 
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferCloseReason;
+import com.youlx.domain.offer.modify.OfferCloseReason;
 import com.youlx.domain.offer.OfferStatus;
 import com.youlx.domain.utils.hashId.HashId;
 import com.youlx.infrastructure.photo.PhotoTuple;
@@ -54,7 +54,7 @@ public class OfferTuple {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = PhotoTuple.class)
     private List<PhotoTuple> photos;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = TagTuple.class)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = TagTuple.class)
     private Set<TagTuple> tags;
 
     public OfferTuple(Offer offer, UserTuple user) {

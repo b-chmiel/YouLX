@@ -1,5 +1,9 @@
-package com.youlx.domain.offer;
+package com.youlx.domain.offer.modify;
 
+import com.youlx.domain.offer.Offer;
+import com.youlx.domain.offer.OfferRepository;
+import com.youlx.domain.offer.stateCheck.OfferStateCheckService;
+import com.youlx.domain.offer.find.OfferFindService;
 import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiCustomException;
 import com.youlx.domain.utils.exception.ApiException;
@@ -10,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class OfferServiceImpl implements OfferModifyService {
+public class OfferModifyServiceImpl implements OfferModifyService {
     private final OfferRepository offerRepository;
     private final OfferFindService offerFindService;
     private final OfferStateCheckService offerStateCheckService;

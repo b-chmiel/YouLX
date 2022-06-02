@@ -1,5 +1,8 @@
-package com.youlx.domain.offer;
+package com.youlx.domain.offer.stateCheck;
 
+import com.youlx.domain.offer.Offer;
+import com.youlx.domain.offer.OfferRepository;
+import com.youlx.domain.offer.OfferStatus;
 import com.youlx.domain.user.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package com.youlx.domain.tag;
 
-import com.youlx.domain.offer.OfferStateCheckService;
+import com.youlx.domain.offer.stateCheck.OfferStateCheckService;
 import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiUnauthorizedException;
 import org.junit.jupiter.api.Nested;

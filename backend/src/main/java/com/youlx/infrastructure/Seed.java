@@ -3,14 +3,15 @@ package com.youlx.infrastructure;
 import com.github.javafaker.Faker;
 import com.youlx.api.config.SecurityRoles;
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferClose;
-import com.youlx.domain.offer.OfferCloseReason;
+import com.youlx.domain.offer.modify.OfferClose;
+import com.youlx.domain.offer.modify.OfferCloseReason;
 import com.youlx.domain.offer.OfferRepository;
 import com.youlx.domain.photo.Photo;
 import com.youlx.domain.tag.Tag;
 import com.youlx.domain.tag.TagRepository;
 import com.youlx.domain.user.User;
 import com.youlx.domain.user.UserRepository;
+import com.youlx.domain.utils.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -18,8 +19,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -38,7 +39,7 @@ public class Seed implements ApplicationRunner {
     private static final Faker faker = new Faker(random);
     private static final int NUMBER_OF_TAGS = 10;
     private static final int PHOTOS_PER_OFFER = 3;
-    private static final int OFFER_COUNT = 9;
+    private static final int OFFER_COUNT = 1;
 
     @Override
     @Transactional
@@ -48,7 +49,7 @@ public class Seed implements ApplicationRunner {
 
         final var photos = List.of(photoFrom("fixtures/photo1.jpg"), photoFrom("fixtures/photo2.jpg"), photoFrom("fixtures/photo3.jpg"), photoFrom("fixtures/photo4.jpg"), photoFrom("fixtures/photo5.jpg"), photoFrom("fixtures/photo6.jpg"), photoFrom("fixtures/photo7.jpg"));
 
-        final var tags = IntStream.range(0, NUMBER_OF_TAGS).mapToObj(i -> faker.commerce().productName()).map(Tag::new).toList();
+        final var tags = tagsFrom();
         tags.forEach(tagRepository::create);
 
         for (final var user : users) {
@@ -79,8 +80,16 @@ public class Seed implements ApplicationRunner {
     }
 
     private void assignTagsToOffer(List<Tag> allTags, String offerId) {
-//        tagRepository.assignToOffer(offerId, allTags.get(faker.random().nextInt(allTags.size())));
-//        tagRepository.assignToOffer(offerId, allTags.get(faker.random().nextInt(allTags.size())));
+        try {
+            tagRepository.assignToOffer(offerId, allTags.get(faker.random().nextInt(allTags.size())));
+            tagRepository.assignToOffer(offerId, allTags.get(faker.random().nextInt(allTags.size())));
+        } catch (ApiException ignored) {
+            // Imma not if this nextInts' randomness out.
+        }
+    }
+
+    private List<Tag> tagsFrom() {
+        return IntStream.range(0, NUMBER_OF_TAGS).mapToObj(i -> faker.lorem().word()).distinct().map(Tag::new).toList();
     }
 
     private User userFrom(String username) {

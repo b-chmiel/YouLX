@@ -35,10 +35,10 @@ class AuthControllerTests {
         }
 
         @Test
-        void shouldLoginAdmin() throws Exception {
+        void shouldLogin() throws Exception {
             final var loginParams = new HashMap<String, String>();
-            loginParams.put("username", "admin");
-            loginParams.put("password", "admin");
+            loginParams.put("username", "user1");
+            loginParams.put("password", "user1");
             helpers.postFormRequest(loginParams, Routes.Auth.LOGIN).andExpect(redirectedUrl("/"));
         }
     }

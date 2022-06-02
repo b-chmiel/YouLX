@@ -1,5 +1,11 @@
-package com.youlx.domain.offer;
+package com.youlx.domain.offer.modify;
 
+import com.youlx.domain.offer.Offer;
+import com.youlx.domain.offer.OfferRepository;
+import com.youlx.domain.offer.OfferStatus;
+import com.youlx.domain.offer.stateCheck.OfferStateCheckService;
+import com.youlx.domain.offer.find.OfferFindService;
+import com.youlx.domain.offer.modify.*;
 import com.youlx.domain.user.User;
 import com.youlx.domain.user.UserId;
 import com.youlx.domain.utils.exception.ApiCustomException;
@@ -16,12 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class OfferServiceTests {
+class OfferModifyServiceTests {
     private final OfferRepository offerRepository = mock(OfferRepository.class);
     private final OfferFindService offerFindService = mock(OfferFindService.class);
     private final OfferStateCheckService offerStateCheckService = mock(OfferStateCheckService.class);
 
-    private final OfferModifyService service = new OfferServiceImpl(offerRepository, offerFindService, offerStateCheckService);
+    private final OfferModifyService service = new OfferModifyServiceImpl(offerRepository, offerFindService, offerStateCheckService);
 
     @Nested
     class CreateTests {

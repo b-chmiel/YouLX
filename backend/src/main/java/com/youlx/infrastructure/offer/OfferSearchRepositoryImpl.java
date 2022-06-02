@@ -1,7 +1,7 @@
 package com.youlx.infrastructure.offer;
 
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferSearchRepository;
+import com.youlx.domain.offer.find.OfferSearchRepository;
 import com.youlx.domain.utils.hashId.HashId;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.search.jpa.Search;

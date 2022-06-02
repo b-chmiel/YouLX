@@ -2,7 +2,8 @@ package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferFindService;
+import com.youlx.domain.offer.find.OfferFindService;
+import com.youlx.domain.offer.find.OfferTagQuery;
 import com.youlx.domain.user.UserService;
 import com.youlx.domain.user.UserId;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ class OfferUserController {
 
         return ResponseEntity.ok(
                 resourcesAssembler.toModel(
-                        offerFindService.findOpen(pageable, new UserId(username), tags)
+                        offerFindService.findOpen(pageable, new UserId(username), new OfferTagQuery(tags))
                         , modelAssembler
                 )
         );

@@ -10,10 +10,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
-    public interface Repo extends JpaRepository<UserTuple, String> {
-    }
-
-    private final Repo repo;
+    private final JpaUserRepository repo;
 
     @Override
     public Optional<User> findByUsername(String username) {

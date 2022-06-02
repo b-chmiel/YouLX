@@ -2,7 +2,7 @@ package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.Offer;
-import com.youlx.domain.offer.OfferCloseReason;
+import com.youlx.domain.offer.modify.OfferCloseReason;
 import com.youlx.domain.offer.OfferStatus;
 import com.youlx.domain.user.User;
 import com.youlx.domain.user.UserRepository;

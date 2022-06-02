@@ -1,4 +1,4 @@
-package com.youlx.domain.offer;
+package com.youlx.domain.offer.modify;
 
 public record OfferClose(OfferCloseReason reason) {
 }

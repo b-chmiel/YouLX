@@ -2,6 +2,13 @@ package com.youlx.api.rest.offer;
 
 import com.youlx.api.Routes;
 import com.youlx.domain.offer.*;
+import com.youlx.domain.offer.find.OfferTagQuery;
+import com.youlx.domain.offer.stateCheck.OfferStateCheckService;
+import com.youlx.domain.offer.find.OfferFindService;
+import com.youlx.domain.offer.modify.OfferClose;
+import com.youlx.domain.offer.modify.OfferCloseReason;
+import com.youlx.domain.offer.modify.OfferModify;
+import com.youlx.domain.offer.modify.OfferModifyService;
 import com.youlx.domain.user.UserId;
 import com.youlx.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +77,7 @@ class OfferController {
             @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(required = false, defaultValue = "") String tags
     ) {
-        final var result = offerFindService.findOpen(pageable, new UserId(), tags);
+        final var result = offerFindService.findOpen(pageable, new UserId(), new OfferTagQuery(tags));
         return resourcesAssembler.toModel(result, modelAssembler);
     }
 

@@ -1,6 +1,7 @@
 package com.youlx.infrastructure.tag;
 
 import com.youlx.domain.tag.Tag;
+import com.youlx.infrastructure.offer.OfferTuple;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.TermVector;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -24,9 +26,12 @@ public class TagTuple implements Comparable<TagTuple> {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Field(termVector = TermVector.WITH_POSITION_OFFSETS)
+    @Field(termVector = TermVector.YES)
     private String name;
     private int references;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = TagTuple.class)
+    private List<OfferTuple> offers;
 
     TagTuple(Tag tag) {
         this.name = tag.name();
@@ -42,12 +47,12 @@ public class TagTuple implements Comparable<TagTuple> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TagTuple tagTuple = (TagTuple) o;
-        return Objects.equals(name, tagTuple.name);
+        return Objects.equals(id, tagTuple.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(id);
     }
 
     public Tag toDomain() {

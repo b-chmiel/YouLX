@@ -13,7 +13,7 @@ public interface OfferPagedRepository extends PagingAndSortingRepository<OfferTu
 
     Page<OfferTuple> findAllByUserIdAndStatusIn(Pageable pageable, String userId, List<OfferStatus> statuses);
 
-    Page<OfferTuple> findAllByUserIdAndAndStatusInAndTagsIn(Pageable pageable, String userId, List<OfferStatus> statuses, List<TagTuple> tags);
+    Page<OfferTuple> findAllByUserIdAndStatusInAndTagsIn(Pageable pageable, String userId, List<OfferStatus> statuses, List<TagTuple> tags);
 
     Page<OfferTuple> findAllByUserId(Pageable pageable, String username);
 

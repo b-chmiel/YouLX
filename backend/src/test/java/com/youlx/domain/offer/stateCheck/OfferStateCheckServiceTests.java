@@ -1,5 +1,11 @@
-package com.youlx.domain.offer;
+package com.youlx.domain.offer.stateCheck;
 
+import com.youlx.domain.offer.Offer;
+import com.youlx.domain.offer.OfferRepository;
+import com.youlx.domain.offer.OfferStatus;
+import com.youlx.domain.offer.stateCheck.OfferStateCheckService;
+import com.youlx.domain.offer.stateCheck.OfferStateCheckServiceImpl;
+import com.youlx.domain.offer.modify.OfferCloseReason;
 import com.youlx.domain.user.User;
 import com.youlx.domain.user.UserId;
 import org.junit.jupiter.api.Nested;
