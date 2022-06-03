@@ -3,5 +3,5 @@ export default interface Profile {
   lastName: string;
   email: string;
   login: string;
-  phone: string;
+  phone?: string;
 }
