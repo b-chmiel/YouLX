@@ -1,6 +1,7 @@
 export interface CreateOfferDto {
   name: string;
   description: string;
+  price?: number;
 }
 
 export interface Offer {

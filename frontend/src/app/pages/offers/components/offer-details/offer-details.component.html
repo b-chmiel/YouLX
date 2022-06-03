@@ -11,6 +11,7 @@
       <hr class="mb-2 mt-3"/>
       <div class="badge badge-outline" [ngClass]="getClassForStatus(offer.status)">{{offer.status}}</div>
       <span class="ml-2 text-xs text-gray-400">posted by {{offer.user.login}} on {{offer.creationDate | date}}</span>
+      <span class="ml-2 text-xs text-gray-400">{{offer.price | currency: 'PLN'}}</span>
       <h4 class="mt-1">{{offer.name}}</h4>
       <hr class="mb-2"/>
       <p>{{offer.description}}</p>
