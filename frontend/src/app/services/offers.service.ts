@@ -84,6 +84,10 @@ export class OffersService {
     }));
   }
 
+  updateOffer(offer: Offer): Observable<Offer> {
+    return this.http.put<Offer>(this.offersUrl + '/' + offer.id, offer);
+  }
+
   closeOffer(offer: Offer): Observable<Offer | null> {
     const closeUrl = offer._links?.close?.href;
 

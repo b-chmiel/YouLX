@@ -22,8 +22,18 @@ const routes: Routes = [
     }
   },
   {
+    path: 'offers/owned/:offerId/edit',
+    component: OfferNewComponent,
+    resolve: {
+      offer: OfferResolver,
+    },
+  },
+  {
     path: 'offers/owned/:offerId',
     component: OfferDetailsComponent,
+    data: {
+      canEdit: true
+    },
     resolve: {
       offer: OfferResolver,
     },
