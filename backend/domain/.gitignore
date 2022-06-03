@@ -35,6 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
-
 com.infrastructure.offer.OfferTuple
 com.infrastructure.tag.TagTuple

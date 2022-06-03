@@ -2,13 +2,21 @@
   <configuration default="false" name="Api" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="ACTIVE_PROFILES" />
     <module name="tlx.main" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="com.youlx.YoulxApplication" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.youlx.com.api.YoulxApplication" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.youlx.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+  <configuration default="false" name="Api" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" />
+    <module name="tlx.api.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.api.YoulxApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
