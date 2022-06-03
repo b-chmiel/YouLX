@@ -1,4 +1,4 @@
-<a [routerLink]="'/offers/browse/' + offer.id" class="card w-96 bg-base-100 shadow-md hover:shadow-xl hover:cursor-pointer">
+<a [routerLink]="offer.id" class="card w-96 bg-base-100 shadow-md hover:shadow-xl hover:cursor-pointer">
   <figure class="px-2 pt-2 aspect-w-16 aspect-h-9">
     <img [src]="offer.coverUrl" [alt]="offer.name" class="rounded-xl object-cover" *ngIf="offer.coverUrl; else noCover"/>
     <ng-template #noCover>

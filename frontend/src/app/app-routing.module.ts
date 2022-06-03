@@ -7,7 +7,7 @@ import {ProfileResolver} from './pages/profile/resolvers/profile.resolver';
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: 'offers/browse',
     component: HomeComponent,
     resolve: {
       offers: OffersResolver
@@ -22,7 +22,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '/home',
+    redirectTo: '/offers/browse',
   },
 ];
 
