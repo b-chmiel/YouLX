@@ -1,1 +1,2 @@
 rootProject.name = 'tlx'
+include 'api', 'domain', 'infrastructure'
