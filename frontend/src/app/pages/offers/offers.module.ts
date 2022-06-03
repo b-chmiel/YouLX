@@ -7,7 +7,6 @@ import {OfferNewComponent} from './components/offer-new/offer-new.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {BrowseMyOffersComponent} from './components/browse-my-offers/browse-my-offers.component';
 import {OfferComponent} from './components/offer/offer.component';
-import {NavigationDirective} from './directives/navigation.directive';
 
 @NgModule({
   declarations: [
@@ -15,7 +14,6 @@ import {NavigationDirective} from './directives/navigation.directive';
     OfferNewComponent,
     BrowseMyOffersComponent,
     OfferComponent,
-    NavigationDirective,
   ],
   imports: [
     CommonModule,

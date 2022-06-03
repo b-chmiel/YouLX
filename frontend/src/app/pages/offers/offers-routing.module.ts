@@ -22,6 +22,13 @@ const routes: Routes = [
     }
   },
   {
+    path: 'offers/owned/:offerId',
+    component: OfferDetailsComponent,
+    resolve: {
+      offer: OfferResolver,
+    },
+  },
+  {
     path: 'offers/create',
     component: OfferNewComponent,
   },
