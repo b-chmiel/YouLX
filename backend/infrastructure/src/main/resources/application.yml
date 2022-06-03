@@ -12,21 +12,12 @@ spring:
     password: password
     driver-class-name: org.h2.Driver
   jpa:
-    show-sql: true
     hibernate:
       ddl-auto: create-drop
     generate-ddl: true
-    properties:
-      hibernate:
-        format_sql=true:
 
 hibernate:
   search:
     default:
       directory_provider: filesystem
       indexBase: /data/index/default
-
-logging:
-  level:
-    org:
-      hibernate: ERROR

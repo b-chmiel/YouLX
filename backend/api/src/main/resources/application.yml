@@ -21,4 +21,5 @@ logging:
     org:
       springframework:
         web: DEBUG
-
+      hibernate:
+        SQL: DEBUG
