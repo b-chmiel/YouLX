@@ -1,16 +1,19 @@
 <ng-container *ngIf="offer; else notFound">
-  <div class="container max-w-4xl mx-auto">
+  <div class="container max-w-4xl mx-auto pb-3">
     <div class="my-3">
       <button backButton class="btn btn-sm btn-outline">go back</button>
     </div>
     <article class="bg-white shadow-xl p-3 rounded-box prose max-w-none">
+      <div>
+        <button *ngIf="offer._links.publish" class="btn btn-outline" (click)="publishOffer()">Publish offer</button>
+        <button *ngIf="offer._links.close" class="btn btn-outline" (click)="closeOffer()">Close offer</button>
+      </div>
+      <hr class="mb-2 mt-3"/>
       <div class="badge badge-outline" [ngClass]="getClassForStatus(offer.status)">{{offer.status}}</div>
       <span class="ml-2 text-xs text-gray-400">posted by {{offer.user.login}} on {{offer.creationDate | date}}</span>
       <h4 class="mt-1">{{offer.name}}</h4>
       <hr class="mb-2"/>
       <p>{{offer.description}}</p>
-      <button *ngIf="offer._links.publish" class="btn btn-outline" (click)="publishOffer()">Publish offer</button>
-      <button *ngIf="offer._links.close" class="btn btn-outline" (click)="closeOffer()">Close offer</button>
     </article>
   </div>
 </ng-container>

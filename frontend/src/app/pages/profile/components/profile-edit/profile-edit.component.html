@@ -21,6 +21,13 @@
   </div>
 
   <div class="form-control">
+    <label for="phone" class="label">
+      <span class="label-text">Phone</span>
+    </label>
+    <input id="phone" type="text" formControlName="phone" [placeholder]="profile.phone" class="input input-bordered w-full">
+  </div>
+
+  <div class="form-control">
     <input type="submit" value="Save" class="btn mt-3" [disabled]="!form.valid" />
   </div>
 </form>

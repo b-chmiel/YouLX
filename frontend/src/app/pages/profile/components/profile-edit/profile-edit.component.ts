@@ -17,7 +17,8 @@ export class ProfileEditComponent implements OnInit {
     this.form = new FormGroup({
       firstName: new FormControl(this.profile.firstName, Validators.required),
       lastName: new FormControl(this.profile.lastName, Validators.required),
-      email: new FormControl(this.profile.email, Validators.required)
+      email: new FormControl(this.profile.email, Validators.required),
+      phone: new FormControl(this.profile.phone)
     })
   }
 
