@@ -10,8 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public
-class TagDto {
+public class TagDto {
     private String name;
 
     TagDto(Tag tag) {

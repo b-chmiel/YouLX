@@ -1,4 +1,4 @@
-package com.api.config;
+package com.api.auth;
 
 import com.api.Routes;
 import lombok.RequiredArgsConstructor;

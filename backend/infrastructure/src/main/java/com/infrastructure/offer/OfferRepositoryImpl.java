@@ -30,7 +30,7 @@ public class OfferRepositoryImpl implements OfferRepository {
     public Offer create(Offer offer) throws ApiException {
         final var user = userRepo.findById(offer.getUser().getUsername());
         if (user.isEmpty()) {
-            throw new ApiNotFoundException("Cannot create com.infrastructure.offer for non existing com.infrastructure.user");
+            throw new ApiNotFoundException("Cannot create offer for non existing user");
         }
 
         final var tuple = new OfferTuple(offer, user.get());

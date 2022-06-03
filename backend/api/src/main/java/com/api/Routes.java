@@ -21,4 +21,8 @@ public final class Routes {
     public static final class Tag {
         public static final String TAG = prefix + "/tags";
     }
+
+    public static final class Message {
+        public static final String MESSAGE = prefix + "/messages";
+    }
 }

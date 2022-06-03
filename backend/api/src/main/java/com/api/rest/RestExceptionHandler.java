@@ -1,4 +1,4 @@
-package com.api.config;
+package com.api.rest;
 
 import com.domain.utils.exception.*;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +29,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {ApiCustomException.class, ApiException.class, Exception.class})
     protected ResponseEntity<Object> handleBadRequest(Exception ex, WebRequest request) {
+        ex.printStackTrace();
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 }

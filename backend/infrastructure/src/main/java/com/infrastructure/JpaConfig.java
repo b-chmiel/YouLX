@@ -2,6 +2,9 @@ package com.infrastructure;
 
 import com.domain.photo.PhotoRepository;
 import com.domain.utils.hashId.HashId;
+import com.infrastructure.conversation.JpaConversationRepository;
+import com.infrastructure.conversation.JpaMessageRepository;
+import com.infrastructure.conversation.ConversationRepositoryImpl;
 import com.infrastructure.offer.JpaOfferRepository;
 import com.infrastructure.offer.OfferFindRepositoryImpl;
 import com.infrastructure.offer.OfferPagedRepository;
@@ -18,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = {OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class, TagRepositoryImpl.class, OfferFindRepositoryImpl.class}, considerNestedRepositories = true)
-@EntityScan(basePackageClasses = {OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class, TagRepositoryImpl.class, OfferFindRepositoryImpl.class})
+@EnableJpaRepositories(basePackageClasses = {OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class, TagRepositoryImpl.class, OfferFindRepositoryImpl.class, ConversationRepositoryImpl.class}, considerNestedRepositories = true)
+@EntityScan(basePackageClasses = {OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class, TagRepositoryImpl.class, OfferFindRepositoryImpl.class, ConversationRepositoryImpl.class})
 public class JpaConfig {
     @Bean
     OfferRepositoryImpl offerRepository(HashId hashId, JpaUserRepository userRepository, JpaOfferRepository offerRepository, PhotoRepository photoRepository) {
@@ -44,5 +47,10 @@ public class JpaConfig {
     @Bean
     OfferFindRepositoryImpl offerFindRepository(HashId hashId, OfferPagedRepository offerPagedRepository, JpaTagRepository tagRepository) {
         return new OfferFindRepositoryImpl(hashId, offerPagedRepository, tagRepository);
+    }
+
+    @Bean
+    ConversationRepositoryImpl messageRepository(JpaMessageRepository messageRepository, JpaConversationRepository conversationRepository, JpaOfferRepository offerRepository, JpaUserRepository userRepository, HashId hashId) {
+        return new ConversationRepositoryImpl(messageRepository, conversationRepository, offerRepository, userRepository, hashId);
     }
 }

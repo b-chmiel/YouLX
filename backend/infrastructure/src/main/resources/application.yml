@@ -1,16 +1,4 @@
 spring:
-  h2:
-    console:
-      path: /h2-console
-      enabled: true
-  datasource:
-    #    url: jdbc:postgresql://localhost:5432/db
-    #    username: postgres
-    #    password: postgres
-    url: jdbc:h2:mem:db;Mode=Oracle
-    username: sa
-    password: password
-    driver-class-name: org.h2.Driver
   jpa:
     hibernate:
       ddl-auto: create-drop
