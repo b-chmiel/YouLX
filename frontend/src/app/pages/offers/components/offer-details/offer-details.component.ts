@@ -12,11 +12,13 @@ import {switchMap} from 'rxjs';
 export class OfferDetailsComponent implements OnInit {
 
   offer: Offer | null = null;
+  canEdit!: boolean;
 
   constructor(private route: ActivatedRoute, private offers: OffersService) { }
 
   ngOnInit(): void {
     this.offer = this.route.snapshot.data["offer"];
+    this.canEdit = this.route.snapshot.data["canEdit"] as boolean && this.offer?.status != 'CLOSED';
   }
 
   closeOffer() {

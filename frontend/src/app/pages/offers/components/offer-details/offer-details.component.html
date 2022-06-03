@@ -7,6 +7,7 @@
       <div>
         <button *ngIf="offer._links.publish" class="btn btn-outline" (click)="publishOffer()">Publish offer</button>
         <button *ngIf="offer._links.close" class="btn btn-outline" (click)="closeOffer()">Close offer</button>
+        <a routerLink="edit" class="ml-2 btn btn-outline" *ngIf="canEdit">Edit</a>
       </div>
       <hr class="mb-2 mt-3"/>
       <div class="badge badge-outline" [ngClass]="getClassForStatus(offer.status)">{{offer.status}}</div>
