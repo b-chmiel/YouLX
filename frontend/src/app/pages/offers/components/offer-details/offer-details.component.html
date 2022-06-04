@@ -4,17 +4,41 @@
       <a routerLink=".." class="btn btn-sm btn-outline">go back</a>
     </div>
     <article class="bg-white shadow-xl p-3 rounded-box prose max-w-none">
-      <div>
-        <button *ngIf="offer._links.publish" class="btn btn-outline" (click)="publishOffer()">Publish offer</button>
-        <button *ngIf="offer._links.close" class="btn btn-outline" (click)="closeOffer()">Close offer</button>
-        <a routerLink="edit" class="ml-2 btn btn-outline" *ngIf="canEdit">Edit</a>
+      <div class="hero" style="background-image: url({{offer.coverUrl}});">
+        <div class="hero-overlay bg-opacity-60"></div>
+        <div class="hero-content text-center text-neutral-content">
+          <div class="max-w-md">
+            <h1 class="mb-0 text-5xl font-bold text-white">{{offer.name}}</h1>
+            <p class="my-2">posted by {{offer.user.login}} on {{offer.creationDate | date}}</p>
+            <div class="badge badge-outline" [ngClass]="getClassForStatus(offer.status)">{{offer.status}}</div>
+            <div class="my-2">{{offer.price ?? 0 | currency: 'PLN'}}</div>
+            <div>
+              <button *ngIf="offer._links.publish" class="btn btn-accent" (click)="publishOffer()">Publish offer</button>
+              <button *ngIf="offer._links.close" class="btn btn-error" (click)="closeOffer()">Close offer</button>
+              <a routerLink="edit" class="ml-2 btn" *ngIf="canEdit">Edit</a>
+            </div>
+          </div>
+        </div>
       </div>
-      <hr class="mb-2 mt-3"/>
-      <div class="badge badge-outline" [ngClass]="getClassForStatus(offer.status)">{{offer.status}}</div>
-      <span class="ml-2 text-xs text-gray-400">posted by {{offer.user.login}} on {{offer.creationDate | date}}</span>
-      <span class="ml-2 text-xs text-gray-400">{{offer.price | currency: 'PLN'}}</span>
-      <h4 class="mt-1">{{offer.name}}</h4>
-      <hr class="mb-2"/>
+
+      <hr class="my-2">
+
+      <ng-template [ngIf]="offer.imageUrls && offer.imageUrls.length > 0">
+        <div class="carousel w-full mt-0">
+          <div *ngFor="let imageUrl of offer.imageUrls; index as i" [id]="'offerImage' + i" class="carousel-item w-full">
+            <img [src]="imageUrl" [alt]="'image for offer #' + i" class="w-full m-0" />
+          </div>
+        </div>
+
+        <hr class="my-2">
+
+        <div class="flex justify-center w-full py-2 gap-2">
+          <a *ngFor="let _ of offer.imageUrls; index as i" (click)="scrollTo('offerImage' + i)" class="btn btn-xs">{{i + 1}}</a>
+        </div>
+
+        <hr class="my-2">
+      </ng-template>
+
       <p>{{offer.description}}</p>
     </article>
   </div>
