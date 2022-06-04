@@ -5,6 +5,24 @@
   <div class="rounded-box bg-base-100 p-3 shadow-xl">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="form-control">
+        <label for="images" class="label">Photos</label>
+        <div class="flex">
+          <button class="btn btn-primary mr-2" (click)="imagesInput.click()">upload</button>
+          <div class="bg-gray-300 rounded-box pb-1 flex-grow">
+            <div *ngFor="let image of images; index as i" class="avatar ml-3 mt-3">
+              <div class="absolute -m-2 p-0 badge badge-error gap-2 hover:bg-red-500 cursor-pointer" (click)="removeImage(i)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </div>
+              <div class="w-32 rounded">
+                <img [src]="image.url"  [alt]="image.file?.name ?? 'photo' + i"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <input #imagesInput type="file" multiple id="images" class="hidden" (change)="onImagesChange($event)" accept="image/*"/>
+      </div>
+
+      <div class="form-control">
         <label for="name" class="label">
           <span class="label-text">Offer Title</span>
         </label>
@@ -21,6 +39,12 @@
           <span class="label-text">Description</span>
         </label>
         <textarea id="description" formControlName="description" class="textarea textarea-bordered h-24" placeholder="Describe your offer in detail"></textarea>
+      </div>
+      <div *ngIf="message" class="alert alert-success shadow-lg mt-3">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <span>{{message}}</span>
+        </div>
       </div>
       <div class="form-control">
         <input type="submit" value="Submit" class="btn mt-3" [disabled]="!form.valid || fetching" />

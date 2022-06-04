@@ -24,8 +24,8 @@
       <hr class="my-2">
 
       <ng-template [ngIf]="offer.imageUrls && offer.imageUrls.length > 0">
-        <div class="carousel w-full mt-0">
-          <div *ngFor="let imageUrl of offer.imageUrls; index as i" [id]="'offerImage' + i" class="carousel-item w-full">
+        <div class="carousel w-full mt-0 bg-gray-400">
+          <div *ngFor="let imageUrl of offer.imageUrls; index as i" [id]="'offerImage' + i" class="carousel-item w-full h-fit">
             <img [src]="imageUrl" [alt]="'image for offer #' + i" class="w-full m-0" />
           </div>
         </div>
