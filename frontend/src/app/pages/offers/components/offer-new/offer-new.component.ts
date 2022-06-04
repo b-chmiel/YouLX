@@ -67,9 +67,8 @@ export class OfferNewComponent implements OnInit {
       }
 
       observable.subscribe(result => {
+        this.router.navigateByUrl(`/offers/owned/${result.id}`);
         this.fetching = false;
-        this.form.setValue(result);
-        this.message = "saved";
       });
     }
     else {
