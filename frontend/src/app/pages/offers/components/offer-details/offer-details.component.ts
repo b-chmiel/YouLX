@@ -24,7 +24,12 @@ export class OfferDetailsComponent implements OnInit {
   closeOffer() {
     this.offers.closeOffer(this.offer!).subscribe(offer => {
       this.offer = offer;
+      this.canEdit = false;
     });
+  }
+
+  scrollTo(element: any): void {
+    (document.getElementById(element) as HTMLElement).scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"});
   }
 
   publishOffer() {

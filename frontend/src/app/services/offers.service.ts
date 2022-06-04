@@ -84,6 +84,16 @@ export class OffersService {
     }));
   }
 
+  uploadPhoto(offerId: string, photo: File): Observable<boolean> {
+    const formData = new FormData();
+    formData.append("file", photo);
+    return this.http.post(this.offersUrl + '/' + offerId + '/photos', formData, {observe: 'response'}).pipe(map(t => t.status == 200))
+  }
+
+  deletePhoto(offerId: string, photoId: string): Observable<boolean> {
+    return this.http.delete(this.offersUrl + '/' + offerId + '/photos/' + photoId, {observe: 'response'}).pipe(map(t => t.status == 200));
+  }
+
   updateOffer(offer: Offer): Observable<Offer> {
     return this.http.put<Offer>(this.offersUrl + '/' + offer.id, offer);
   }

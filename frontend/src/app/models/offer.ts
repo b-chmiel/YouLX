@@ -9,6 +9,7 @@ export interface Offer {
   name: string;
   description: string | null;
   coverUrl: string | null;
+  imageUrls?: string[];
   price: number | null;
   creationDate: string;
   user: {
