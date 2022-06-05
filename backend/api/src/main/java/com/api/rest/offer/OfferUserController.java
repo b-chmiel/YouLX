@@ -3,6 +3,7 @@ package com.api.rest.offer;
 import com.api.Routes;
 import com.domain.offer.Offer;
 import com.domain.offer.find.OfferFindService;
+import com.domain.offer.find.OfferSearchQuery;
 import com.domain.offer.find.OfferTagQuery;
 import com.domain.user.UserId;
 import com.domain.user.UserService;
@@ -32,7 +33,8 @@ class OfferUserController {
     ResponseEntity<PagedModel<EntityModel<OfferDto>>> offers(
             @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
             @Valid @PathVariable String username,
-            @RequestParam(required = false, defaultValue = "") String tags
+            @Valid @RequestParam(required = false, defaultValue = "") String tags,
+            @Valid @RequestParam(required = false, defaultValue = "") String query
     ) {
         if (!userService.exists(username)) {
             return ResponseEntity.notFound().build();
@@ -40,7 +42,7 @@ class OfferUserController {
 
         return ResponseEntity.ok(
                 resourcesAssembler.toModel(
-                        offerFindService.findOpen(pageable, new UserId(username), new OfferTagQuery(tags))
+                        offerFindService.findOpen(pageable, new UserId(username), new OfferTagQuery(tags), new OfferSearchQuery(query))
                         , modelAssembler
                 )
         );

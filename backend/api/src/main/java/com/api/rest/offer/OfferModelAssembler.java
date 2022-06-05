@@ -5,7 +5,6 @@ import com.domain.offer.stateCheck.OfferStateCheckService;
 import com.domain.user.UserId;
 import com.sun.security.auth.UserPrincipal;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -45,7 +44,7 @@ public class OfferModelAssembler implements RepresentationModelAssembler<Offer, 
         }
 
         links.add(
-                linkTo(methodOn(OfferController.class).getAllOpen(Pageable.unpaged(), "")).withRel("allOpenOffers")
+                linkTo(methodOn(OfferController.class).getAllOpen(Pageable.unpaged(), "", "")).withRel("allOpenOffers")
         );
 
         return links;

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+import static com.domain.Fixtures.user;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -46,16 +47,50 @@ class OfferFindServiceTests {
     @Nested
     class FindByTests {
         @Test
+        void noOffersFound() {
+            final var query = "asdf";
+
+            when(offerSearchRepository.search(query)).thenReturn(List.of());
+
+            assertEquals(new PageImpl<>(List.of()), service.findOpen(Pageable.unpaged(), new UserId(user), new OfferTagQuery(""), new OfferSearchQuery(query)));
+            verify(offerSearchRepository, times(1)).search(query);
+        }
+
+        @Test
+        void notVisible() {
+            final var query = "asdf";
+
+            when(offerSearchRepository.search(query)).thenReturn(List.of(Fixtures.offer));
+            when(offerStateCheckService.isVisible(new UserId(user.getUsername()), Fixtures.offer)).thenReturn(false);
+
+            assertEquals(new PageImpl<>(List.of()), service.findBy(Pageable.unpaged(), new UserId(user), new OfferStatusQuery(""), new OfferTagQuery(""), new OfferSearchQuery(query)));
+            verify(offerSearchRepository, times(1)).search(query);
+        }
+
+        @Test
+        void search() {
+            final var query = "asdf";
+
+            when(offerSearchRepository.search(query)).thenReturn(List.of(Fixtures.offer));
+            when(offerStateCheckService.isVisible(new UserId(user.getUsername()), Fixtures.offer)).thenReturn(true);
+
+            assertEquals(new PageImpl<>(List.of(Fixtures.offer)), service.findOpen(Pageable.unpaged(), new UserId(user), new OfferTagQuery(""), new OfferSearchQuery(query)));
+
+            verify(offerSearchRepository, times(1)).search(query);
+        }
+
+        @Test
         void findAll() {
             final var page = Pageable.unpaged();
             final var user = new UserId();
             final var statusQuery = new OfferStatusQuery("OPEN");
             final var tagQuery = new OfferTagQuery("");
+            final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
             when(offerFindRepository.findAllByStatusIn(page, statusQuery.getStatuses())).thenReturn(expected);
 
-            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery));
+            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
 
         @Test
@@ -64,11 +99,12 @@ class OfferFindServiceTests {
             final var user = new UserId();
             final var statusQuery = new OfferStatusQuery("OPEN");
             final var tagQuery = new OfferTagQuery("tag1;tag2");
+            final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
             when(offerFindRepository.findAllByStatusInAndTagsIn(page, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
 
-            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery));
+            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
 
         @Test
@@ -77,11 +113,12 @@ class OfferFindServiceTests {
             final var user = new UserId("user");
             final var statusQuery = new OfferStatusQuery("");
             final var tagQuery = new OfferTagQuery("");
+            final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
             when(offerFindRepository.findAllByUserId(page, user)).thenReturn(expected);
 
-            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery));
+            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
 
         @Test
@@ -90,11 +127,12 @@ class OfferFindServiceTests {
             final var user = new UserId("user");
             final var statusQuery = new OfferStatusQuery("DRAFT;CLOSED;OPEN");
             final var tagQuery = new OfferTagQuery("");
+            final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
             when(offerFindRepository.findAllByUserIdAndStatusIn(page, user, statusQuery.getStatuses())).thenReturn(expected);
 
-            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery));
+            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
 
         @Test
@@ -103,11 +141,12 @@ class OfferFindServiceTests {
             final var user = new UserId("user");
             final var statusQuery = new OfferStatusQuery("OPEN");
             final var tagQuery = new OfferTagQuery("tag1;tag2;");
+            final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
             when(offerFindRepository.findAllByUserIdAndStatusInAndTagsIn(page, user, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
 
-            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery));
+            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
 
         @Test
@@ -116,11 +155,12 @@ class OfferFindServiceTests {
             final var user = new UserId("user");
             final var statusQuery = new OfferStatusQuery("OPEN;CLOSED");
             final var tagQuery = new OfferTagQuery("tag1;tag2;");
+            final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
             when(offerFindRepository.findAllByUserIdAndStatusInAndTagsIn(page, user, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
 
-            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery));
+            assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
     }
 
@@ -132,45 +172,12 @@ class OfferFindServiceTests {
             final var user = new UserId("user");
             final var statusQuery = new OfferStatusQuery("OPEN");
             final var tagQuery = new OfferTagQuery("tag1;tag2;");
+            final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
             when(offerFindRepository.findAllByUserIdAndStatusInAndTagsIn(page, user, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
 
-            assertEquals(expected, service.findOpen(page, user, tagQuery));
-        }
-    }
-
-    @Nested
-    class SearchTests {
-        @Test
-        void noOffersFound() {
-            final var query = "asdf";
-
-            when(offerSearchRepository.search(query)).thenReturn(List.of());
-
-            assertEquals(List.of(), service.search(new UserId(Fixtures.user.getUsername()), query));
-        }
-
-        @Test
-        void notVisible() {
-            final var query = "asdf";
-
-            when(offerSearchRepository.search(query)).thenReturn(List.of(Fixtures.offer));
-            when(offerStateCheckService.isVisible(new UserId(Fixtures.user.getUsername()), Fixtures.offer)).thenReturn(false);
-
-            assertEquals(List.of(), service.search(new UserId(Fixtures.user.getUsername()), query));
-        }
-
-        @Test
-        void search() {
-            final var query = "asdf";
-
-            when(offerSearchRepository.search(query)).thenReturn(List.of(Fixtures.offer));
-            when(offerStateCheckService.isVisible(new UserId(Fixtures.user.getUsername()), Fixtures.offer)).thenReturn(true);
-
-            assertEquals(List.of(Fixtures.offer), service.search(new UserId(Fixtures.user.getUsername()), query));
-
-            verify(offerSearchRepository, times(1)).search(query);
+            assertEquals(expected, service.findOpen(page, user, tagQuery, searchQuery));
         }
     }
 }

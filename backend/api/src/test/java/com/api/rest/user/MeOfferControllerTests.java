@@ -36,7 +36,7 @@ public class MeOfferControllerTests {
         @Test
         @WithMockUser("user")
         void get() throws Exception {
-            when(service.findBy(any(), any(UserId.class), any(), any())).thenReturn(Page.empty());
+            when(service.findBy(any(), any(UserId.class), any(), any(), any())).thenReturn(Page.empty());
             helpers.getRequest(Routes.User.ME + "/offers?size=0&page=0").andExpect(status().isOk());
         }
     }
