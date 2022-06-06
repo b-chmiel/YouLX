@@ -3,7 +3,7 @@
     <div class="my-3">
       <a routerLink=".." class="btn btn-sm btn-outline">go back</a>
     </div>
-    <article class="bg-white shadow-xl p-3 rounded-box prose max-w-none">
+    <article class="bg-white shadow-xl p-3 rounded-box prose prose-xl max-w-none">
       <div class="hero" style="background-image: url({{offer.coverUrl}});">
         <div class="hero-overlay bg-opacity-60"></div>
         <div class="hero-content text-center text-neutral-content">
@@ -24,9 +24,9 @@
       <hr class="my-2">
 
       <ng-template [ngIf]="offer.imageUrls && offer.imageUrls.length > 0">
-        <div class="carousel w-full mt-0 bg-gray-400">
-          <div *ngFor="let imageUrl of offer.imageUrls; index as i" [id]="'offerImage' + i" class="carousel-item w-full h-fit">
-            <img [src]="imageUrl" [alt]="'image for offer #' + i" class="w-full m-0" />
+        <div class="carousel mx-auto w-1/2 mt-0 bg-gray-400 shadow-2xl">
+          <div *ngFor="let imageUrl of offer.imageUrls; index as i" [id]="'offerImage' + i" class="carousel-item w-full flex flex-col justify-center">
+            <img [src]="imageUrl" [alt]="'image for offer #' + i" class="w-full h-fit m-0" />
           </div>
         </div>
 
@@ -39,7 +39,7 @@
         <hr class="my-2">
       </ng-template>
 
-      <p>{{offer.description}}</p>
+      <p class="whitespace-pre">{{offer.description}}</p>
     </article>
   </div>
 </ng-container>
