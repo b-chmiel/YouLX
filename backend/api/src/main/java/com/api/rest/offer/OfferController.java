@@ -3,6 +3,7 @@ package com.api.rest.offer;
 import com.api.Routes;
 import com.domain.offer.Offer;
 import com.domain.offer.find.OfferFindService;
+import com.domain.offer.find.OfferSearchQuery;
 import com.domain.offer.find.OfferTagQuery;
 import com.domain.offer.modify.OfferClose;
 import com.domain.offer.modify.OfferCloseReason;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -75,9 +75,10 @@ class OfferController {
     @GetMapping
     PagedModel<EntityModel<OfferDto>> getAllOpen(
             @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
-            @RequestParam(required = false, defaultValue = "") String tags
+            @RequestParam(required = false, defaultValue = "") String tags,
+            @Valid @RequestParam(required = false, defaultValue = "") String query
     ) {
-        final var result = offerFindService.findOpen(pageable, new UserId(), new OfferTagQuery(tags));
+        final var result = offerFindService.findOpen(pageable, new UserId(), new OfferTagQuery(tags), new OfferSearchQuery(query));
         return resourcesAssembler.toModel(result, modelAssembler);
     }
 
@@ -93,15 +94,5 @@ class OfferController {
     ResponseEntity<Void> publish(Principal user, @Valid @PathVariable String id) {
         service.publish(new UserId(user), id);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/search")
-    ResponseEntity<List<OfferDto>> search(Principal user, @Valid @RequestParam String query) {
-        final var result = offerFindService
-                .search(new UserId(user), query)
-                .stream()
-                .map(OfferDto::new)
-                .toList();
-        return ResponseEntity.ok(result);
     }
 }

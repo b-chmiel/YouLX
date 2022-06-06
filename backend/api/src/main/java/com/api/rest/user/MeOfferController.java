@@ -5,6 +5,7 @@ import com.api.rest.offer.OfferDto;
 import com.api.rest.offer.OfferModelAssembler;
 import com.domain.offer.Offer;
 import com.domain.offer.find.OfferFindService;
+import com.domain.offer.find.OfferSearchQuery;
 import com.domain.offer.find.OfferStatusQuery;
 import com.domain.offer.find.OfferTagQuery;
 import com.domain.user.UserId;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
@@ -40,9 +42,10 @@ class MeOfferController {
             @ParameterObject @PageableDefault(sort = {"creationDate"}, direction = Sort.Direction.DESC) Pageable pageable,
             Principal user,
             @Parameter(description = "Statuses delimited with ';' symbol. Pass 'ALL' for no filtering.") @RequestParam(required = false, defaultValue = "OPEN") String statuses,
-            @Parameter(description = "Tags delimited with ';' symbol. Empty list means no filtering.") @RequestParam(required = false, defaultValue = "") String tags
+            @Parameter(description = "Tags delimited with ';' symbol. Empty list means no filtering.") @RequestParam(required = false, defaultValue = "") String tags,
+            @Valid @RequestParam(required = false, defaultValue = "") String query
     ) {
-        final var result = service.findBy(pageable, new UserId(user), new OfferStatusQuery(statuses), new OfferTagQuery(tags));
+        final var result = service.findBy(pageable, new UserId(user), new OfferStatusQuery(statuses), new OfferTagQuery(tags), new OfferSearchQuery(query));
         return ResponseEntity.ok(resourcesAssembler.toModel(result, modelAssembler));
     }
 }

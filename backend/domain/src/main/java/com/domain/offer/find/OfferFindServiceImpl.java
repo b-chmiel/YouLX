@@ -1,12 +1,13 @@
 package com.domain.offer.find;
 
-import com.domain.user.UserId;
 import com.domain.offer.Offer;
 import com.domain.offer.OfferRepository;
 import com.domain.offer.OfferStatus;
 import com.domain.offer.stateCheck.OfferStateCheckService;
+import com.domain.user.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,11 +35,13 @@ public class OfferFindServiceImpl implements OfferFindService {
 
     @Override
     @Transactional
-    public Page<Offer> findBy(Pageable pageable, UserId user, OfferStatusQuery statusQuery, OfferTagQuery tagQuery) {
+    public Page<Offer> findBy(Pageable pageable, UserId user, OfferStatusQuery statusQuery, OfferTagQuery tagQuery, OfferSearchQuery searchQuery) {
         final var statuses = statusQuery.getStatuses();
         final var tags = tagQuery.getTags();
 
-        if (user.getUsername() == null) {
+        if (searchQuery.isPresent()) {
+            return search(user, searchQuery, pageable);
+        } else if (user.getUsername() == null) {
             if (tags.isEmpty()) {
                 return offerFindRepository.findAllByStatusIn(pageable, List.of(OfferStatus.OPEN));
             } else {
@@ -59,16 +62,17 @@ public class OfferFindServiceImpl implements OfferFindService {
 
     @Override
     @Transactional
-    public Page<Offer> findOpen(Pageable pageable, UserId user, OfferTagQuery tagQuery) {
-        return findBy(pageable, user, new OfferStatusQuery("OPEN"), tagQuery);
+    public Page<Offer> findOpen(Pageable pageable, UserId user, OfferTagQuery tagQuery, OfferSearchQuery searchQuery) {
+        return findBy(pageable, user, new OfferStatusQuery("OPEN"), tagQuery, searchQuery);
     }
 
-    @Override
-    public List<Offer> search(UserId user, String query) {
-        return offerSearchRepository
-                .search(query)
+    private Page<Offer> search(UserId user, OfferSearchQuery query, Pageable pageable) {
+        final var result = offerSearchRepository
+                .search(query.getQuery())
                 .stream()
                 .filter(offer -> offerStateCheckService.isVisible(user, offer))
                 .toList();
+
+        return new PageImpl<>(result, pageable, result.size());
     }
 }
