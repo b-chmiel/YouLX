@@ -47,6 +47,7 @@ class TagSearchRepositoryTests {
     }
 
 
+    @Disabled
     @Test
     void search() throws InterruptedException {
         final var query = "word";
