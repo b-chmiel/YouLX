@@ -7,7 +7,7 @@
       <div class="form-control">
         <label for="images" class="label">Photos</label>
         <div class="flex">
-          <button class="btn btn-primary mr-2" (click)="imagesInput.click()">upload</button>
+          <button type="button" class="btn btn-primary mr-2" (click)="imagesInput.click()">upload</button>
           <div class="bg-gray-300 rounded-box pb-1 flex-grow">
             <div *ngFor="let image of images; index as i" class="avatar ml-3 mt-3">
               <div class="absolute -m-2 p-0 badge badge-error gap-2 hover:bg-red-500 cursor-pointer" (click)="removeImage(i)">
