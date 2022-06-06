@@ -47,17 +47,17 @@ class TagSearchRepositoryTests {
     }
 
 
-    @Disabled
     @Test
     void search() throws InterruptedException {
+        final var query = "word";
+        final var tag = new Tag("word");
+
+        repository.create(tag);
         FullTextEntityManager fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
         fullTextEntityManager.createIndexer().startAndWait();
 
-        final var query = "asdf";
-        final var tag = new Tag("asdfasdf asdf");
 
-        repository.create(tag);
-
+        assertEquals(List.of(tag), repository.getAll());
         assertEquals(List.of(tag), findRepository.search(query));
     }
 }
