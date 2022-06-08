@@ -13,12 +13,22 @@ export class OffersService {
   constructor(private http: HttpClient) {
   }
 
-  getOffers(page: number, size: number): Observable<Offer[]> {
+  getOffers(page: number, size: number, query?: string): Observable<Offer[]> {
     if (page < 0 || size < 1) {
       return of([] as Offer[]);
     }
 
-    return this.http.get<GetOffersResponse>(this.offersUrl).pipe(
+    const params = {
+      page,
+      size,
+      query: ''
+    };
+
+    if (query) {
+      params.query = query
+    }
+
+    return this.http.get<GetOffersResponse>(this.offersUrl, {params}).pipe(
       map(value => value._embedded.offers.map(offer => {
         if (offer.price === undefined) {
           offer.price = null;
