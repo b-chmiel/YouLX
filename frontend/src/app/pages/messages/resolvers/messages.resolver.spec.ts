@@ -1,12 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 
 import { MessagesResolver } from './messages.resolver';
+import {MessagingService} from '../../../services/messaging.service';
 
-describe('ConversationResolver', () => {
+describe('MessagesResolver', () => {
   let resolver: MessagesResolver;
+  let messagingServiceSpy: any = jasmine.createSpyObj('MessagingService', ['getMessages', 'postMessage']);
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        {provide: MessagingService, useValue: messagingServiceSpy}
+      ]
+    });
     resolver = TestBed.inject(MessagesResolver);
   });
 

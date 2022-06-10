@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ConversationsComponent } from './conversations.component';
+import {ActivatedRoute} from '@angular/router';
 
 describe('ConversationsComponent', () => {
   let component: ConversationsComponent;
@@ -8,7 +9,12 @@ describe('ConversationsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ConversationsComponent ]
+      declarations: [ ConversationsComponent ],
+      providers: [
+        {
+          provide: ActivatedRoute, useValue: { snapshot: { data: { conversation: { offer: { coverUrl: '' } } } } }
+        }
+      ]
     })
     .compileComponents();
   });
