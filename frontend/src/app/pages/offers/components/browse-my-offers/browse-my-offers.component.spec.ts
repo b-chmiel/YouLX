@@ -23,7 +23,17 @@ describe('BrowseMyOffersComponent', () => {
           useValue: {
             snapshot: {
               data: {
-                offers: []
+                offers: {
+                  _embedded: {
+                    offers: []
+                  },
+                  page: {
+                    number: 0,
+                    size: 0,
+                    totalPages: 0,
+                    totalElements: 0
+                  }
+                }
               }
             }
           }
@@ -40,7 +50,17 @@ describe('BrowseMyOffersComponent', () => {
   });
 
   it('should create', () => {
-    offersServiceSpy.getOwnOffers.and.returnValue(of([]));
+    offersServiceSpy.getOwnOffers.and.returnValue(of({
+      _embedded: {
+        offers: []
+      },
+      page: {
+        number: 0,
+        size: 0,
+        totalPages: 0,
+        totalElements: 0
+      }
+    }));
     expect(component).toBeTruthy();
   });
 });

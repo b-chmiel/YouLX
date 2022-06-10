@@ -4,6 +4,18 @@ export interface CreateOfferDto {
   price?: number;
 }
 
+export interface PaginatedOffers {
+  _embedded: {
+    offers: Offer[]
+  },
+  page: {
+    size: number,
+    totalElements: number,
+    totalPages: number,
+    number: number
+  }
+}
+
 export interface Offer {
   id: string;
   name: string;

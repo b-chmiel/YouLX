@@ -8,6 +8,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {OfferComponent} from './components/offer/offer.component';
 import {OffersComponent} from './components/offers/offers.component';
 import {RouterModule} from '@angular/router';
+import { PaginationComponent } from './components/pagination/pagination.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import {RouterModule} from '@angular/router';
     ToolbarComponent,
     OfferComponent,
     OffersComponent,
+    PaginationComponent,
   ],
   imports: [
     CommonModule,

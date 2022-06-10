@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {catchError, map, Observable, of} from 'rxjs';
-import {CreateOfferDto, Offer} from '../models/offer';
+import {CreateOfferDto, Offer, PaginatedOffers} from '../models/offer';
 
 @Injectable({
   providedIn: 'root',
@@ -13,9 +13,19 @@ export class OffersService {
   constructor(private http: HttpClient) {
   }
 
-  getOffers(page: number, size: number, query?: string): Observable<Offer[]> {
+  getOffers(page: number, size: number, query?: string): Observable<PaginatedOffers> {
     if (page < 0 || size < 1) {
-      return of([] as Offer[]);
+      return of({
+        _embedded: {
+          offers: []
+        },
+        page: {
+          number: 0,
+          size: 0,
+          totalPages: 0,
+          totalElements: 0
+        }
+      });
     }
 
     const params = {
@@ -28,53 +38,100 @@ export class OffersService {
       params.query = query
     }
 
-    return this.http.get<GetOffersResponse>(this.offersUrl, {params}).pipe(
-      map(value => value._embedded.offers.map(offer => {
-        if (offer.price === undefined) {
-          offer.price = null;
-        }
+    return this.http.get<PaginatedOffers>(this.offersUrl, {params})
+      .pipe(
+        map(v => {
+          v._embedded.offers = v._embedded.offers.map(offer => {
+            if (offer.price === undefined) {
+              offer.price = null;
+            }
 
-        if (offer.coverUrl === undefined) {
-          offer.coverUrl = null;
-        }
+            if (offer.coverUrl === undefined) {
+              offer.coverUrl = null;
+            }
 
-        if (offer.description === undefined) {
-          offer.description = null;
-        }
+            if (offer.description === undefined) {
+              offer.description = null;
+            }
 
-        return offer;
-      })),
-      catchError(err => of([] as Offer[])));
+            return offer;
+          });
+
+          return v;
+        }),
+        catchError(_ => of({
+          _embedded: {
+            offers: []
+          },
+          page: {
+            number: 0,
+            size: 0,
+            totalPages: 0,
+            totalElements: 0
+          }
+        }))
+      );
   }
 
-  getOwnOffers(page: number, size: number, statuses: string = 'ALL'): Observable<Offer[]> {
+  getOwnOffers(page: number, size: number, statuses: string = 'ALL', query?: string): Observable<PaginatedOffers> {
     if (page < 0 || size < 1) {
-      return of([] as Offer[]);
+      return of({
+        _embedded: {
+          offers: []
+        },
+        page: {
+          number: 0,
+          size: 0,
+          totalPages: 0,
+          totalElements: 0
+        }
+      });
     }
 
-    return this.http.get<GetOffersResponse>(this.ownOffersUrl, {
-      params: {
-        page,
-        size,
-        statuses,
-      },
-    }).pipe(
-      map(value => value._embedded.offers.map(offer => {
-        if (offer.price === undefined) {
-          offer.price = null;
-        }
+    const params = {
+      page,
+      size,
+      statuses,
+      query: ''
+    };
 
-        if (offer.coverUrl === undefined) {
-          offer.coverUrl = null;
-        }
+    if (query) {
+      params.query = query
+    }
 
-        if (offer.description === undefined) {
-          offer.description = null;
-        }
+    return this.http.get<PaginatedOffers>(this.ownOffersUrl, {params})
+      .pipe(
+        map(v => {
+          v._embedded.offers = v._embedded.offers.map(offer => {
+            if (offer.price === undefined) {
+              offer.price = null;
+            }
 
-        return offer;
-      })),
-      catchError(err => of([] as Offer[])));
+            if (offer.coverUrl === undefined) {
+              offer.coverUrl = null;
+            }
+
+            if (offer.description === undefined) {
+              offer.description = null;
+            }
+
+            return offer;
+          });
+
+          return v;
+        }),
+        catchError(_ => of({
+          _embedded: {
+            offers: []
+          },
+          page: {
+            number: 0,
+            size: 0,
+            totalPages: 0,
+            totalElements: 0
+          }
+        }))
+      );
   }
 
   getOffer(offerId: string): Observable<Offer | null> {
