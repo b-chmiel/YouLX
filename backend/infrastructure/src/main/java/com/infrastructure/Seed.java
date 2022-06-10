@@ -43,7 +43,7 @@ public class Seed implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        final var users = List.of(userFrom("user1"), userFrom("user2"));
+        final var users = List.of(userFrom("user1"), userFrom("user2"), userFrom("user3"));
         users.forEach(userRepository::create);
 
         final var photos = List.of(photoFrom("fixtures/photo1.jpg"), photoFrom("fixtures/photo2.jpg"), photoFrom("fixtures/photo3.jpg"), photoFrom("fixtures/photo4.jpg"), photoFrom("fixtures/photo5.jpg"), photoFrom("fixtures/photo6.jpg"), photoFrom("fixtures/photo7.jpg"));

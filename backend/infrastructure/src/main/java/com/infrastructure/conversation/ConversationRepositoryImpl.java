@@ -1,18 +1,20 @@
 package com.infrastructure.conversation;
 
 import com.domain.conversation.Conversation;
+import com.domain.conversation.ConversationId;
 import com.domain.conversation.ConversationRepository;
 import com.domain.conversation.Message;
 import com.domain.user.UserId;
-import com.domain.utils.exception.ApiCustomException;
 import com.domain.utils.exception.ApiException;
 import com.domain.utils.exception.ApiNotFoundException;
+import com.domain.utils.hashId.ApiHashIdException;
 import com.domain.utils.hashId.HashId;
 import com.infrastructure.offer.JpaOfferRepository;
 import com.infrastructure.user.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
@@ -24,7 +26,7 @@ public class ConversationRepositoryImpl implements ConversationRepository {
     private final HashId hashId;
 
     @Override
-    public void send(Message message, Conversation conversation, UserId userId) throws ApiException {
+    public void send(Message message, ConversationId conversation, UserId userId) throws ApiException {
         try {
             final var user = userRepository.getById(userId.getUsername());
             final var messageTuple = new MessageTuple(message, user);
@@ -68,19 +70,11 @@ public class ConversationRepositoryImpl implements ConversationRepository {
     }
 
     @Override
-    public Conversation findConversationBy(String offerId, UserId userId) throws ApiException {
-        final var user = userRepository.getById(userId.getUsername());
-        final var offer = offerRepository.getById(hashId.decode(offerId));
-        final var posterConversation = conversationRepository.findAllByPosterAndOffer(user, offer).stream();
-        final var browserConversation = conversationRepository.findAllByBrowserAndOffer(user, offer).stream();
-        final var conversation = Stream.concat(posterConversation, browserConversation).distinct().toList();
-
-        if (conversation.isEmpty()) {
-            throw new ApiNotFoundException("Conversation not found.");
-        } else if (conversation.size() != 1) {
-            throw new ApiCustomException("Multiple conversations per offer per user is not allowed.");
+    public Optional<Conversation> findById(ConversationId conversationId) {
+        try {
+            return conversationRepository.findById(hashId.decode(conversationId.getId())).map(c -> c.toDomain(hashId));
+        } catch (ApiHashIdException e) {
+            return Optional.empty();
         }
-
-        return conversation.get(0).toDomain(hashId);
     }
 }

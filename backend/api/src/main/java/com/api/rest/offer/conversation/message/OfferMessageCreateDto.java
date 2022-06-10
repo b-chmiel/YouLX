@@ -1,4 +1,4 @@
-package com.api.rest.conversation;
+package com.api.rest.offer.conversation.message;
 
 import com.domain.conversation.Message;
 import com.domain.user.UserId;
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Getter
 @Setter
-class MessageCreateDto {
+class OfferMessageCreateDto {
     @NotNull
     private String content;
 
