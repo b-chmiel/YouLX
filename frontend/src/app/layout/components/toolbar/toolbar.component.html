@@ -4,6 +4,10 @@
   </div>
   <div class="flex-none">
     <ng-container *ngIf="profile$ | async as profile; else notLoggedIn">
+      <a routerLink="/conversations" class="mr-3 btn btn-ghost btn-sm">
+        Messages
+      </a>
+
       <a routerLink="/offers/owned" class="mr-3 btn btn-ghost btn-sm">
         My offers
       </a>
