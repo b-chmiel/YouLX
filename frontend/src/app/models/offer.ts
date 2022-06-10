@@ -25,7 +25,11 @@ export interface Offer {
   price: number | null;
   creationDate: string;
   user: {
-    login: string
+    login: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string,
+    phone?: string
   };
   status: string;
   _links: {
