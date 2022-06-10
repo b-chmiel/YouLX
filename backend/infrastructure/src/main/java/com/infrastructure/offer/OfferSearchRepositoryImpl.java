@@ -28,8 +28,9 @@ class OfferSearchRepositoryImpl implements OfferSearchRepository {
 
         final var query = queryBuilder
                 .keyword()
+                .wildcard()
                 .onFields("name", "description")
-                .matching(searchString)
+                .matching(searchString + "*")
                 .createQuery();
 
         @SuppressWarnings("unchecked") final List<OfferTuple> result = fullTextManager.createFullTextQuery(query, OfferTuple.class).getResultList();

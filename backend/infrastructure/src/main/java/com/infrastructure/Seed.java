@@ -38,7 +38,7 @@ public class Seed implements ApplicationRunner {
     private static final Faker faker = new Faker(random);
     private static final int NUMBER_OF_TAGS = 10;
     private static final int PHOTOS_PER_OFFER = 3;
-    private static final int OFFER_COUNT = 1;
+    private static final int OFFER_COUNT = 2;
 
     @Override
     @Transactional
