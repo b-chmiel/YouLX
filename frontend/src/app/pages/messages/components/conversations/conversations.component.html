@@ -3,7 +3,7 @@
   <ng-container *ngIf="conversationsBrowser && conversationsBrowser.length > 0">
     <h1 class="mx-auto w-fit text-2xl font-bold my-4">Offers I'm interested in</h1>
 
-    <a [routerLink]="conversation.id" *ngFor="let conversation of conversationsBrowser" class="bg-base-100 hover:bg-base-200 shadow hover:shadow-md transition-all flex p-2 w-full rounded-box">
+    <a [routerLink]="conversation.id" *ngFor="let conversation of conversationsBrowser" class="bg-base-100 my-2 hover:bg-base-200 shadow hover:shadow-md transition-all flex p-2 w-full rounded-box">
       <div class="avatar">
         <div class="w-24 rounded-xl bg-base-300">
           <img *ngIf="conversation.offer.coverUrl" [src]="conversation.offer.coverUrl" [alt]="conversation.offer.name"/>
@@ -24,7 +24,7 @@
   <ng-container *ngIf="conversationsPoster && conversationsPoster.length > 0">
     <h1 class="mx-auto w-fit text-2xl font-bold my-4">My Offers</h1>
 
-    <a [routerLink]="conversation.id" *ngFor="let conversation of conversationsPoster" class="bg-base-100 hover:bg-base-200 shadow hover:shadow-md transition-all flex p-2 w-full max-w-2xl rounded-box">
+    <a [routerLink]="conversation.id" *ngFor="let conversation of conversationsPoster" class="bg-base-100 my-2 hover:bg-base-200 shadow hover:shadow-md transition-all flex p-2 w-full max-w-2xl rounded-box">
       <div class="avatar">
         <div class="w-24 rounded-xl bg-base-300">
           <img *ngIf="conversation.offer.coverUrl" [src]="conversation.offer.coverUrl" [alt]="conversation.offer.name"/>

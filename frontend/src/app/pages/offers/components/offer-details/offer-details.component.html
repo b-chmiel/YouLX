@@ -5,6 +5,9 @@
     <div class="container max-w-4xl mx-auto flex-grow pb-3">
       <div class="my-3">
         <a routerLink=".." class="btn btn-sm btn-outline">go back</a>
+        <ng-container *ngIf="loggedInUser$ | async as loggedInUser">
+          <button *ngIf="loggedInUser.login != offer.user.login" (click)="reply()" class="btn btn-sm btn-outline ml-2">reply</button>
+        </ng-container>
       </div>
       <article class="bg-white shadow-xl p-3 rounded-box prose prose-xl max-w-none">
         <div class="hero" style="background-image: url({{offer.coverUrl}});">

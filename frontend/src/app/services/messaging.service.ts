@@ -17,7 +17,13 @@ export class MessagingService {
   createConversationForOffer(offerId: string): Observable<string | null> {
     return this.http.post<Conversation>(this.apiPrefix + "/" + offerId, {}).pipe(
       map(conversation => conversation.id),
-      catchError(_ => of(null))
+      catchError(_ => this.getConversations().pipe(map(conversations => {
+        const results = conversations.filter(conversation => conversation.offer.id == offerId);
+        if (results.length > 0) {
+          return results[0].id;
+        }
+        return null;
+      })))
     )
   }
 
