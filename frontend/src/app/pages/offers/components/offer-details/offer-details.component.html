@@ -4,7 +4,7 @@
     </div>
     <div class="container max-w-4xl mx-auto flex-grow pb-3">
       <div class="my-3">
-        <a routerLink=".." class="btn btn-sm btn-outline">go back</a>
+        <a routerLink=".." class="btn btn-sm btn-outline">go to offers</a>
       </div>
       <article class="bg-white shadow-xl p-3 rounded-box prose prose-xl max-w-none">
         <div class="hero" style="background-image: url({{offer.coverUrl}});">
@@ -47,6 +47,7 @@
     </div>
     <div class="flex-1 px-3 pt-16">
       <ng-container *ngIf="loggedInUser$ | async as user">
+        <button *ngIf="user.login != offer.user.login" (click)="reply()" class="btn btn-outline w-full mb-3 -mt-1.5">reply</button>
         <div *ngIf="user.login != offer.user.login" class="collapse">
           <input type="checkbox" />
           <div class="collapse-title btn btn-outline">
@@ -55,7 +56,6 @@
           <div class="collapse-content">
             <div class="outline rounded-box p-3 mt-3">
               <div *ngIf="offer.user.firstName && offer.user.lastName">Name: {{offer.user.firstName}} {{offer.user.lastName}}</div>
-              <div *ngIf="offer.user.email">Email: {{offer.user.email}}</div>
               <div *ngIf="offer.user.phone">Phone: {{offer.user.phone}}</div>
             </div>
           </div>

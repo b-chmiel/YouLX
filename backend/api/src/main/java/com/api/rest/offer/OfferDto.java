@@ -1,10 +1,13 @@
 package com.api.rest.offer;
 
+import com.api.rest.DateSerializer;
 import com.api.rest.user.UserDto;
 import com.domain.offer.Offer;
 import com.domain.offer.modify.OfferCloseReason;
 import com.domain.tag.Tag;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,17 +31,20 @@ public class OfferDto extends RepresentationModel<OfferDto> {
     private String name;
     private String description;
     private String status;
+    @JsonSerialize(using = DateSerializer.class)
     private LocalDateTime creationDate;
     private OfferCloseReason closeReason;
     private UserDto user;
     private String coverUrl;
     private List<String> imageUrls;
     private BigDecimal price;
+    @JsonSerialize(using = DateSerializer.class)
     private LocalDateTime publishedDate;
+    @JsonSerialize(using = DateSerializer.class)
     private LocalDateTime closedDate;
     private Set<Tag> tags;
 
-    OfferDto(Offer offer) {
+    public OfferDto(Offer offer) {
         this.id = offer.getId();
         this.name = offer.getName();
         this.description = offer.getDescription();

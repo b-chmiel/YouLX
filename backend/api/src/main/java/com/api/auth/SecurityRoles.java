@@ -1,4 +1,4 @@
-package com.api.config;
+package com.api.auth;
 
 public enum SecurityRoles {
     USER, ADMIN

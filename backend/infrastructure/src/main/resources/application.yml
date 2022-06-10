@@ -1,32 +1,11 @@
 spring:
-  h2:
-    console:
-      path: /h2-console
-      enabled: true
-  datasource:
-    #    url: jdbc:postgresql://localhost:5432/db
-    #    username: postgres
-    #    password: postgres
-    url: jdbc:h2:mem:db;Mode=Oracle
-    username: sa
-    password: password
-    driver-class-name: org.h2.Driver
   jpa:
-    show-sql: true
     hibernate:
       ddl-auto: create-drop
     generate-ddl: true
-    properties:
-      hibernate:
-        format_sql=true:
 
 hibernate:
   search:
     default:
       directory_provider: filesystem
       indexBase: /data/index/default
-
-logging:
-  level:
-    org:
-      hibernate: ERROR

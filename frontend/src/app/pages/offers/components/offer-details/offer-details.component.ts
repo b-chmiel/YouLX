@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {Offer} from '../../../../models/offer';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {OffersService} from '../../../../services/offers.service';
 import {Observable, switchMap} from 'rxjs';
 import {AuthService} from '../../../../services/auth.service';
 import Profile from '../../../../models/profile';
+import {MessagingService} from '../../../../services/messaging.service';
 
 @Component({
   selector: 'app-offer-details',
@@ -18,7 +19,7 @@ export class OfferDetailsComponent implements OnInit {
   loggedInUser$!: Observable<Profile | null>;
 
 
-  constructor(private route: ActivatedRoute, private offers: OffersService, private auth: AuthService) { }
+  constructor(private route: ActivatedRoute, private offers: OffersService, private auth: AuthService, private messaging: MessagingService, private router: Router) { }
 
   ngOnInit(): void {
     this.offer = this.route.snapshot.data["offer"];
@@ -54,5 +55,11 @@ export class OfferDetailsComponent implements OnInit {
       default:
         return "badge-info";
     }
+  }
+
+  reply() {
+    this.messaging.createConversationForOffer(this.offer!.id).subscribe(id => {
+      this.router.navigateByUrl("/conversations/" + id);
+    })
   }
 }

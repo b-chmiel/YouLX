@@ -11,6 +11,11 @@ public final class Routes {
 
     public static final class Offer {
         public static final String OFFERS = prefix + "/offers";
+
+    }
+
+    public static final class Conversation {
+        public static final String CONVERSATIONS = prefix + "/conversations";
     }
 
     public static final class User {
@@ -20,5 +25,9 @@ public final class Routes {
 
     public static final class Tag {
         public static final String TAG = prefix + "/tags";
+    }
+
+    public static final class Message {
+        public static final String MESSAGE = prefix + "/messages";
     }
 }

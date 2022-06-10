@@ -1,6 +1,5 @@
 package com.api.auth;
 
-import com.api.config.SecurityRoles;
 import com.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

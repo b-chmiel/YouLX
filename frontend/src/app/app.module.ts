@@ -9,6 +9,7 @@ import {HomeModule} from './pages/home/home.module';
 import {HttpClientModule} from '@angular/common/http';
 import {OffersModule} from './pages/offers/offers.module';
 import {ProfileModule} from './pages/profile/profile.module';
+import {MessagesModule} from './pages/messages/messages.module';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import {ProfileModule} from './pages/profile/profile.module';
     HttpClientModule,
     OffersModule,
     ProfileModule,
+    MessagesModule,
     AppRoutingModule,
   ],
   providers: [],
