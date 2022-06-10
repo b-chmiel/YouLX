@@ -1,6 +1,18 @@
 <main class="container mx-auto max-w-2xl pb-3 mt-3">
-  <a routerLink=".." class="btn btn-sm btn-outline">go back</a>
-  <div #chat style="height: 65vh" class="overflow-scroll my-2">
+  <a routerLink=".." class="btn btn-sm btn-outline">go to conversations</a>
+
+  <a routerLink="/offers/browse/{{conversation.offer.id}}" class="hero my-2 shadow hover:shadow-xl" style="background-image: url({{conversation.offer.coverUrl}});">
+    <div class="hero-overlay bg-opacity-60"></div>
+    <div class="hero-content text-center text-neutral-content">
+      <div class="max-w-md">
+        <h1 class="mb-0 text-5xl font-bold text-white">{{conversation.offer.name}}</h1>
+        <p class="my-2">posted by {{conversation.offer.user.login}} on {{conversation.offer.creationDate | date}}</p>
+        <div class="my-2">{{conversation.offer.price ?? 0 | currency: 'PLN'}}</div>
+      </div>
+    </div>
+  </a>
+
+  <div #chat style="height: 50vh" class="overflow-scroll my-2">
     <div class="flex flex-col gap-3">
       <div *ngFor="let message of messages" class="w-fit rounded-box bg-base-100 p-2 shadow hover:shadow-md" [class.ml-auto]="message.owned" [class]="message.owned ? 'bg-gradient-to-r from-green-300 to-blue-300' : ''" >
         {{message.content}}
@@ -8,7 +20,7 @@
     </div>
   </div>
   <form [formGroup]="message" (ngSubmit)="addComment()" class="w-full flex gap-3">
-    <input formControlName="content" type="text" placeholder="Type here" class="input input-bordered input-primary w-full" />
+    <input autofocus formControlName="content" type="text" placeholder="Type here" class="input input-bordered input-primary w-full" />
     <button type="submit" class="btn btn-primary w-32">Send</button>
   </form>
 </main>

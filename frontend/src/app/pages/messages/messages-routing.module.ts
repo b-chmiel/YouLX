@@ -2,9 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {ConversationsComponent} from './components/conversations/conversations.component';
 import {ConversationComponent} from './components/conversation/conversation.component';
-import {ConversationResolver} from './resolvers/conversation.resolver';
+import {MessagesResolver} from './resolvers/messages.resolver';
 import {ConversationsPosterResolver} from './resolvers/conversations-poster.resolver';
 import {ConversationsBrowserResolver} from './resolvers/conversations-browser.resolver';
+import {ConversationResolver} from './resolvers/conversation.resolver';
 
 const routes: Routes = [
   {
@@ -19,7 +20,8 @@ const routes: Routes = [
     path: 'conversations/:conversationId',
     component: ConversationComponent,
     resolve: {
-      messages: ConversationResolver
+      conversation: ConversationResolver,
+      messages: MessagesResolver
     }
   }
 ];

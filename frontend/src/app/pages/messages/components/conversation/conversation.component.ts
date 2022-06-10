@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewRef} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Message} from '../../../../models/conversation';
+import {Conversation, Message} from '../../../../models/conversation';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MessagingService} from '../../../../services/messaging.service';
 import {filter, switchMap} from 'rxjs';
@@ -11,7 +11,7 @@ import {filter, switchMap} from 'rxjs';
   styleUrls: ['./conversation.component.scss'],
 })
 export class ConversationComponent implements OnInit, AfterViewInit {
-  conversationId!: string;
+  conversation!: Conversation;
   messages!: Message[];
   message = new FormGroup({
     content: new FormControl("", Validators.required)
@@ -22,7 +22,7 @@ export class ConversationComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.conversationId = this.route.snapshot.paramMap.get('conversationId')!;
+    this.conversation = this.route.snapshot.data['conversation'];
     this.messages = this.route.snapshot.data['messages'];
   }
 
@@ -36,9 +36,9 @@ export class ConversationComponent implements OnInit, AfterViewInit {
     }
 
     const message = this.message.value;
-    this.messaging.postMessage(this.conversationId, message.content).pipe(
+    this.messaging.postMessage(this.conversation.id, message.content).pipe(
       filter(Boolean),
-      switchMap(_ => this.messaging.getMessages(this.conversationId))
+      switchMap(_ => this.messaging.getMessages(this.conversation.id))
     ).subscribe(messages => {
       this.messages = messages;
       this.message.reset();
