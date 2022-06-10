@@ -1,4 +1,14 @@
 <main class="container mx-auto max-w-2xl pb-3 mt-3">
   <a routerLink=".." class="btn btn-sm btn-outline">go back</a>
-  <p *ngFor="let message of messages">{{message.userId}}: {{message.content}}</p>
+  <div #chat style="height: 65vh" class="overflow-scroll my-2">
+    <div class="flex flex-col gap-3">
+      <div *ngFor="let message of messages" class="w-fit rounded-box bg-base-100 p-2 shadow hover:shadow-md" [class.ml-auto]="message.owned" [class]="message.owned ? 'bg-gradient-to-r from-green-300 to-blue-300' : ''" >
+        {{message.content}}
+      </div>
+    </div>
+  </div>
+  <form [formGroup]="message" (ngSubmit)="addComment()" class="w-full flex gap-3">
+    <input formControlName="content" type="text" placeholder="Type here" class="input input-bordered input-primary w-full" />
+    <button type="submit" class="btn btn-primary w-32">Send</button>
+  </form>
 </main>

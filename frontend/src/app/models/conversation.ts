@@ -10,7 +10,8 @@ export interface Conversation {
 export interface Message {
   content: string,
   time: Date,
-  userId: string
+  userId: string,
+  owned: boolean
 }
 
 export interface PostMessage {

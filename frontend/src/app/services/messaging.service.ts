@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {catchError, combineLatest, concatMap, filter, map, Observable, of, withLatestFrom, zip} from 'rxjs';
+import {catchError, combineLatest, concatMap, filter, map, Observable, of, switchMap, withLatestFrom, zip} from 'rxjs';
 import {Conversation, Message} from '../models/conversation';
 import {AuthService} from './auth.service';
 import Profile from '../models/profile';
@@ -53,12 +53,28 @@ export class MessagingService {
 
   getMessages(conversationId: string): Observable<Message[]> {
     return this.http.get<Message[]>(this.apiPrefix + "/" + conversationId + "/messages").pipe(
-      catchError(_ => of([]))
+      catchError(_ => of([])),
+      withLatestFrom(this.auth.getProfileInfo()),
+      map(x => {
+        const [messages, profile] = x;
+        if (!profile) {
+          return [];
+        }
+        return messages.map(message => {
+          if (message.userId == profile.login) {
+            message.owned = true;
+          }
+          return message;
+        });
+      })
     )
   }
 
   postMessage(conversationId: string, content: string): Observable<boolean> {
-    return this.http.post(this.apiPrefix + "/" + conversationId + "/messages", {content}, {observe: 'response'}).pipe(
+    const body = {
+      content: content
+    };
+    return this.http.post(this.apiPrefix + "/" + conversationId + "/messages", body, {observe: 'response'}).pipe(
       map(response => response.ok)
     )
   }

@@ -1,19 +1,22 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
-import { MessagesRoutingModule } from './messages-routing.module';
-import { ConversationsComponent } from './components/conversations/conversations.component';
-import { ConversationComponent } from './components/conversation/conversation.component';
+import {MessagesRoutingModule} from './messages-routing.module';
+import {ConversationsComponent} from './components/conversations/conversations.component';
+import {ConversationComponent} from './components/conversation/conversation.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 
 @NgModule({
   declarations: [
     ConversationsComponent,
-    ConversationComponent
+    ConversationComponent,
   ],
   imports: [
     CommonModule,
-    MessagesRoutingModule
-  ]
+    ReactiveFormsModule,
+    MessagesRoutingModule,
+  ],
 })
-export class MessagesModule { }
+export class MessagesModule {
+}
