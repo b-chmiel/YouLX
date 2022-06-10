@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {catchError, combineLatest, concatMap, filter, map, Observable, of, zip} from 'rxjs';
+import {catchError, combineLatest, concatMap, filter, map, Observable, of, withLatestFrom, zip} from 'rxjs';
 import {Conversation, Message} from '../models/conversation';
 import {AuthService} from './auth.service';
+import Profile from '../models/profile';
 
 @Injectable({
   providedIn: 'root',
@@ -25,11 +26,29 @@ export class MessagingService {
   }
 
   getBrowserConversations(): Observable<Conversation[]> {
-    return this.getConversations();
+    return this.getConversations().pipe(
+      withLatestFrom(this.auth.getProfileInfo()),
+      map(x => {
+        const [conversations, profile]: [Conversation[], Profile | null] = x;
+        if (!profile) {
+          return [];
+        }
+        return conversations.filter(conversation => conversation.posterId != profile.login);
+      })
+    );
   }
 
   getPosterConversations(): Observable<Conversation[]> {
-    return this.getConversations();
+    return this.getConversations().pipe(
+      withLatestFrom(this.auth.getProfileInfo()),
+      map(x => {
+        const [conversations, profile]: [Conversation[], Profile | null] = x;
+        if (!profile) {
+          return [];
+        }
+        return conversations.filter(conversation => conversation.posterId == profile.login);
+      })
+    );
   }
 
   getMessages(conversationId: string): Observable<Message[]> {

@@ -8,12 +8,14 @@ import {Conversation} from '../../../../models/conversation';
   styleUrls: ['./conversations.component.scss']
 })
 export class ConversationsComponent implements OnInit {
-  conversations!: Conversation[];
+  conversationsPoster!: Conversation[];
+  conversationsBrowser!: Conversation[];
 
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.conversations = this.route.snapshot.data["conversations"];
+    this.conversationsPoster = this.route.snapshot.data["conversationsPoster"];
+    this.conversationsBrowser = this.route.snapshot.data["conversationsBrowser"];
   }
 
 }

@@ -1,1 +1,4 @@
-<p *ngFor="let message of messages">{{message.userId}}: {{message.content}}</p>
+<main class="container mx-auto max-w-2xl pb-3 mt-3">
+  <a routerLink=".." class="btn btn-sm btn-outline">go back</a>
+  <p *ngFor="let message of messages">{{message.userId}}: {{message.content}}</p>
+</main>

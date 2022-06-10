@@ -1,21 +1,21 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
-  Resolve,
+  Router, Resolve,
   RouterStateSnapshot,
-  ActivatedRouteSnapshot,
+  ActivatedRouteSnapshot
 } from '@angular/router';
-import {Observable, of} from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {Conversation} from '../../../models/conversation';
 import {MessagingService} from '../../../services/messaging.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class ConversationsResolver implements Resolve<Conversation[]> {
+export class ConversationsBrowserResolver implements Resolve<Conversation[]> {
   constructor(private service: MessagingService) {
   }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Conversation[]> {
-    return this.service.getConversations();
+    return this.service.getBrowserConversations();
   }
 }
