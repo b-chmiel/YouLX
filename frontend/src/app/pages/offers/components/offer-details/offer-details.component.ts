@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {Offer} from '../../../../models/offer';
 import {ActivatedRoute} from '@angular/router';
 import {OffersService} from '../../../../services/offers.service';
-import {switchMap} from 'rxjs';
+import {Observable, switchMap} from 'rxjs';
+import {AuthService} from '../../../../services/auth.service';
+import Profile from '../../../../models/profile';
 
 @Component({
   selector: 'app-offer-details',
@@ -13,12 +15,15 @@ export class OfferDetailsComponent implements OnInit {
 
   offer: Offer | null = null;
   canEdit!: boolean;
+  loggedInUser$!: Observable<Profile | null>;
 
-  constructor(private route: ActivatedRoute, private offers: OffersService) { }
+
+  constructor(private route: ActivatedRoute, private offers: OffersService, private auth: AuthService) { }
 
   ngOnInit(): void {
     this.offer = this.route.snapshot.data["offer"];
     this.canEdit = this.route.snapshot.data["canEdit"] as boolean && this.offer?.status != 'CLOSED';
+    this.loggedInUser$ = this.auth.getProfileInfo();
   }
 
   closeOffer() {

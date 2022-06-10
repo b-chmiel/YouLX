@@ -1,3 +1,10 @@
 <main class="container mx-auto flex flex-wrap justify-center gap-3 py-3">
-  <offers-offer *ngFor="let offer of offers" [offer]="offer"></offers-offer>
+  <offers-offer *ngFor="let offer of offers._embedded.offers" [offer]="offer"></offers-offer>
 </main>
+<div *ngIf="offers.page.totalPages > 1" class="w-full flex justify-center">
+  <div class="btn-group">
+    <button class="btn" (click)="prevPage()">«</button>
+    <button class="btn">Page {{offers.page.number + 1}}</button>
+    <button class="btn" (click)="nextPage()">»</button>
+  </div>
+</div>

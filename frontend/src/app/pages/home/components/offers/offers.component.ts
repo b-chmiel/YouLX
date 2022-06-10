@@ -1,6 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {Offer} from '../../../../models/offer';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Offer, PaginatedOffers} from '../../../../models/offer';
 import {ActivatedRoute} from '@angular/router';
+import {OffersService} from '../../../../services/offers.service';
+import {Observable, ReplaySubject, Subject, switchMap} from 'rxjs';
 
 @Component({
   selector: 'home-offers',
@@ -8,12 +10,38 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./offers.component.scss'],
 })
 export class OffersComponent implements OnInit {
-  offers: Offer[] = [];
+  offers!: PaginatedOffers;
+  query: string = "";
+  refresh$ = new Subject();
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private service: OffersService) {
   }
 
   ngOnInit() {
     this.offers = this.route.snapshot.data['offers'];
+    this.refresh$.pipe(
+      switchMap(_ => this.service.getOffers(this.offers.page.number, 6, this.query))
+    ).subscribe(offers => {
+      this.offers = offers;
+    })
+  }
+
+  changePage(page: number) {
+    const pagination = this.offers.page;
+    if (page == pagination.number || page < 0 || page > pagination.totalPages) {
+      return;
+    }
+
+    if (page > pagination.number && (this.offers._embedded.offers.length < pagination.size || this.offers._embedded.offers.length == pagination.totalElements)) {
+      return;
+    }
+
+    this.offers.page.number = page;
+    this.refresh$.next(true);
+  }
+
+  searchOffers(query: string) {
+    this.query = query;
+    this.refresh$.next(true);
   }
 }

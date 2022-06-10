@@ -12,15 +12,23 @@ import static org.mockito.Mockito.*;
 
 class TagServiceTests {
     private final TagRepository repository = mock(TagRepository.class);
+    private final TagSearchRepository searchRepository = mock(TagSearchRepository.class);
     private final OfferStateCheckService offerStateCheckService = mock(OfferStateCheckService.class);
-    private final TagService service = new TagServiceImpl(repository, offerStateCheckService);
+    private final TagService service = new TagServiceImpl(repository, searchRepository, offerStateCheckService);
 
     @Nested
     class GetAllTests {
         @Test
         void getAll() {
-            service.getAll();
+            service.getAll("");
             verify(repository, times(1)).getAll();
+        }
+
+        @Test
+        void getAllQuery() {
+            final var query = "query";
+            service.getAll(query);
+            verify(searchRepository, times(1)).search(query);
         }
     }
 

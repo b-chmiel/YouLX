@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
 import {
-  Router, Resolve,
+  Resolve,
   RouterStateSnapshot,
   ActivatedRouteSnapshot
 } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import {Offer} from '../../../models/offer';
+import { Observable } from 'rxjs';
+import {PaginatedOffers} from '../../../models/offer';
 import {OffersService} from '../../../services/offers.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OffersResolver implements Resolve<Offer[]> {
+export class OffersResolver implements Resolve<PaginatedOffers> {
   constructor(private offers: OffersService) {
   }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Offer[]> {
-    return this.offers.getOffers(0, 8);
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<PaginatedOffers> {
+    return this.offers.getOffers(0, 6);
   }
 }

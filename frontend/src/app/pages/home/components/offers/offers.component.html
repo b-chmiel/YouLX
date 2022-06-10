@@ -1,3 +1,4 @@
 <main class="container mx-auto flex flex-wrap justify-center gap-3 pb-3">
-  <home-offer *ngFor="let offer of offers" [offer]="offer"></home-offer>
+  <home-offer *ngFor="let offer of offers._embedded.offers" [offer]="offer"></home-offer>
 </main>
+<home-pagination *ngIf="offers.page.totalPages > 1" (nextPage)="changePage($event)" (prevPage)="changePage($event)" [page]="offers.page.number"></home-pagination>
