@@ -13,11 +13,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TagServiceImpl implements TagService {
     private final TagRepository repository;
+    private final TagSearchRepository searchRepository;
     private final OfferStateCheckService offerStateCheckService;
 
     @Override
-    public List<Tag> getAll() {
-        return repository.getAll();
+    public List<Tag> getAll(String query) {
+        if (query == null || query.isBlank()) {
+            return repository.getAll();
+        }
+
+        return searchRepository.search(query);
     }
 
     @Override

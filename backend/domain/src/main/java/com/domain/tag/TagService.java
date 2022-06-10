@@ -6,7 +6,7 @@ import com.domain.utils.exception.ApiException;
 import java.util.List;
 
 public interface TagService {
-    List<Tag> getAll();
+    List<Tag> getAll(String query);
 
     void create(Tag tag) throws ApiException;
 

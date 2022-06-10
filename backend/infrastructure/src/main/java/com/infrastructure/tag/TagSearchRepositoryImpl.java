@@ -26,8 +26,9 @@ public class TagSearchRepositoryImpl implements TagSearchRepository {
 
         final var query = queryBuilder
                 .keyword()
+                .wildcard()
                 .onFields("name")
-                .matching(searchString)
+                .matching(searchString + "*")
                 .createQuery();
 
         @SuppressWarnings("unchecked") final List<TagTuple> result = fullTextManager.createFullTextQuery(query, TagTuple.class).getResultList();
