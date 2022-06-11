@@ -3,6 +3,8 @@ import {TestBed} from '@angular/core/testing';
 import {ToolbarComponent} from './toolbar.component';
 import {AuthService} from '../../../services/auth.service';
 import {of} from 'rxjs';
+import {TagsService} from '../../../services/tags.service';
+import {ActivatedRoute} from '@angular/router';
 
 describe('ToolbarComponent', () => {
   let authServiceSpy: any = jasmine.createSpyObj('AuthService', ['getProfileInfo']);
@@ -12,6 +14,16 @@ describe('ToolbarComponent', () => {
       declarations: [ToolbarComponent],
       providers: [
         {provide: AuthService, useValue: authServiceSpy},
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              data: {
+                tags: []
+              }
+            }
+          }
+        }
       ],
     })
       .compileComponents();

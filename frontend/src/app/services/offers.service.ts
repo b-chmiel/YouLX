@@ -13,7 +13,7 @@ export class OffersService {
   constructor(private http: HttpClient) {
   }
 
-  getOffers(page: number, size: number, query?: string): Observable<PaginatedOffers> {
+  getOffers(page: number, size: number, query?: string, tags: string[] = []): Observable<PaginatedOffers> {
     if (page < 0 || size < 1) {
       return of({
         _embedded: {
@@ -31,7 +31,8 @@ export class OffersService {
     const params = {
       page,
       size,
-      query: ''
+      query: '',
+      tags: tags.join(';')
     };
 
     if (query) {

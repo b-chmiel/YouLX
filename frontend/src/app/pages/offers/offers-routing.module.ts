@@ -5,6 +5,7 @@ import {OfferResolver} from './resolvers/offer.resolver';
 import {OfferNewComponent} from './components/offer-new/offer-new.component';
 import {BrowseMyOffersComponent} from './components/browse-my-offers/browse-my-offers.component';
 import {MyOffersResolver} from './resolvers/my-offers.resolver';
+import {TagsResolver} from '../../resolvers/tags.resolver';
 
 const routes: Routes = [
   {
@@ -26,6 +27,7 @@ const routes: Routes = [
     component: OfferNewComponent,
     resolve: {
       offer: OfferResolver,
+      tags: TagsResolver
     },
   },
   {
@@ -41,6 +43,9 @@ const routes: Routes = [
   {
     path: 'offers/create',
     component: OfferNewComponent,
+    resolve: {
+      tags: TagsResolver
+    }
   },
 ];
 

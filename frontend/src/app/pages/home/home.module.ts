@@ -8,7 +8,10 @@ import {MatIconModule} from '@angular/material/icon';
 import {OfferComponent} from './components/offer/offer.component';
 import {OffersComponent} from './components/offers/offers.component';
 import {RouterModule} from '@angular/router';
-import { PaginationComponent } from './components/pagination/pagination.component';
+import {PaginationComponent} from './components/pagination/pagination.component';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -22,8 +25,11 @@ import { PaginationComponent } from './components/pagination/pagination.componen
     CommonModule,
     MatInputModule,
     MatAutocompleteModule,
+    MatChipsModule,
+    MatFormFieldModule,
     MatIconModule,
     RouterModule,
+    ReactiveFormsModule,
   ],
   exports: [
     HomeComponent,

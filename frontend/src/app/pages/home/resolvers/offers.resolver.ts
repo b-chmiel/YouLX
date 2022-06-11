@@ -16,6 +16,6 @@ export class OffersResolver implements Resolve<PaginatedOffers> {
   }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<PaginatedOffers> {
-    return this.offers.getOffers(0, 6);
+    return this.offers.getOffers(0, 6, undefined);
   }
 }
