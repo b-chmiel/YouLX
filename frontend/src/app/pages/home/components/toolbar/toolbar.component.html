@@ -2,17 +2,36 @@
   <div class="form-control flex-1 min-w-fit">
     <div class="input-group">
       <span class="pl-2 pr-1.5"><mat-icon>search</mat-icon></span>
-      <input #input type="text" placeholder="Search for whatever you want" class="input input-bordered w-full">
+      <input #input type="text" placeholder="Search for whatever you want" class="input input-bordered w-full" style="height: 59.5px">
     </div>
   </div>
   <div class="form-control w-full md:max-w-xs">
-    <div class="input-group">
-      <span class="pl-2 pr-1.5"><mat-icon>location_on</mat-icon></span>
-      <input type="text" placeholder="Everywhere" class="input input-bordered w-full" [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete">
-        <mat-option *ngFor="let option of options" [value]="option">{{option}}</mat-option>
+    <mat-form-field appearance="outline">
+      <mat-label>Tags</mat-label>
+      <mat-chip-list #chipList aria-label="Tags selection">
+        <mat-chip
+          *ngFor="let tag of tags"
+          (removed)="remove(tag)">
+          {{tag}}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+        <input
+          placeholder="New tag..."
+          #tagInput
+          [formControl]="tagCtrl"
+          [matAutocomplete]="auto"
+          [matChipInputFor]="chipList"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="add($event)"
+        >
+      </mat-chip-list>
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+          {{tag}}
+        </mat-option>
       </mat-autocomplete>
-      <button class="btn">Search</button>
-    </div>
+    </mat-form-field>
   </div>
 </div>

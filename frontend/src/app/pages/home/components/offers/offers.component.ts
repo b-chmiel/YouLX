@@ -1,8 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Offer, PaginatedOffers} from '../../../../models/offer';
+import {PaginatedOffers} from '../../../../models/offer';
 import {ActivatedRoute} from '@angular/router';
 import {OffersService} from '../../../../services/offers.service';
-import {Observable, ReplaySubject, Subject, switchMap} from 'rxjs';
+import {Subject, switchMap} from 'rxjs';
 
 @Component({
   selector: 'home-offers',
@@ -11,7 +11,8 @@ import {Observable, ReplaySubject, Subject, switchMap} from 'rxjs';
 })
 export class OffersComponent implements OnInit {
   offers!: PaginatedOffers;
-  query: string = "";
+  query: string = '';
+  tags: string[] = [];
   refresh$ = new Subject();
 
   constructor(private route: ActivatedRoute, private service: OffersService) {
@@ -20,10 +21,10 @@ export class OffersComponent implements OnInit {
   ngOnInit() {
     this.offers = this.route.snapshot.data['offers'];
     this.refresh$.pipe(
-      switchMap(_ => this.service.getOffers(this.offers.page.number, 6, this.query))
+      switchMap(_ => this.service.getOffers(this.offers.page.number, 6, this.query, this.tags)),
     ).subscribe(offers => {
       this.offers = offers;
-    })
+    });
   }
 
   changePage(page: number) {
@@ -42,6 +43,11 @@ export class OffersComponent implements OnInit {
 
   searchOffers(query: string) {
     this.query = query;
+    this.refresh$.next(true);
+  }
+
+  searchTags(tags: string[]) {
+    this.tags = tags;
     this.refresh$.next(true);
   }
 }

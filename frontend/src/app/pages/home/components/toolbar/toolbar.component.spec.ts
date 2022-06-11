@@ -2,6 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {ToolbarComponent} from './toolbar.component';
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {ActivatedRoute} from '@angular/router';
 
 describe('ToolbarComponent', () => {
   let component: ToolbarComponent;
@@ -10,7 +11,19 @@ describe('ToolbarComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ToolbarComponent],
-      imports: [MatAutocompleteModule]
+      imports: [MatAutocompleteModule],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              data: {
+                tags: []
+              }
+            }
+          }
+        }
+      ]
     })
       .compileComponents();
   });

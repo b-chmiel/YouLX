@@ -24,6 +24,7 @@ export interface Offer {
   imageUrls?: string[];
   price: number | null;
   creationDate: string;
+  tags: {name: string}[];
   user: {
     login: string,
     firstName?: string,
