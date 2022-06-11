@@ -3,11 +3,10 @@ package com.infrastructure;
 import com.domain.photo.PhotoRepository;
 import com.domain.tag.TagRepository;
 import com.domain.utils.hashId.HashId;
+import com.infrastructure.conversation.ConversationRepositoryImpl;
 import com.infrastructure.conversation.JpaConversationRepository;
 import com.infrastructure.conversation.JpaMessageRepository;
-import com.infrastructure.conversation.ConversationRepositoryImpl;
 import com.infrastructure.offer.JpaOfferRepository;
-import com.infrastructure.offer.OfferFindRepositoryImpl;
 import com.infrastructure.offer.OfferPagedRepository;
 import com.infrastructure.offer.OfferRepositoryImpl;
 import com.infrastructure.photo.JpaPhotoRepository;
@@ -22,12 +21,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackageClasses = {OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class, TagRepositoryImpl.class, OfferFindRepositoryImpl.class, ConversationRepositoryImpl.class}, considerNestedRepositories = true)
-@EntityScan(basePackageClasses = {OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class, TagRepositoryImpl.class, OfferFindRepositoryImpl.class, ConversationRepositoryImpl.class})
+@EnableJpaRepositories(basePackageClasses = {OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class, TagRepositoryImpl.class, ConversationRepositoryImpl.class}, considerNestedRepositories = true)
+@EntityScan(basePackageClasses = {OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class, TagRepositoryImpl.class, ConversationRepositoryImpl.class})
 public class JpaConfig {
     @Bean
-    OfferRepositoryImpl offerRepository(HashId hashId, JpaUserRepository userRepository, JpaOfferRepository offerRepository, PhotoRepository photoRepository, TagRepository tagRepository) {
-        return new OfferRepositoryImpl(hashId, userRepository, offerRepository, photoRepository, tagRepository);
+    OfferRepositoryImpl offerRepository(HashId hashId, JpaUserRepository userRepository, JpaOfferRepository offerRepository, PhotoRepository photoRepository, TagRepository tagRepository, OfferPagedRepository offerPagedRepository, JpaTagRepository jpaTagRepository) {
+        return new OfferRepositoryImpl(hashId, userRepository, offerRepository, photoRepository, tagRepository, offerPagedRepository, jpaTagRepository);
     }
 
     @Bean
@@ -43,11 +42,6 @@ public class JpaConfig {
     @Bean
     TagRepositoryImpl tagRepository(HashId hashId, JpaTagRepository tagRepository, JpaOfferRepository offerRepository) {
         return new TagRepositoryImpl(hashId, tagRepository, offerRepository);
-    }
-
-    @Bean
-    OfferFindRepositoryImpl offerFindRepository(HashId hashId, OfferPagedRepository offerPagedRepository, JpaTagRepository tagRepository) {
-        return new OfferFindRepositoryImpl(hashId, offerPagedRepository, tagRepository);
     }
 
     @Bean

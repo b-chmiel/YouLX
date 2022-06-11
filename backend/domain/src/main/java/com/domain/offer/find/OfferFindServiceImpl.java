@@ -21,7 +21,6 @@ public class OfferFindServiceImpl implements OfferFindService {
     private final OfferRepository offerRepository;
     private final OfferSearchRepository offerSearchRepository;
     private final OfferStateCheckService offerStateCheckService;
-    private final OfferFindRepository offerFindRepository;
 
     @Override
     public boolean exists(String id) {
@@ -43,19 +42,19 @@ public class OfferFindServiceImpl implements OfferFindService {
             return search(user, searchQuery, pageable);
         } else if (user.getUsername() == null) {
             if (tags.isEmpty()) {
-                return offerFindRepository.findAllByStatusIn(pageable, List.of(OfferStatus.OPEN));
+                return offerRepository.findAllByStatusIn(pageable, List.of(OfferStatus.OPEN));
             } else {
-                return offerFindRepository.findAllByStatusInAndTagsIn(pageable, List.of(OfferStatus.OPEN), tags);
+                return offerRepository.findAllByStatusInAndTagsIn(pageable, List.of(OfferStatus.OPEN), tags);
             }
         } else {
             if (tags.isEmpty() && statuses.isEmpty()) {
-                return offerFindRepository.findAllByUserId(pageable, user);
+                return offerRepository.findAllByUserId(pageable, user);
             } else if (tags.isEmpty()) {
-                return offerFindRepository.findAllByUserIdAndStatusIn(pageable, user, statuses);
+                return offerRepository.findAllByUserIdAndStatusIn(pageable, user, statuses);
             } else if (statuses.isEmpty()) {
-                return offerFindRepository.findAllByUserIdAndStatusInAndTagsIn(pageable, user, List.of(OfferStatus.OPEN), tags);
+                return offerRepository.findAllByUserIdAndStatusInAndTagsIn(pageable, user, List.of(OfferStatus.OPEN), tags);
             } else {
-                return offerFindRepository.findAllByUserIdAndStatusInAndTagsIn(pageable, user, statuses, tags);
+                return offerRepository.findAllByUserIdAndStatusInAndTagsIn(pageable, user, statuses, tags);
             }
         }
     }

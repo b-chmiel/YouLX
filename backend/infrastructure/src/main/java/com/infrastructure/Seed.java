@@ -9,7 +9,6 @@ import com.domain.tag.Tag;
 import com.domain.tag.TagRepository;
 import com.domain.user.User;
 import com.domain.user.UserRepository;
-import com.domain.utils.exception.ApiException;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -25,7 +24,6 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
@@ -38,7 +36,8 @@ public class Seed implements ApplicationRunner {
 
     private static final Random random = new Random(1L);
     private static final Faker faker = new Faker(random);
-    private static final int NUMBER_OF_TAGS = 10;
+
+    private static final int TAGS_PER_OFFER = 2;
     private static final int PHOTOS_PER_OFFER = 3;
     private static final int OFFER_COUNT = 2;
 
@@ -65,32 +64,20 @@ public class Seed implements ApplicationRunner {
     private void createOpenOffer(User user, List<Photo> photos, List<Tag> tags) {
         final var open = offerRepository.create(offerFrom(user, photos));
         offerRepository.publish(open.getId());
-        assignTagsToOffer(tags, open.getId());
     }
 
     private void createDraftOffer(User user, List<Photo> photos, List<Tag> tags) {
         final var draft = offerRepository.create(offerFrom(user, photos));
-        assignTagsToOffer(tags, draft.getId());
     }
 
     private void createClosedOffer(User user, List<Photo> photos, List<Tag> tags) {
         final var closed = offerRepository.create(offerFrom(user, photos));
         offerRepository.publish(closed.getId());
         offerRepository.close(closed.getId(), new OfferClose(OfferCloseReason.MANUAL));
-        assignTagsToOffer(tags, closed.getId());
-    }
-
-    private void assignTagsToOffer(List<Tag> allTags, String offerId) {
-//        try {
-//            tagRepository.assignToOffer(offerId, allTags.get(faker.random().nextInt(allTags.size())));
-//            tagRepository.assignToOffer(offerId, allTags.get(faker.random().nextInt(allTags.size())));
-//        } catch (ApiException ignored) {
-//            // Imma not if this nextInts' randomness out.
-//        }
     }
 
     private List<Tag> tagsFrom() {
-        return IntStream.range(0, NUMBER_OF_TAGS).mapToObj(i -> faker.lorem().word()).distinct().map(Tag::new).toList();
+        return IntStream.range(0, TAGS_PER_OFFER).mapToObj(i -> faker.lorem().word()).distinct().map(Tag::new).toList();
     }
 
     private User userFrom(String username) {
