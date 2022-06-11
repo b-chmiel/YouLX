@@ -8,12 +8,14 @@ import com.domain.utils.exception.ApiException;
 import com.domain.utils.exception.ApiNotFoundException;
 import com.domain.utils.exception.ApiUnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
+@ComponentScan(basePackages = "com.infrastructure")
 @RequiredArgsConstructor
 public class ConversationServiceImpl implements ConversationService {
     private final UserService userService;

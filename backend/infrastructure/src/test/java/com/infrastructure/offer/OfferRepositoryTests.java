@@ -12,7 +12,9 @@ import com.domain.utils.hashId.ApiHashIdException;
 import com.domain.utils.hashId.HashId;
 import com.domain.utils.hashId.HashIdImpl;
 import com.infrastructure.Fixtures;
-import com.infrastructure.JpaConfig;
+import com.infrastructure.photo.PhotoRepositoryImpl;
+import com.infrastructure.tag.TagRepositoryImpl;
+import com.infrastructure.user.UserRepositoryImpl;
 import com.infrastructure.user.UserTuple;
 import org.hashids.Hashids;
 import org.junit.jupiter.api.AfterEach;
@@ -21,8 +23,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -36,15 +39,15 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(SpringExtension.class)
-@Transactional
+@DataJpaTest
 @ContextConfiguration(
-        classes = {JpaConfig.class, HashIdImpl.class, Hashids.class},
+        classes = {HashIdImpl.class, Hashids.class, OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class, TagRepositoryImpl.class},
         loader = AnnotationConfigContextLoader.class
 )
-@DataJpaTest
+@EnableJpaRepositories("com.infrastructure")
+@EntityScan("com.infrastructure")
+@Transactional
 class OfferRepositoryTests {
     @Autowired
     private HashId hashId;

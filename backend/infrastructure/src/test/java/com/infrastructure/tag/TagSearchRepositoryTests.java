@@ -4,7 +4,6 @@ import com.domain.tag.Tag;
 import com.domain.tag.TagRepository;
 import com.domain.tag.TagSearchRepository;
 import com.domain.utils.hashId.HashIdImpl;
-import com.infrastructure.JpaConfig;
 import org.hashids.Hashids;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
@@ -13,7 +12,9 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -24,13 +25,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(SpringExtension.class)
-@Transactional
+@DataJpaTest
 @ContextConfiguration(
-        classes = {TagSearchRepositoryImpl.class, JpaConfig.class, HashIdImpl.class, Hashids.class},
+        classes = {TagSearchRepositoryImpl.class, HashIdImpl.class, Hashids.class, TagRepositoryImpl.class},
         loader = AnnotationConfigContextLoader.class
 )
-@DataJpaTest
+@EnableJpaRepositories(basePackages = "com.infrastructure")
+@EntityScan("com.infrastructure")
+@Transactional
 class TagSearchRepositoryTests {
     @Autowired
     private TagSearchRepository findRepository;

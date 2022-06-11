@@ -11,12 +11,14 @@ import com.domain.utils.hashId.HashId;
 import com.infrastructure.offer.JpaOfferRepository;
 import com.infrastructure.offer.OfferTuple;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
 
+@Repository
 @RequiredArgsConstructor
 public class PhotoRepositoryImpl implements PhotoRepository {
     private final HashId hashId;

@@ -9,9 +9,9 @@ import com.domain.utils.hashId.ApiHashIdException;
 import com.domain.utils.hashId.HashId;
 import com.domain.utils.hashId.HashIdImpl;
 import com.infrastructure.Fixtures;
-import com.infrastructure.JpaConfig;
 import com.infrastructure.offer.JpaOfferRepository;
 import com.infrastructure.offer.OfferTuple;
+import com.infrastructure.user.UserRepositoryImpl;
 import com.infrastructure.user.UserTuple;
 import org.hashids.Hashids;
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +20,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -32,13 +34,14 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@Transactional
+@DataJpaTest
 @ContextConfiguration(
-        classes = {JpaConfig.class, HashIdImpl.class, Hashids.class},
+        classes = {HashIdImpl.class, Hashids.class, PhotoRepositoryImpl.class, UserRepositoryImpl.class},
         loader = AnnotationConfigContextLoader.class
 )
-@DataJpaTest
+@EnableJpaRepositories("com.infrastructure")
+@EntityScan("com.infrastructure")
+@Transactional
 class PhotoRepositoryTests {
     @Autowired
     private HashId hashId;

@@ -4,9 +4,11 @@ import com.domain.user.User;
 import com.domain.user.UserEdit;
 import com.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     private final JpaUserRepository repo;
