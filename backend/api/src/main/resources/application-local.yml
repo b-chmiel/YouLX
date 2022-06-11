@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:db;Mode=Oracle
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    generate-ddl: true
+  mvc:
+    log-request-details: true
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+      hibernate:
+        SQL: DEBUG
