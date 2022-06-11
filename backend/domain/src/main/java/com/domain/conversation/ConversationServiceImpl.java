@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
-@ComponentScan(basePackages = "com.infrastructure")
 @RequiredArgsConstructor
 public class ConversationServiceImpl implements ConversationService {
     private final UserService userService;

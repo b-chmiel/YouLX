@@ -2,6 +2,7 @@ package com.api.rest.offer;
 
 import com.api.rest.tag.TagDto;
 import com.domain.offer.Offer;
+import com.domain.tag.Tag;
 import com.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,12 +24,14 @@ class OfferCreateDto {
     private Set<TagDto> tags;
 
     Offer toDomain(User user) {
+        final Set<Tag> tags = this.tags == null ? Set.of() : this.tags.stream().map(TagDto::toDomain).collect(Collectors.toSet());
+
         return new Offer(
                 name,
                 description,
                 user,
                 price,
-                tags.stream().map(TagDto::toDomain).collect(Collectors.toSet())
+                tags
         );
     }
 }
