@@ -21,8 +21,7 @@ class OfferFindServiceTests {
     private final OfferRepository offerRepository = mock(OfferRepository.class);
     private final OfferSearchRepository offerSearchRepository = mock(OfferSearchRepository.class);
     private final OfferStateCheckService offerStateCheckService = mock(OfferStateCheckService.class);
-    private final OfferFindRepository offerFindRepository = mock(OfferFindRepository.class);
-    private final OfferFindService service = new OfferFindServiceImpl(offerRepository, offerSearchRepository, offerStateCheckService, offerFindRepository);
+    private final OfferFindService service = new OfferFindServiceImpl(offerRepository, offerSearchRepository, offerStateCheckService);
 
     @Nested
     class ExistsTests {
@@ -88,7 +87,7 @@ class OfferFindServiceTests {
             final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
-            when(offerFindRepository.findAllByStatusIn(page, statusQuery.getStatuses())).thenReturn(expected);
+            when(offerRepository.findAllByStatusIn(page, statusQuery.getStatuses())).thenReturn(expected);
 
             assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
@@ -102,7 +101,7 @@ class OfferFindServiceTests {
             final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
-            when(offerFindRepository.findAllByStatusInAndTagsIn(page, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
+            when(offerRepository.findAllByStatusInAndTagsIn(page, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
 
             assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
@@ -116,7 +115,7 @@ class OfferFindServiceTests {
             final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
-            when(offerFindRepository.findAllByUserId(page, user)).thenReturn(expected);
+            when(offerRepository.findAllByUserId(page, user)).thenReturn(expected);
 
             assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
@@ -130,7 +129,7 @@ class OfferFindServiceTests {
             final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
-            when(offerFindRepository.findAllByUserIdAndStatusIn(page, user, statusQuery.getStatuses())).thenReturn(expected);
+            when(offerRepository.findAllByUserIdAndStatusIn(page, user, statusQuery.getStatuses())).thenReturn(expected);
 
             assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
@@ -144,7 +143,7 @@ class OfferFindServiceTests {
             final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
-            when(offerFindRepository.findAllByUserIdAndStatusInAndTagsIn(page, user, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
+            when(offerRepository.findAllByUserIdAndStatusInAndTagsIn(page, user, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
 
             assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
@@ -158,7 +157,7 @@ class OfferFindServiceTests {
             final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
-            when(offerFindRepository.findAllByUserIdAndStatusInAndTagsIn(page, user, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
+            when(offerRepository.findAllByUserIdAndStatusInAndTagsIn(page, user, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
 
             assertEquals(expected, service.findBy(page, user, statusQuery, tagQuery, searchQuery));
         }
@@ -175,7 +174,7 @@ class OfferFindServiceTests {
             final var searchQuery = new OfferSearchQuery("");
 
             final Page<Offer> expected = new PageImpl<>(List.of(Fixtures.offer));
-            when(offerFindRepository.findAllByUserIdAndStatusInAndTagsIn(page, user, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
+            when(offerRepository.findAllByUserIdAndStatusInAndTagsIn(page, user, statusQuery.getStatuses(), tagQuery.getTags())).thenReturn(expected);
 
             assertEquals(expected, service.findOpen(page, user, tagQuery, searchQuery));
         }

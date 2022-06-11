@@ -14,7 +14,6 @@ import java.util.List;
 public class TagServiceImpl implements TagService {
     private final TagRepository repository;
     private final TagSearchRepository searchRepository;
-    private final OfferStateCheckService offerStateCheckService;
 
     @Override
     public List<Tag> getAll(String query) {
@@ -28,14 +27,5 @@ public class TagServiceImpl implements TagService {
     @Override
     public void create(Tag tag) throws ApiException {
         repository.create(tag);
-    }
-
-    @Override
-    public void assignToOffer(UserId user, String offerId, Tag tag) throws ApiException {
-        if (!offerStateCheckService.isOwnerOf(offerId, user)) {
-            throw new ApiUnauthorizedException("User must be owner of com.infrastructure.offer to change it's tags.");
-        }
-
-        repository.assignToOffer(offerId, tag);
     }
 }

@@ -8,6 +8,7 @@ import com.domain.utils.exception.ApiException;
 import com.domain.utils.exception.ApiNotFoundException;
 import com.domain.utils.exception.ApiUnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

@@ -33,13 +33,9 @@ public class TagTuple implements Comparable<TagTuple> {
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = TagTuple.class)
     private List<OfferTuple> offers;
 
-    TagTuple(Tag tag) {
+    public TagTuple(Tag tag) {
         this.name = tag.name();
         this.references = 0;
-    }
-
-    public TagTuple(String name) {
-        this.name = name;
     }
 
     @Override

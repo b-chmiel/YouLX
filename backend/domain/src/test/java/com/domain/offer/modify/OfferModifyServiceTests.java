@@ -5,6 +5,7 @@ import com.domain.offer.OfferRepository;
 import com.domain.offer.OfferStatus;
 import com.domain.offer.find.OfferFindService;
 import com.domain.offer.stateCheck.OfferStateCheckService;
+import com.domain.tag.Tag;
 import com.domain.user.User;
 import com.domain.user.UserId;
 import com.domain.utils.exception.ApiCustomException;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -31,7 +33,7 @@ class OfferModifyServiceTests {
     class CreateTests {
         @Test
         void create() throws Exception {
-            final var offer = new Offer(null, null, null, null);
+            final var offer = new Offer(null, null, null, null, Set.of(new Tag("string")));
 
             service.create(offer);
 
@@ -46,7 +48,7 @@ class OfferModifyServiceTests {
             final var id = "aa";
             final var user = new User(List.of(), "", "", "", "", "b", "");
             final var offerClose = new OfferClose(OfferCloseReason.EXPIRED);
-            final var offer = new Offer(null, null, user, null);
+            final var offer = new Offer(null, null, null, null, Set.of(new Tag("string")));
             offer.setStatus(OfferStatus.OPEN);
 
             when(offerRepository.findById(id)).thenReturn(Optional.of(offer));
@@ -74,7 +76,7 @@ class OfferModifyServiceTests {
             final var id = "aa";
             final var user = new User(List.of(), "", "", "", "", "b", "");
             final var offerClose = new OfferClose(OfferCloseReason.EXPIRED);
-            final var offer = new Offer(null, null, user, null);
+            final var offer = new Offer(null, null, null, null, Set.of(new Tag("string")));
             offer.setStatus(OfferStatus.OPEN);
 
             when(offerRepository.findById(id)).thenReturn(Optional.of(offer));
@@ -89,7 +91,7 @@ class OfferModifyServiceTests {
         @Test
         void offerNotFound() {
             final var offerId = "a";
-            final var offer = new OfferModify("b", "c", BigDecimal.ONE);
+            final var offer = new OfferModify("b", "c", BigDecimal.ONE, Set.of(new Tag("")));
             final var username = "d";
 
             when(offerFindService.exists(offerId)).thenReturn(false);
@@ -100,7 +102,7 @@ class OfferModifyServiceTests {
         @Test
         void userNotOwnerOf() {
             final var offerId = "a";
-            final var offer = new OfferModify("b", "c", BigDecimal.ONE);
+            final var offer = new OfferModify("b", "c", BigDecimal.ONE, Set.of(new Tag("")));
             final var username = "d";
 
             when(offerFindService.exists(offerId)).thenReturn(true);
@@ -112,7 +114,7 @@ class OfferModifyServiceTests {
         @Test
         void modify() {
             final var offerId = "a";
-            final var offer = new OfferModify("b", "c", BigDecimal.ONE);
+            final var offer = new OfferModify("b", "c", BigDecimal.ONE, Set.of(new Tag("")));
             final var username = "d";
 
             when(offerFindService.exists(offerId)).thenReturn(true);

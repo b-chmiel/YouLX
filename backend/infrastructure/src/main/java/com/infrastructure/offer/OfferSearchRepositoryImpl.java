@@ -11,8 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Repository
+@RequiredArgsConstructor
 class OfferSearchRepositoryImpl implements OfferSearchRepository {
     @PersistenceContext
     private EntityManager entityManager;

@@ -9,9 +9,9 @@ import com.domain.utils.hashId.ApiHashIdException;
 import com.domain.utils.hashId.HashId;
 import com.domain.utils.hashId.HashIdImpl;
 import com.infrastructure.Fixtures;
-import com.infrastructure.JpaConfig;
 import com.infrastructure.offer.JpaOfferRepository;
 import com.infrastructure.offer.OfferTuple;
+import com.infrastructure.user.UserRepositoryImpl;
 import com.infrastructure.user.UserTuple;
 import org.hashids.Hashids;
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +20,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -28,16 +30,18 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@Transactional
+@DataJpaTest
 @ContextConfiguration(
-        classes = {JpaConfig.class, HashIdImpl.class, Hashids.class},
+        classes = {HashIdImpl.class, Hashids.class, PhotoRepositoryImpl.class, UserRepositoryImpl.class},
         loader = AnnotationConfigContextLoader.class
 )
-@DataJpaTest
+@EnableJpaRepositories("com.infrastructure")
+@EntityScan("com.infrastructure")
+@Transactional
 class PhotoRepositoryTests {
     @Autowired
     private HashId hashId;
@@ -90,7 +94,7 @@ class PhotoRepositoryTests {
 
         @Test
         void save() {
-            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null), new UserTuple(Fixtures.user));
+            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null, Set.of()), new UserTuple(Fixtures.user));
             final var offerSaved = offerRepo.save(offer);
 
             final var saved = repository.savePhoto(hashId.encode(offerSaved.getId()), Fixtures.photo);
@@ -103,7 +107,7 @@ class PhotoRepositoryTests {
     class DeleteTests {
         @Test
         void delete() {
-            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null), new UserTuple(Fixtures.user));
+            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null, Set.of()), new UserTuple(Fixtures.user));
             final var id = hashId.encode(offerRepo.save(offer).getId());
 
             final var saved = repository.savePhoto(id, Fixtures.photo);
@@ -123,7 +127,7 @@ class PhotoRepositoryTests {
 
         @Test
         void multiplePhotos() {
-            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null), new UserTuple(Fixtures.user));
+            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null, Set.of()), new UserTuple(Fixtures.user));
             final var id = hashId.encode(offerRepo.save(offer).getId());
 
             final var saved1 = repository.savePhoto(id, Fixtures.photo);
@@ -140,8 +144,8 @@ class PhotoRepositoryTests {
 
         @Test
         void multipleOffers() {
-            final var offer1 = new OfferTuple(new Offer("", "", Fixtures.user, null), new UserTuple(Fixtures.user));
-            final var offer2 = new OfferTuple(new Offer("", "", Fixtures.user, null), new UserTuple(Fixtures.user));
+            final var offer1 = new OfferTuple(new Offer("", "", Fixtures.user, null, Set.of()), new UserTuple(Fixtures.user));
+            final var offer2 = new OfferTuple(new Offer("", "", Fixtures.user, null, Set.of()), new UserTuple(Fixtures.user));
             final var id1 = hashId.encode(offerRepo.save(offer1).getId());
             final var id2 = hashId.encode(offerRepo.save(offer2).getId());
 

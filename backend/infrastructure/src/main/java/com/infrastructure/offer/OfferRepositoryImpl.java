@@ -6,25 +6,36 @@ import com.domain.offer.OfferStatus;
 import com.domain.offer.modify.OfferClose;
 import com.domain.offer.modify.OfferModify;
 import com.domain.photo.PhotoRepository;
+import com.domain.tag.Tag;
+import com.domain.tag.TagRepository;
+import com.domain.user.UserId;
 import com.domain.utils.exception.ApiException;
 import com.domain.utils.exception.ApiNotFoundException;
 import com.domain.utils.hashId.ApiHashIdException;
 import com.domain.utils.hashId.HashId;
+import com.infrastructure.tag.JpaTagRepository;
 import com.infrastructure.user.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 @RequiredArgsConstructor
 public class OfferRepositoryImpl implements OfferRepository {
-
     private final HashId hashId;
     private final JpaUserRepository userRepo;
     private final JpaOfferRepository repo;
     private final PhotoRepository photoRepository;
+    private final TagRepository tagRepository;
+    private final OfferPagedRepository offerPagedRepository;
+    private final JpaTagRepository tagRepo;
+
 
     @Override
     public Offer create(Offer offer) throws ApiException {
@@ -39,6 +50,8 @@ public class OfferRepositoryImpl implements OfferRepository {
         offer.getPhotos().forEach(
                 p -> photoRepository.savePhoto(hashId.encode(result.getId()), p)
         );
+
+        tagRepository.assignAllToOffer(hashId.encode(tuple.getId()), offer.getTags());
 
         return result.toDomain(hashId);
     }
@@ -102,6 +115,10 @@ public class OfferRepositoryImpl implements OfferRepository {
         tuple.setName(offer.name());
         tuple.setDescription(offer.description());
         tuple.setPrice(offer.price());
+        tuple.getTags().clear();
+
+        tagRepository.assignAllToOffer(hashId.encode(tuple.getId()), offer.tags());
+
         repo.save(tuple);
     }
 
@@ -121,5 +138,54 @@ public class OfferRepositoryImpl implements OfferRepository {
         } catch (ApiHashIdException e) {
             return false;
         }
+    }
+
+    @Override
+    public Page<Offer> findAllByStatusIn(Pageable pageable, List<OfferStatus> status) {
+        return offerPagedRepository
+                .findAllByStatusIn(pageable, status)
+                .map(o -> o.toDomain(hashId));
+    }
+
+    @Override
+    public Page<Offer> findAllByUserIdAndStatusIn(Pageable pageable, UserId user, List<OfferStatus> statuses) {
+        return offerPagedRepository
+                .findAllByUserIdAndStatusIn(pageable, user.getUsername(), statuses)
+                .map(o -> o.toDomain(hashId));
+    }
+
+    @Override
+    public Page<Offer> findAllByUserIdAndStatusInAndTagsIn(Pageable pageable, UserId user, List<OfferStatus> statuses, List<Tag> tags) {
+        final var tagTuples = tags
+                .stream()
+                .map(Tag::name)
+                .map(tagRepo::findByName)
+                .flatMap(Optional::stream)
+                .toList();
+
+        return offerPagedRepository
+                .findAllByUserIdAndStatusInAndTagsIn(pageable, user.getUsername(), statuses, tagTuples)
+                .map(o -> o.toDomain(hashId));
+    }
+
+    @Override
+    public Page<Offer> findAllByUserId(Pageable pageable, UserId user) {
+        return offerPagedRepository
+                .findAllByUserId(pageable, user.getUsername())
+                .map(o -> o.toDomain(hashId));
+    }
+
+    @Override
+    public Page<Offer> findAllByStatusInAndTagsIn(Pageable pageable, List<OfferStatus> statuses, List<Tag> tags) {
+        final var tagTuples = tags
+                .stream()
+                .map(Tag::name)
+                .map(tagRepo::findByName)
+                .flatMap(Optional::stream)
+                .toList();
+
+        return offerPagedRepository
+                .findAllByStatusInAndTagsIn(pageable, statuses, tagTuples)
+                .map(o -> o.toDomain(hashId));
     }
 }

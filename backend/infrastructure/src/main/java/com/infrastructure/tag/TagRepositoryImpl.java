@@ -12,6 +12,7 @@ import com.infrastructure.offer.JpaOfferRepository;
 import com.infrastructure.offer.OfferTuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Comparator;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@Repository
 @RequiredArgsConstructor
 public class TagRepositoryImpl implements TagRepository {
     private final HashId hashId;
@@ -44,7 +46,12 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public void assignToOffer(String offerId, Tag tag) throws ApiException {
+    public void assignAllToOffer(String offerId, Set<Tag> tags) {
+        tags.stream().filter(t -> !exists(t)).forEach(this::create);
+        tags.forEach(t -> assignToOffer(offerId, t));
+    }
+
+    private void assignToOffer(String offerId, Tag tag) throws ApiException {
         final OfferTuple offer;
 
         try {
@@ -95,5 +102,10 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public void clear() {
         repo.deleteAll();
+    }
+
+    @Override
+    public boolean exists(Tag tag) {
+        return repo.existsByName(tag.name());
     }
 }

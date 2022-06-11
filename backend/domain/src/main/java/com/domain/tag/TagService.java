@@ -9,6 +9,4 @@ public interface TagService {
     List<Tag> getAll(String query);
 
     void create(Tag tag) throws ApiException;
-
-    void assignToOffer(UserId user, String offerId, Tag tag) throws ApiException;
 }

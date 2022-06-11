@@ -2,12 +2,13 @@ package com.api.rest.offer;
 
 import com.api.MvcHelpers;
 import com.api.Routes;
+import com.api.rest.tag.TagDto;
 import com.domain.offer.Offer;
 import com.domain.offer.OfferStatus;
 import com.domain.offer.modify.OfferCloseReason;
+import com.domain.tag.Tag;
 import com.domain.user.User;
 import com.domain.user.UserRepository;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -55,7 +57,7 @@ class OfferControllerFT {
         @Test
         @WithMockUser(value = "a")
         void shouldGetRecentlyCreated() throws Exception {
-            final var offer = new OfferDto(new Offer("", "", mockUser, null));
+            final var offer = new OfferDto(new Offer("", "", mockUser, null, Set.of(new Tag("string"))));
 
             final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
@@ -65,7 +67,7 @@ class OfferControllerFT {
         @Test
         @WithMockUser("a")
         void publishForNewlyCreatedOfferForOwner() throws Exception {
-            final var offer = new OfferDto(new Offer("", "", mockUser, null));
+            final var offer = new OfferDto(new Offer("", "", mockUser, null, Set.of(new Tag("string"))));
 
             final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
@@ -77,7 +79,7 @@ class OfferControllerFT {
         @Test
         @WithMockUser("a")
         void closeForPublishedOffer() throws Exception {
-            final var offer = new OfferDto(new Offer("", "", mockUser, null));
+            final var offer = new OfferDto(new Offer("", "", mockUser, null, Set.of(new Tag("string"))));
             final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
             final var location = response.andReturn().getResponse().getHeader("location");
             helpers.postRequest(null, location + "/publish");
@@ -115,7 +117,7 @@ class OfferControllerFT {
             final var name = "asdf";
             final var desc = "fdsa";
             final var price = BigDecimal.TEN;
-            final var offer = new OfferCreateDto(name, desc, price);
+            final var offer = new OfferCreateDto(name, desc, price, Set.of(new TagDto("tags")));
 
             final var response = helpers.postRequest(offer, Routes.Offer.OFFERS);
 
@@ -129,6 +131,7 @@ class OfferControllerFT {
             Assertions.assertEquals(desc, MvcHelpers.attributeFromResult("description", created));
             assertThat(price, Matchers.comparesEqualTo(new BigDecimal(MvcHelpers.attributeFromResult("price", created))));
             assertEquals(OfferStatus.DRAFT.name(), MvcHelpers.attributeFromResult("status", created));
+            assertEquals(offer.getTags().stream().toList().get(0).getName(), MvcHelpers.attributeFromResult("tags.[0].name", created));
 
             final var expectedDate = LocalDateTime.now();
             final var actualDate = LocalDateTime.parse(MvcHelpers.attributeFromResult("creationDate", created));
@@ -142,7 +145,7 @@ class OfferControllerFT {
         @Test
         @WithMockUser("a")
         void shouldCloseOffer() throws Exception {
-            final var offer = new OfferDto(new Offer("", "", mockUser, null));
+            final var offer = new OfferDto(new Offer("", "", mockUser, null, Set.of(new Tag("string"))));
 
             final var response = helpers.postRequest(offer, Routes.Offer.OFFERS).andExpect(status().isCreated());
             final var location = response.andReturn().getResponse().getHeader("location");
@@ -157,7 +160,7 @@ class OfferControllerFT {
     class ModifyTests {
         @Test
         void unauthorized() throws Exception {
-            final var offer = new OfferCreateDto("", "", null);
+            final var offer = new OfferCreateDto("", "", null, Set.of(new TagDto("tag")));
             final var id = "a";
             final var url = Routes.Offer.OFFERS + '/' + id;
             helpers.putRequest(offer, url).andExpect(status().isForbidden());
@@ -166,7 +169,7 @@ class OfferControllerFT {
         @Test
         @WithMockUser
         void notFound() throws Exception {
-            final var offer = new OfferCreateDto("", "", null);
+            final var offer = new OfferCreateDto("", "", null, Set.of(new TagDto("tag")));
             final var id = "a";
             final var url = Routes.Offer.OFFERS + '/' + id;
 

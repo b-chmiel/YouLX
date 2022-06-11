@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,7 +26,7 @@ class OfferStateCheckServiceTests {
         @Test
         void isClosable() {
             final var user = new User(null, "", "", "", "", "", "");
-            final var offer = new Offer("", "", user, null);
+            final var offer = new Offer("", "", user, null, Set.of());
             offer.setStatus(OfferStatus.OPEN);
 
             assertTrue(service.isClosable(new UserId(user.getUsername()), offer));
@@ -37,7 +38,7 @@ class OfferStateCheckServiceTests {
         @Test
         void newlyCreatedNotClosable() {
             final var user = new User(null, "", "", "", "", "", "");
-            final var offer = new Offer("", "", user, null);
+            final var offer = new Offer("", "", user, null, Set.of());
 
             assertFalse(service.isClosable(new UserId(user.getUsername()), offer));
         }
@@ -45,7 +46,7 @@ class OfferStateCheckServiceTests {
         @Test
         void closedNotClosable() {
             final var user = new User(null, "", "", "", "", "", "");
-            final var offer = new Offer("", "", user, null);
+            final var offer = new Offer("", "", user, null, Set.of());
             offer.setStatus(OfferStatus.CLOSED);
 
             assertFalse(service.isClosable(new UserId(user.getUsername()), offer));
@@ -54,7 +55,7 @@ class OfferStateCheckServiceTests {
         @Test
         void notClosableForOtherUser() {
             final var user = new User(null, "", "", "", "", "", "");
-            final var offer = new Offer("", "", user, null);
+            final var offer = new Offer("", "", user, null, Set.of());
             offer.setStatus(OfferStatus.OPEN);
 
             assertFalse(service.isClosable(new UserId(user.getUsername() + "a"), offer));
@@ -90,8 +91,9 @@ class OfferStateCheckServiceTests {
             final var offerId = "a";
             final var username = "b";
             final var user = new User(List.of(), "", "", "", "", username + "a", "");
+            final var offer = new Offer("", "", user, null, Set.of());
 
-            when(repository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", user, null)));
+            when(repository.findById(offerId)).thenReturn(Optional.of(offer));
             assertFalse(service.isOwnerOf(offerId, new UserId(username)));
         }
 
@@ -99,8 +101,9 @@ class OfferStateCheckServiceTests {
         void isOwnerOf() {
             final var offerId = "a";
             final var user = new User(List.of(), "", "", "", "", "b", "");
+            final var offer = new Offer("", "", user, null, Set.of());
 
-            when(repository.findById(offerId)).thenReturn(Optional.of(new Offer("", "", user, null)));
+            when(repository.findById(offerId)).thenReturn(Optional.of(offer));
             assertTrue(service.isOwnerOf(offerId, new UserId(user)));
         }
     }

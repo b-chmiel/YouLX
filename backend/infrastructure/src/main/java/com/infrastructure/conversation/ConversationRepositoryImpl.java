@@ -12,11 +12,13 @@ import com.domain.utils.hashId.HashId;
 import com.infrastructure.offer.JpaOfferRepository;
 import com.infrastructure.user.JpaUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+@Repository
 @RequiredArgsConstructor
 public class ConversationRepositoryImpl implements ConversationRepository {
     private final JpaMessageRepository messageRepository;
