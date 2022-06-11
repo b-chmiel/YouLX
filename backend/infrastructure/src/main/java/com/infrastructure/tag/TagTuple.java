@@ -28,6 +28,8 @@ public class TagTuple implements Comparable<TagTuple> {
 
     @Field(termVector = TermVector.YES)
     private String name;
+
+    @Column(name = "tag_references")
     private int references;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = TagTuple.class)

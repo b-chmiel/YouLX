@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   db:
-    image: postgres
+    image: postgres:14-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db:/var/lib/postgresql/data
+      - lx_postgres:/var/lib/postgresql/data
 volumes:
-  db:
+  lx_postgres:
     driver: local

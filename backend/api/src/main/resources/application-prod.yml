@@ -1,0 +1,28 @@
+spring:
+  sql:
+    init:
+      schema-locations: file:create.sql
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    generate-ddl: true
+#    properties:
+#      javax:
+#        persistence:
+#          schema-generation:
+#            create-source: metadata
+#            scripts:
+#              action: create
+#              create-target: create.sql
+
+logging:
+  level:
+    org:
+      springframework:
+        web: ERROR
+      hibernate:
+        SQL: ERROR
