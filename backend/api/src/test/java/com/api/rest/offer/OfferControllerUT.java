@@ -3,6 +3,7 @@ package com.api.rest.offer;
 import com.api.Fixtures;
 import com.api.MvcHelpers;
 import com.api.Routes;
+import com.api.rest.tag.TagDto;
 import com.domain.offer.Offer;
 import com.domain.offer.find.OfferFindService;
 import com.domain.offer.modify.OfferClose;
@@ -27,6 +28,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,14 +55,14 @@ class OfferControllerUT {
     class CreateTests {
         @Test
         void notAuthorized() throws Exception {
-            final var offer = new OfferCreateDto("name", "desc", BigDecimal.TEN);
+            final var offer = new OfferCreateDto("name", "desc", BigDecimal.TEN, Set.of(new TagDto("tag")));
             helpers.postRequest(offer, Routes.Offer.OFFERS).andExpect(status().isForbidden());
         }
 
         @Test
         @WithMockUser
         void userNotFound() throws Exception {
-            final var offerCreate = new OfferCreateDto("name", "desc", BigDecimal.TEN);
+            final var offerCreate = new OfferCreateDto("name", "desc", BigDecimal.TEN, Set.of(new TagDto("tag")));
             final var user = new User(List.of(), "", "", "", "", "user", "");
 
             when(userService.findById(user.getUsername())).thenReturn(Optional.empty());
@@ -70,7 +73,7 @@ class OfferControllerUT {
         @Test
         @WithMockUser("user")
         void create() throws Exception {
-            final var offerCreate = new OfferCreateDto("name", "desc", BigDecimal.TEN);
+            final var offerCreate = new OfferCreateDto("name", "desc", BigDecimal.TEN, Set.of(new TagDto("tag")));
             final var user = new User(List.of(), "", "", "", "", "user", "");
             final var offer = offerCreate.toDomain(user);
 
@@ -129,7 +132,7 @@ class OfferControllerUT {
         void close() throws Exception {
             final var id = "a";
             final var user = new User(List.of(), "", "", "", "", "user", "");
-            final var offer = new Offer(null, null, user, null);
+            final var offer = new Offer(null, null, user, null, null);
             when(service.close(id, new OfferClose(OfferCloseReason.MANUAL), new UserId("user"))).thenReturn(offer);
 
             helpers.postRequest(null, url + "/" + id + "/close").andExpect(status().isOk());
@@ -165,9 +168,9 @@ class OfferControllerUT {
         @WithMockUser
         void modify() throws Exception {
             final var id = "a";
-            final var offer = new OfferCreateDto();
-            helpers.putRequest(new OfferCreateDto(), Routes.Offer.OFFERS + "/" + id).andExpect(status().isOk());
-            verify(service, times(1)).modify(id, new OfferModify(offer.getName(), offer.getDescription(), offer.getPrice()), new UserId("user"));
+            final var offer = new OfferCreateDto("", "", BigDecimal.ONE, Set.of(new TagDto("")));
+            helpers.putRequest(offer, Routes.Offer.OFFERS + "/" + id).andExpect(status().isOk());
+            verify(service, times(1)).modify(id, new OfferModify(offer.getName(), offer.getDescription(), offer.getPrice(), offer.getTags().stream().map(TagDto::toDomain).collect(Collectors.toSet())), new UserId("user"));
         }
     }
 

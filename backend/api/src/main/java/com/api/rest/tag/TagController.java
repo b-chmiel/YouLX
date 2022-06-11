@@ -29,11 +29,4 @@ class TagController {
         final var result = service.getAll(query).stream().map(TagDto::new).toList();
         return ResponseEntity.ok(result);
     }
-
-    @PostMapping
-    @PreAuthorize("isAuthenticated()")
-    ResponseEntity<Void> create(Principal user, @Valid @RequestBody TagDto tag) throws URISyntaxException {
-        service.create(tag.toDomain());
-        return ResponseEntity.created(new URI(Routes.Tag.TAG)).build();
-    }
 }

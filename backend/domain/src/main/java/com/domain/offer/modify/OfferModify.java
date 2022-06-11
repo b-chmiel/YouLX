@@ -1,6 +1,9 @@
 package com.domain.offer.modify;
 
-import java.math.BigDecimal;
+import com.domain.tag.Tag;
 
-public record OfferModify(String name, String description, BigDecimal price) {
+import java.math.BigDecimal;
+import java.util.Set;
+
+public record OfferModify(String name, String description, BigDecimal price, Set<Tag> tags) {
 }

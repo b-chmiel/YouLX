@@ -28,6 +28,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,7 +91,7 @@ class PhotoRepositoryTests {
 
         @Test
         void save() {
-            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null), new UserTuple(Fixtures.user));
+            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null, Set.of()), new UserTuple(Fixtures.user));
             final var offerSaved = offerRepo.save(offer);
 
             final var saved = repository.savePhoto(hashId.encode(offerSaved.getId()), Fixtures.photo);
@@ -103,7 +104,7 @@ class PhotoRepositoryTests {
     class DeleteTests {
         @Test
         void delete() {
-            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null), new UserTuple(Fixtures.user));
+            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null, Set.of()), new UserTuple(Fixtures.user));
             final var id = hashId.encode(offerRepo.save(offer).getId());
 
             final var saved = repository.savePhoto(id, Fixtures.photo);
@@ -123,7 +124,7 @@ class PhotoRepositoryTests {
 
         @Test
         void multiplePhotos() {
-            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null), new UserTuple(Fixtures.user));
+            final var offer = new OfferTuple(new Offer("", "", Fixtures.user, null, Set.of()), new UserTuple(Fixtures.user));
             final var id = hashId.encode(offerRepo.save(offer).getId());
 
             final var saved1 = repository.savePhoto(id, Fixtures.photo);
@@ -140,8 +141,8 @@ class PhotoRepositoryTests {
 
         @Test
         void multipleOffers() {
-            final var offer1 = new OfferTuple(new Offer("", "", Fixtures.user, null), new UserTuple(Fixtures.user));
-            final var offer2 = new OfferTuple(new Offer("", "", Fixtures.user, null), new UserTuple(Fixtures.user));
+            final var offer1 = new OfferTuple(new Offer("", "", Fixtures.user, null, Set.of()), new UserTuple(Fixtures.user));
+            final var offer2 = new OfferTuple(new Offer("", "", Fixtures.user, null, Set.of()), new UserTuple(Fixtures.user));
             final var id1 = hashId.encode(offerRepo.save(offer1).getId());
             final var id2 = hashId.encode(offerRepo.save(offer2).getId());
 

@@ -1,6 +1,7 @@
 package com.infrastructure;
 
 import com.domain.photo.PhotoRepository;
+import com.domain.tag.TagRepository;
 import com.domain.utils.hashId.HashId;
 import com.infrastructure.conversation.JpaConversationRepository;
 import com.infrastructure.conversation.JpaMessageRepository;
@@ -25,8 +26,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackageClasses = {OfferRepositoryImpl.class, UserRepositoryImpl.class, PhotoRepositoryImpl.class, TagRepositoryImpl.class, OfferFindRepositoryImpl.class, ConversationRepositoryImpl.class})
 public class JpaConfig {
     @Bean
-    OfferRepositoryImpl offerRepository(HashId hashId, JpaUserRepository userRepository, JpaOfferRepository offerRepository, PhotoRepository photoRepository) {
-        return new OfferRepositoryImpl(hashId, userRepository, offerRepository, photoRepository);
+    OfferRepositoryImpl offerRepository(HashId hashId, JpaUserRepository userRepository, JpaOfferRepository offerRepository, PhotoRepository photoRepository, TagRepository tagRepository) {
+        return new OfferRepositoryImpl(hashId, userRepository, offerRepository, photoRepository, tagRepository);
     }
 
     @Bean

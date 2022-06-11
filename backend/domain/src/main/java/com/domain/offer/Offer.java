@@ -33,11 +33,11 @@ public class Offer {
     private LocalDateTime closedDate;
     private final Set<Tag> tags;
 
-    public Offer(String name, String description, User user, BigDecimal price) {
-        this(name, description, user, List.of(), price);
+    public Offer(String name, String description, User user, BigDecimal price, Set<Tag> tags) {
+        this(name, description, user, List.of(), price, tags);
     }
 
-    public Offer(String name, String description, User user, List<Photo> photos, BigDecimal price) {
+    public Offer(String name, String description, User user, List<Photo> photos, BigDecimal price, Set<Tag> tags) {
         this.id = null;
         this.name = name;
         this.description = description;
@@ -49,7 +49,7 @@ public class Offer {
         this.price = price;
         this.publishedDate = null;
         this.closedDate = null;
-        this.tags = Set.of();
+        this.tags = tags;
     }
 
     public List<String> photosUrls() {

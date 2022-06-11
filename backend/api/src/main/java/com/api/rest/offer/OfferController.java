@@ -1,6 +1,7 @@
 package com.api.rest.offer;
 
 import com.api.Routes;
+import com.api.rest.tag.TagDto;
 import com.domain.offer.Offer;
 import com.domain.offer.find.OfferFindService;
 import com.domain.offer.find.OfferSearchQuery;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.security.Principal;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -85,7 +87,12 @@ class OfferController {
     @PutMapping("{id}")
     @PreAuthorize("isAuthenticated()")
     ResponseEntity<Void> modify(Principal user, @Valid @PathVariable String id, @Valid @RequestBody OfferCreateDto offer) {
-        service.modify(id, new OfferModify(offer.getName(), offer.getDescription(), offer.getPrice()), new UserId(user));
+        final var tags = offer.getTags().stream().map(TagDto::toDomain).collect(Collectors.toSet());
+        final var offerModify = new OfferModify(offer.getName(), offer.getDescription(), offer.getPrice(), tags);
+        final var userId = new UserId(user);
+
+        service.modify(id, offerModify, userId);
+
         return ResponseEntity.ok().build();
     }
 

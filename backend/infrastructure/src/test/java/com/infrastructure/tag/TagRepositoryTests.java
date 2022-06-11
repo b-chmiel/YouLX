@@ -94,7 +94,7 @@ class TagRepositoryTests {
             repository.create(tag1);
             repository.create(tag2);
 
-            repository.assignToOffer(createdOffer.getId(), tag1);
+            repository.assignAllToOffer(createdOffer.getId(), Set.of(tag1));
 
             assertEquals(List.of(tag1, tag2), repository.getAll());
         }
@@ -109,7 +109,7 @@ class TagRepositoryTests {
             repository.create(tag1);
             repository.create(tag2);
 
-            repository.assignToOffer(createdOffer.getId(), tag2);
+            repository.assignAllToOffer(createdOffer.getId(), Set.of(tag2));
 
             assertEquals(List.of(tag2, tag1), repository.getAll());
         }
@@ -133,10 +133,10 @@ class TagRepositoryTests {
     }
 
     @Nested
-    class AssignToOfferTests {
+    class AssignAllToOffer {
         @Test
         void offerNotFound() {
-            assertThrows(ApiNotFoundException.class, () -> repository.assignToOffer("asdf", new Tag("sdf")));
+            assertThrows(ApiNotFoundException.class, () -> repository.assignAllToOffer("asdf", Set.of(new Tag("sdf"))));
         }
 
         @Test
@@ -144,7 +144,7 @@ class TagRepositoryTests {
             userRepository.create(Fixtures.user);
             offerRepo.save(new OfferTuple(Fixtures.offer, new UserTuple(Fixtures.user)));
 
-            assertThrows(ApiNotFoundException.class, () -> repository.assignToOffer("asdf", new Tag("asdf")));
+            assertThrows(ApiNotFoundException.class, () -> repository.assignAllToOffer("asdf", Set.of(new Tag("asdf"))));
         }
 
         @Test
@@ -155,8 +155,8 @@ class TagRepositoryTests {
             final var createdOffer = offerRepo.saveAndFlush(new OfferTuple(offer, new UserTuple(Fixtures.user))).toDomain(hashId);
             repository.create(Fixtures.tag);
 
-            repository.assignToOffer(createdOffer.getId(), Fixtures.tag);
-            assertThrows(ApiConflictException.class, () -> repository.assignToOffer(createdOffer.getId(), Fixtures.tag));
+            repository.assignAllToOffer(createdOffer.getId(), Set.of(Fixtures.tag));
+            assertThrows(ApiConflictException.class, () -> repository.assignAllToOffer(createdOffer.getId(), Set.of(Fixtures.tag)));
         }
 
         @Test
@@ -168,7 +168,7 @@ class TagRepositoryTests {
             repository.create(Fixtures.tag);
 
             assertEquals(Set.of(), offerRepository.findById(createdOffer.getId()).get().getTags());
-            repository.assignToOffer(createdOffer.getId(), Fixtures.tag);
+            repository.assignAllToOffer(createdOffer.getId(), Set.of(Fixtures.tag));
 
             assertEquals(Set.of(Fixtures.tag), offerRepository.findById(createdOffer.getId()).get().getTags());
         }

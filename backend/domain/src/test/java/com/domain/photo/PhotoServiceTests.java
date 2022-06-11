@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -76,7 +77,7 @@ class PhotoServiceTests {
         @Test
         void findAll() {
             final var id = "a";
-            final var offer = new Offer("", "", null, List.of(Fixtures.photo, Fixtures.photo), null);
+            final var offer = new Offer("", "", null, List.of(Fixtures.photo, Fixtures.photo), null, Set.of());
             when(offerFindService.findById(id)).thenReturn(Optional.of(offer));
             assertEquals(Fixtures.photo, service.findAllForOffer(id).get(0));
             assertEquals(Fixtures.photo, service.findAllForOffer(id).get(1));

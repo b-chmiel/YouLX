@@ -22,8 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
@@ -79,12 +81,12 @@ public class Seed implements ApplicationRunner {
     }
 
     private void assignTagsToOffer(List<Tag> allTags, String offerId) {
-        try {
-            tagRepository.assignToOffer(offerId, allTags.get(faker.random().nextInt(allTags.size())));
-            tagRepository.assignToOffer(offerId, allTags.get(faker.random().nextInt(allTags.size())));
-        } catch (ApiException ignored) {
-            // Imma not if this nextInts' randomness out.
-        }
+//        try {
+//            tagRepository.assignToOffer(offerId, allTags.get(faker.random().nextInt(allTags.size())));
+//            tagRepository.assignToOffer(offerId, allTags.get(faker.random().nextInt(allTags.size())));
+//        } catch (ApiException ignored) {
+//            // Imma not if this nextInts' randomness out.
+//        }
     }
 
     private List<Tag> tagsFrom() {
@@ -112,7 +114,8 @@ public class Seed implements ApplicationRunner {
         final var description = faker.lorem().paragraph(80);
         final var selectedPhotos = IntStream.range(0, PHOTOS_PER_OFFER).mapToObj(i -> faker.random().nextInt(photos.size())).map(photos::get).toList();
         final var price = BigDecimal.valueOf(faker.number().randomDouble(2, 1, 200));
+        final var tags = new HashSet<>(tagsFrom());
 
-        return new Offer(name, description, user, selectedPhotos, price);
+        return new Offer(name, description, user, selectedPhotos, price, tags);
     }
 }

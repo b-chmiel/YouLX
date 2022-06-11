@@ -6,14 +6,18 @@ import com.domain.offer.OfferStatus;
 import com.domain.offer.modify.OfferClose;
 import com.domain.offer.modify.OfferCloseReason;
 import com.domain.offer.modify.OfferModify;
+import com.domain.tag.Tag;
 import com.domain.user.UserRepository;
 import com.domain.utils.hashId.ApiHashIdException;
 import com.domain.utils.hashId.HashId;
+import com.domain.utils.hashId.HashIdImpl;
 import com.infrastructure.Fixtures;
 import com.infrastructure.JpaConfig;
 import com.infrastructure.user.UserTuple;
+import org.hashids.Hashids;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +41,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ContextConfiguration(
-        classes = JpaConfig.class,
+        classes = {JpaConfig.class, HashIdImpl.class, Hashids.class},
         loader = AnnotationConfigContextLoader.class
 )
 @DataJpaTest
 class OfferRepositoryTests {
-    @MockBean
+    @Autowired
     private HashId hashId;
 
     @Autowired
@@ -57,14 +61,6 @@ class OfferRepositoryTests {
 
     @BeforeEach
     void setup() throws ApiHashIdException {
-        when(hashId.encode(1L)).thenReturn("1");
-        when(hashId.encode(2L)).thenReturn("2");
-        when(hashId.encode(3L)).thenReturn("3");
-        when(hashId.encode(4L)).thenReturn("4");
-        when(hashId.decode("1")).thenReturn(1L);
-        when(hashId.decode("2")).thenReturn(2L);
-        when(hashId.decode("3")).thenReturn(3L);
-        when(hashId.decode("4")).thenReturn(4L);
         userRepository.create(Fixtures.user);
         repository.clear();
     }
@@ -74,68 +70,82 @@ class OfferRepositoryTests {
         repository.clear();
     }
 
-    @Test
-    void shouldCreate() {
-        final var offer = new Offer("a", "b", Fixtures.user, List.of(), BigDecimal.TEN);
+    @Nested
+    class CreateTests {
+        @Test
+        void create() {
+            final var offer = new Offer("a", "b", Fixtures.user, List.of(), BigDecimal.TEN, Set.of());
 
-        final var result = repository.create(offer);
+            final var result = repository.create(offer);
 
-        Helpers.assertOfferAttributesEqual(offer, result);
+            Helpers.assertOfferAttributesEqual(offer, result);
+        }
     }
 
-    @Test
-    void shouldPatch() {
-        final var offer = new Offer("a", "b", Fixtures.user, BigDecimal.ONE);
+    @Nested
+    class CloseTests {
+        @Test
+        void close() {
+            final var offer = new Offer("a", "b", Fixtures.user, BigDecimal.ONE, Set.of());
 
-        final var result = repository.create(offer);
+            final var result = repository.create(offer);
 
-        result.close(OfferCloseReason.EXPIRED);
-        repository.close(result.getId(), new OfferClose(OfferCloseReason.EXPIRED));
-        final var changed = repository.findById(result.getId()).orElse(null);
+            result.close(OfferCloseReason.EXPIRED);
+            repository.close(result.getId(), new OfferClose(OfferCloseReason.EXPIRED));
+            final var changed = repository.findById(result.getId()).orElse(null);
 
-        Helpers.assertOfferAttributesEqual(result, changed);
+            Helpers.assertOfferAttributesEqual(result, changed);
+        }
+
+        @Test
+        void createAndClose() {
+            final var offer = new Offer("1", "a", "b", LocalDateTime.now(), Fixtures.user, List.of(), BigDecimal.TEN, Set.of());
+            offer.setCloseReason(Optional.empty());
+            offer.setStatus(OfferStatus.OPEN);
+            final var created = repo.save(new OfferTuple(offer, new UserTuple(Fixtures.user))).toDomain(hashId);
+
+            assertEquals(OfferStatus.OPEN, created.getStatus());
+
+            repository.close(created.getId(), new OfferClose(OfferCloseReason.EXPIRED));
+
+            final var result = repository.findById(created.getId()).get();
+            assertEquals(OfferStatus.CLOSED, result.getStatus());
+            assertEquals(OfferCloseReason.EXPIRED, result.getCloseReason().get());
+        }
     }
 
-    @Test
-    void shouldClose() {
-        final var offer = new Offer("1", "a", "b", LocalDateTime.now(), Fixtures.user, List.of(), BigDecimal.TEN, Set.of());
-        offer.setCloseReason(Optional.empty());
-        offer.setStatus(OfferStatus.OPEN);
-        final var created = repo.save(new OfferTuple(offer, new UserTuple(Fixtures.user))).toDomain(hashId);
 
-        assertEquals(OfferStatus.OPEN, created.getStatus());
+    @Nested
+    class FindByUserIdTests {
+        @Test
+        void findByUserId() {
+            assertEquals(0, repository.findByUserId(Fixtures.user.getUsername()).size());
 
-        repository.close(created.getId(), new OfferClose(OfferCloseReason.EXPIRED));
+            repository.create(new Offer("", "", Fixtures.user, null, Set.of()));
+            repository.create(new Offer("", "", Fixtures.user, null, Set.of()));
 
-        final var result = repository.findById(created.getId()).get();
-        assertEquals(OfferStatus.CLOSED, result.getStatus());
-        assertEquals(OfferCloseReason.EXPIRED, result.getCloseReason().get());
+            assertEquals(2, repository.findByUserId(Fixtures.user.getUsername()).size());
+        }
     }
 
-    @Test
-    void shouldGetAllByUserId() {
-        assertEquals(0, repository.findByUserId(Fixtures.user.getUsername()).size());
+    @Nested
+    class ModifyTests {
+        @Test
+        void modify() {
+            final var offer = new Offer("4", "", "", LocalDateTime.now(), Fixtures.user, List.of(), BigDecimal.ONE, Set.of(new Tag("tag1")));
+            offer.close(OfferCloseReason.MANUAL);
+            final var created = repo.save(new OfferTuple(offer, new UserTuple(Fixtures.user))).toDomain(hashId);
+            final var modify = new OfferModify("a", "b", BigDecimal.TEN, Set.of(new Tag("tag2")));
 
-        repository.create(new Offer("", "", Fixtures.user, null));
-        repository.create(new Offer("", "", Fixtures.user, null));
+            assertTrue(repository.findById(created.getId()).isPresent());
+            repository.modify(created.getId(), modify);
 
-        assertEquals(2, repository.findByUserId(Fixtures.user.getUsername()).size());
-    }
-
-    @Test
-    void shouldModify() {
-        final var offer = new Offer("4", "", "", LocalDateTime.now(), Fixtures.user, List.of(), BigDecimal.ONE, Set.of());
-        offer.close(OfferCloseReason.MANUAL);
-        final var created = repo.save(new OfferTuple(offer, new UserTuple(Fixtures.user))).toDomain(hashId);
-        final var modify = new OfferModify("a", "b", BigDecimal.TEN);
-
-        assertTrue(repository.findById(created.getId()).isPresent());
-        repository.modify(created.getId(), modify);
-
-        final var modified = repository.findById(created.getId());
-        assertEquals(modify.name(), modified.get().getName());
-        assertEquals(modify.description(), modified.get().getDescription());
-        assertEquals(modify.price(), modified.get().getPrice());
+            final var modified = repository.findById(created.getId());
+            assertEquals(modify.name(), modified.get().getName());
+            assertEquals(modify.description(), modified.get().getDescription());
+            assertEquals(modify.price(), modified.get().getPrice());
+            assertEquals(modify.tags(), modified.get().getTags());
+        }
     }
 
     private static class Helpers {
@@ -146,6 +156,7 @@ class OfferRepositoryTests {
             assertEquals(expected.getName(), actual.getName());
             assertEquals(expected.getStatus(), actual.getStatus());
             assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
+            assertEquals(expected.getTags(), actual.getTags());
         }
     }
 }

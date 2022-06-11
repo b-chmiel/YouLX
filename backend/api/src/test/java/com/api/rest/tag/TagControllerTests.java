@@ -41,28 +41,4 @@ class TagControllerTests {
             Assertions.assertEquals("{name=c}", MvcHelpers.attributeFromResult("[2]", result));
         }
     }
-
-    @Nested
-    class CreateTests {
-        @Test
-        void forbidden() throws Exception {
-            helpers.postRequest(new TagDto("a"), Routes.Tag.TAG).andExpect(status().isForbidden());
-        }
-
-        @Test
-        @WithMockUser
-        void conflict() throws Exception {
-            final var tag = new Tag("asdf");
-            doThrow(new ApiConflictException("")).when(service).create(tag);
-            helpers.postRequest(tag, Routes.Tag.TAG).andExpect(status().isConflict());
-        }
-
-        @Test
-        @WithMockUser
-        void create() throws Exception {
-            final var tag = new Tag("asdf");
-            helpers.postRequest(tag, Routes.Tag.TAG).andExpect(status().isCreated());
-            verify(service, times(1)).create(tag);
-        }
-    }
 }

@@ -6,6 +6,7 @@ import com.domain.offer.OfferStatus;
 import com.domain.offer.modify.OfferClose;
 import com.domain.offer.modify.OfferModify;
 import com.domain.photo.PhotoRepository;
+import com.domain.tag.TagRepository;
 import com.domain.utils.exception.ApiException;
 import com.domain.utils.exception.ApiNotFoundException;
 import com.domain.utils.hashId.ApiHashIdException;
@@ -25,6 +26,7 @@ public class OfferRepositoryImpl implements OfferRepository {
     private final JpaUserRepository userRepo;
     private final JpaOfferRepository repo;
     private final PhotoRepository photoRepository;
+    private final TagRepository tagRepository;
 
     @Override
     public Offer create(Offer offer) throws ApiException {
@@ -39,6 +41,8 @@ public class OfferRepositoryImpl implements OfferRepository {
         offer.getPhotos().forEach(
                 p -> photoRepository.savePhoto(hashId.encode(result.getId()), p)
         );
+
+        tagRepository.assignAllToOffer(hashId.encode(tuple.getId()), offer.getTags());
 
         return result.toDomain(hashId);
     }
@@ -102,6 +106,10 @@ public class OfferRepositoryImpl implements OfferRepository {
         tuple.setName(offer.name());
         tuple.setDescription(offer.description());
         tuple.setPrice(offer.price());
+        tuple.getTags().clear();
+
+        tagRepository.assignAllToOffer(hashId.encode(tuple.getId()), offer.tags());
+
         repo.save(tuple);
     }
 

@@ -24,6 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -65,12 +66,12 @@ class OfferSearchRepositoryTests {
     @Test
     void search() {
         final var query = "asdf";
-        final var offer1 = new Offer("asdfffss", "asdfasdf", Fixtures.user, null);
-        final var offer2 = new Offer("asdfaasd ", "asdfasdf", Fixtures.user, null);
-        final var offer3 = new Offer("", "asdfasdf", Fixtures.user, null);
-        final var offer4 = new Offer("asdf", "", Fixtures.user, null);
-        final var offerEmpty = new Offer("", "", Fixtures.user, null);
-        final var offerNotFound = new Offer("aaaaaaaaa", "bbbbbbbb", Fixtures.user, null);
+        final var offer1 = new Offer("asdfffss", "asdfasdf", Fixtures.user, null, Set.of());
+        final var offer2 = new Offer("asdfaasd ", "asdfasdf", Fixtures.user, null, Set.of());
+        final var offer3 = new Offer("", "asdfasdf", Fixtures.user, null, Set.of());
+        final var offer4 = new Offer("asdf", "", Fixtures.user, null, Set.of());
+        final var offerEmpty = new Offer("", "", Fixtures.user, null, Set.of());
+        final var offerNotFound = new Offer("aaaaaaaaa", "bbbbbbbb", Fixtures.user, null, Set.of());
         offerRepository.create(offer1);
         offerRepository.create(offer2);
         offerRepository.create(offer3);
