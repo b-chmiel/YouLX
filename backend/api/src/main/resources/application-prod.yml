@@ -19,6 +19,9 @@ spring:
 #              action: create
 #              create-target: create.sql
 
+server:
+  port: ${PORT}
+
 logging:
   level:
     org:
