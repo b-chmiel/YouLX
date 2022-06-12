@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -22,7 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ComponentScan(basePackages = "com.infrastructure")
-class MeControllerFT {
+@ActiveProfiles(profiles = "local")
+class MeControllerTests {
     @Autowired
     private MvcHelpers helpers;
 
