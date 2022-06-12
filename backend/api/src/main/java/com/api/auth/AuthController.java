@@ -3,6 +3,7 @@ package com.api.auth;
 import com.api.Routes;
 import com.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -22,6 +24,9 @@ import java.net.URISyntaxException;
 @RequiredArgsConstructor
 @ComponentScan(basePackages = {"com.domain"})
 class AuthController {
+    @Value("${frontend-url}")
+    private String frontendUrl;
+
     private final UserService service;
 
     @RequestMapping(Routes.Auth.LOGIN)
@@ -55,4 +60,12 @@ class AuthController {
 
         return ResponseEntity.status(HttpStatus.FOUND).location(new URI(Routes.Auth.LOGIN)).build();
     }
+
+    @RequestMapping("/")
+    public RedirectView localRedirect() {
+        final var redirectView = new RedirectView();
+        redirectView.setUrl(frontendUrl);
+        return redirectView;
+    }
+
 }
