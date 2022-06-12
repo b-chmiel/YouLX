@@ -1,4 +1,12 @@
+FROM node as build
+WORKDIR /app
+COPY package*.json /app/
+RUN npm install
+COPY . /app
+ARG configuration=production
+RUN npm run build -- --outputPath=./dist/out --configuration $configuration
+
 FROM nginx:1.17.1-alpine
-COPY nginx.conf.template /etc/nginx/conf.d/default.conf.template
-COPY /dist/frontend /usr/share/nginx/html
-CMD /bin/sh -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf" && nginx -g
+COPY --from=build /app/dist/out/ /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
+CMD /bin/sh -c "envsubst < /etc/nginx/nginx.conf | tee /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
