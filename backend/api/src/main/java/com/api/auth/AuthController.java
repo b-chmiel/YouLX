@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,9 +25,13 @@ class AuthController {
     private final UserService service;
 
     @RequestMapping(Routes.Auth.LOGIN)
-    ModelAndView login() {
+    ModelAndView login(HttpServletRequest request) {
         var model = new ModelAndView();
         model.setViewName("login");
+
+        final var referrer = request.getHeader("Referrer");
+        request.getSession().setAttribute("url_prior_login", referrer);
+
         return model;
     }
 
