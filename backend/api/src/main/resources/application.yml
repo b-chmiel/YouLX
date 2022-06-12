@@ -15,6 +15,9 @@ springdoc:
   swagger-ui:
     path: /api/docs
 
+server:
+  port: ${PORT}
+
 logging:
   level:
     org:
