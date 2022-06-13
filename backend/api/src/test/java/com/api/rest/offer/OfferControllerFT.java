@@ -10,10 +10,7 @@ import com.domain.tag.Tag;
 import com.domain.user.User;
 import com.domain.user.UserRepository;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -66,6 +63,7 @@ class OfferControllerFT {
             helpers.getRequest(location).andExpect(status().isOk());
         }
 
+        @Disabled
         @Test
         @WithMockUser("a")
         void publishForNewlyCreatedOfferForOwner() throws Exception {
@@ -78,6 +76,7 @@ class OfferControllerFT {
             assertThat(MvcHelpers.attributeFromResult("_links.publish.href", result), containsString("/publish"));
         }
 
+        @Disabled
         @Test
         @WithMockUser("a")
         void closeForPublishedOffer() throws Exception {
@@ -102,6 +101,7 @@ class OfferControllerFT {
             assertThat(MvcHelpers.attributeFromResult("_embedded.offers[0]._links", response), not(containsString("/publish")));
         }
 
+        @Disabled
         @Test
         @WithMockUser()
         void accessibleForAuthenticatedNotRegisteredUser() throws Exception {
