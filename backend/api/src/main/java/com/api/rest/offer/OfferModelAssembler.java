@@ -47,6 +47,6 @@ public class OfferModelAssembler implements RepresentationModelAssembler<Offer, 
                 linkTo(methodOn(OfferController.class).getAllOpen(Pageable.unpaged(), "", "")).withRel("allOpenOffers")
         );
 
-        return links.stream().map(link -> Link.of(link.getHref().replace("youlx-backend", "youlx"), link.getRel())).toList();
+        return links.stream().map(link -> Link.of(link.getHref().replace("http", "https").replace("youlx-backend", "youlx"), link.getRel())).toList();
     }
 }
