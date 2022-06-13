@@ -19,6 +19,11 @@ spring:
 #              action: create
 #              create-target: create.sql
 
+server:
+  port: ${PORT}
+
+frontend-url: ${HEROKU_APP_FRONTEND_URL}
+
 logging:
   level:
     org:

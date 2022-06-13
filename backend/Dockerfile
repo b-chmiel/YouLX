@@ -5,7 +5,6 @@ WORKDIR /app
 RUN gradle bootJar
 
 FROM openjdk:17-alpine3.14
-EXPOSE 8080
 COPY --from=jar /app/api/build/libs/*.jar app.jar
 COPY --from=jar /app/create.sql create.sql
 ENTRYPOINT ["java", "-Dspring.profiles.active=prod" ,"-jar", "/app.jar"]

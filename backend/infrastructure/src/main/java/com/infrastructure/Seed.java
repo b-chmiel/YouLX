@@ -50,7 +50,9 @@ public class Seed implements ApplicationRunner {
         final var photos = List.of(photoFrom("fixtures/photo1.jpg"), photoFrom("fixtures/photo2.jpg"), photoFrom("fixtures/photo3.jpg"), photoFrom("fixtures/photo4.jpg"), photoFrom("fixtures/photo5.jpg"), photoFrom("fixtures/photo6.jpg"), photoFrom("fixtures/photo7.jpg"));
 
         final var tags = tagsFrom();
-        tags.forEach(tagRepository::create);
+        try {
+            tags.forEach(tagRepository::create);
+        } catch (Exception ignored) {}
 
         for (final var user : users) {
             IntStream.range(0, OFFER_COUNT).forEach(i -> {
