@@ -21,6 +21,7 @@ spring:
 
 server:
   port: ${PORT}
+  forward-headers-strategy: framework
 
 frontend-url: ${HEROKU_APP_FRONTEND_URL}
 
