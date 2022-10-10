@@ -5,6 +5,7 @@ import com.domain.offer.stateCheck.OfferStateCheckService;
 import com.domain.user.UserId;
 import com.sun.security.auth.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -22,6 +23,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 @RequiredArgsConstructor
 public class OfferModelAssembler implements RepresentationModelAssembler<Offer, EntityModel<OfferDto>> {
+    @Value("${hateoas-callback-url}")
+    private String selfUrl;
+
     private final OfferStateCheckService offerStateCheckService;
 
     @Override
@@ -47,6 +51,10 @@ public class OfferModelAssembler implements RepresentationModelAssembler<Offer, 
                 linkTo(methodOn(OfferController.class).getAllOpen(Pageable.unpaged(), "", "")).withRel("allOpenOffers")
         );
 
-        return links.stream().map(link -> Link.of(link.getHref().replace("http", "https").replace("youlx-backend", "youlx"), link.getRel())).toList();
+        return fixOrigin(links);
+    }
+
+    private List<Link> fixOrigin(List<Link> links) {
+        return links.stream().map(link -> Link.of(link.getHref().replaceFirst("(https?+:\\/\\/[a-zA-Z\\d:]*)", selfUrl), link.getRel())).toList();
     }
 }

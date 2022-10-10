@@ -3,7 +3,7 @@ spring:
     init:
       schema-locations: file:create.sql
   datasource:
-    url: jdbc:postgresql://localhost:5432/db
+    url: jdbc:postgresql://${DATABASE_URL}/db
     username: postgres
     password: postgres
   jpa:
@@ -24,6 +24,7 @@ server:
   forward-headers-strategy: framework
 
 frontend-url: ${HEROKU_APP_FRONTEND_URL}
+hateoas-callback-url: ${HATEOAS_CALLBACK_URL}
 
 logging:
   level:
