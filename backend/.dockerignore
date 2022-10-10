@@ -1,0 +1,13 @@
+com.infrastructure.offer.OfferTuple/
+com.infrastructure.tag.TagTuple/
+
+api/build/
+api/com.infrastructure.offer.OfferTuple/
+api/com.infrastructure.tag.TagTuple/
+
+domain/build/
+
+infrastructure/build/
+infrastructure/com.infrastructure.offer.OfferTuple/
+infrastructure/com.infrastructure.tag.TagTuple/
+infrastructure/target/

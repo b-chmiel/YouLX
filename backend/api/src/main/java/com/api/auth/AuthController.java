@@ -24,7 +24,7 @@ import java.net.URISyntaxException;
 @RequiredArgsConstructor
 @ComponentScan(basePackages = {"com.domain"})
 class AuthController {
-    @Value("${frontend-url:localhost:4200}")
+    @Value("${frontend-url}")
     private String frontendUrl;
 
     private final UserService service;

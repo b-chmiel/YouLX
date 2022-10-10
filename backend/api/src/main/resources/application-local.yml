@@ -12,6 +12,10 @@ spring:
     log-request-details: true
 
 frontend-url: localhost:4200
+hateoas-callback-url: http://localhost:4200
+
+server:
+  port: 8080
 
 logging:
   level:
